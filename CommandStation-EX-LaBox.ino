@@ -64,6 +64,13 @@
 #warning You have myAutomation.h but your hardware has not enough memory to do that, so EX-RAIL DISABLED
 #endif
 
+//--------------------------- HMI client -------------------------------------
+#ifdef USE_HMI
+#include "hmi.h"
+hmi boxHMI(&Wire);
+#endif
+//----------------------------------------------------------------------------
+
 void setup()
 {
   // The main sketch has responsibilities during setup()
@@ -81,6 +88,15 @@ void setup()
     LCD(1,F("Lic GPLv3"));
   }
 
+#ifdef USE_HMI
+  // setup led !
+  pinMode(PIN_LEDBUILTIN, OUTPUT);
+  digitalWrite(PIN_LEDBUILTIN, HIGH);
+
+  //----------- Start HMI -------------
+  boxHMI.begin();
+#endif
+
   // Responsibility 2: Start all the communications before the DCC engine
   // Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
   // Start Ethernet if it exists
@@ -89,8 +105,10 @@ void setup()
   WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL);
 #endif // WIFI_ON
 #else
+  Serial.println("Start wifi");
   // ESP32 needs wifi on always
   WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL);
+  Serial.println("End wifi");
 #endif // ARDUINO_ARCH_ESP32
 
 #if ETHERNET_ON
@@ -125,6 +143,9 @@ void setup()
   #endif
   LCD(3, F("Ready"));
   CommandDistributor::broadcastPower();
+#ifdef USE_HMI
+  digitalWrite(PIN_LEDBUILTIN, LOW);
+#endif
 }
 
 void loop()
@@ -173,4 +194,7 @@ void loop()
     ramLowWatermark = freeNow;
     LCD(3,F("Free RAM=%5db"), ramLowWatermark);
   }
+#ifdef USE_HMI
+  boxHMI.update();
+#endif
 }

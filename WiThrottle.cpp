@@ -228,6 +228,7 @@ void WiThrottle::parse(RingStream * stream, byte * cmdx) {
       break;
     case 'P':  
       if (cmd[1]=='P' && cmd[2]=='A' )  {  //PPA power mode 
+      Serial.println("Power change");
 	TrackManager::setMainPower(cmd[3]=='1'?POWERMODE::ON:POWERMODE::OFF);
 /* TODO 
 	if (MotorDriver::commonFaultPin) // commonFaultPin prevents individual track handling

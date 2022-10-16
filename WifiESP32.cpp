@@ -203,7 +203,6 @@ bool WifiESP::setup(const char *SSid,
     }
   }
 
-
   if (!wifiUp) {
     DIAG(F("Wifi setup all fail (STA and AP mode)"));
     // no idea to go on

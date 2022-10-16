@@ -25,6 +25,7 @@
 #include "MotorDriver.h"
 #include "DCCTimer.h"
 #include "DIAG.h"
+#include "hmi.h"
 // Virtualised Motor shield multi-track hardware Interface
 #define FOR_EACH_TRACK(t) for (byte t=0;t<=lastTrack;t++)
     
@@ -349,6 +350,15 @@ void TrackManager::setPower2(bool setProg,POWERMODE mode) {
                 driver->setBrake(true);
                 driver->setBrake(false); // DCC runs with brake off
                 driver->setPower(mode);  
+#ifdef USE_HMI
+              	if (hmi::CurrentInterface != NULL)
+                {
+                  if (mode == POWERMODE::ON)
+                    hmi::CurrentInterface->DCCOn();
+                  if (mode == POWERMODE::OFF)
+                    hmi::CurrentInterface->DCCOff();
+                }
+#endif
                 break; 
             case TRACK_MODE_DC:
             case TRACK_MODE_DCX:
