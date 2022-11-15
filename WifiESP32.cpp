@@ -27,7 +27,7 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
-#include "hmi.h"
+#include "HMI/hmi.h"
 /*
 #include "soc/rtc_wdt.h"
 #include "esp_task_wdt.h"

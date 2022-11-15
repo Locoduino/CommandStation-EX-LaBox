@@ -25,7 +25,7 @@
 #include "MotorDriver.h"
 #include "DCCTimer.h"
 #include "DIAG.h"
-#include "hmi.h"
+#include "HMI/hmi.h"
 // Virtualised Motor shield multi-track hardware Interface
 #define FOR_EACH_TRACK(t) for (byte t=0;t<=lastTrack;t++)
     

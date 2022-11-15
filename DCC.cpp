@@ -37,6 +37,7 @@
 #include "CommandDistributor.h"
 #include "TrackManager.h"
 #include "DCCTimer.h"
+#include "HMI/hmi.h"
 
 // This module is responsible for converting API calls into
 // messages to be sent to the waveform generator.
@@ -80,6 +81,14 @@ void DCC::setThrottle( uint16_t cab, uint8_t tSpeed, bool tDirection)  {
   TrackManager::setDCSignal(cab,speedCode); // in case this is a dcc track on this addr
   // retain speed for loco reminders
   updateLocoReminder(cab, speedCode );
+#ifdef USE_HMI
+	  if (hmi::CurrentInterface != NULL)
+	  {
+		  hmi::CurrentInterface->ChangeDirection(cab, tDirection);
+		  hmi::CurrentInterface->ChangeSpeed(cab, tSpeed);
+		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  }
+#endif
 }
 
 void DCC::setThrottle2( uint16_t cab, byte speedCode)  {
@@ -184,6 +193,13 @@ bool DCC::setFn( int cab, int16_t functionNumber, bool on) {
        b[nB++] = functionNumber >>7 ;  // high order bits
     }
     DCCWaveform::mainTrack.schedulePacket(b, nB, 4);
+#ifdef USE_HMI
+	  if (hmi::CurrentInterface != NULL)
+	  {
+		  hmi::CurrentInterface->ChangeFunction(cab, functionNumber, on);
+		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  }
+#endif
     return true;
   }
 
@@ -573,7 +589,17 @@ void DCC::setLocoId(int id,ACK_CALLBACK callback) {
 void DCC::forgetLoco(int cab) {  // removes any speed reminders for this loco
   setThrottle2(cab,1); // ESTOP this loco if still on track
   int reg=lookupSpeedTable(cab);
-  if (reg>=0) speedTable[reg].loco=0;
+  if (reg>=0) 
+  {
+#ifdef USE_HMI
+	  if (hmi::CurrentInterface != NULL)
+	  {
+		  hmi::CurrentInterface->LocoRemove(cab);
+		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  }
+#endif
+    speedTable[reg].loco=0;
+  }
   setThrottle2(cab,1); // ESTOP if this loco still on track
 }
 void DCC::forgetAllLocos() {  // removes all speed reminders
@@ -693,6 +719,14 @@ int DCC::lookupSpeedTable(int locoId, bool autoCreate) {
         speedTable[reg].speedCode=128;  // default direction forward
         speedTable[reg].groupFlags=0;
         speedTable[reg].functions=0;
+
+#ifdef USE_HMI
+	  if (hmi::CurrentInterface != NULL)
+	  {
+		  hmi::CurrentInterface->LocoAdd("", locoId);
+		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  }
+#endif
   }
   return reg;
 }
