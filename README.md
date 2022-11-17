@@ -1,9 +1,3 @@
-# Why a new Fork of CommandStation-Ex ?
-
-Here on Locoduino, we develop a DCC control center with hardware and software. The hardware is based on an ESP32 and a small OLED screen. As on option, a radio extension and a CAN bus chip can be added.
-
-Based on CommandStation-EX, the software take the best of the previous version of Labox software : Throttles classes, Z21 App compatibility and menus on the small graphic screen.
-
 # What is DCC++ EX?
 DCC++ EX is the organization maintaining several codebases that together represent a fully open source DCC system. Currently, this includes the following:
 
