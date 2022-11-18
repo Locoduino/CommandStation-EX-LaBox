@@ -31,6 +31,7 @@ unsigned int DCCACK::minAckPulseDuration = 2000; // micros
 unsigned int DCCACK::maxAckPulseDuration = 20000; // micros
   
 MotorDriver *  DCCACK::progDriver=NULL;
+DCCWaveform *   DCCACK::progTrack=NULL;
 ackOp  const *  DCCACK::ackManagerProg;
 ackOp  const *  DCCACK::ackManagerProgStart;
 byte   DCCACK::ackManagerByte;
@@ -71,15 +72,23 @@ void  DCCACK::Setup(int cv, byte byteValueOrBitnum, ackOp const program[], ACK_C
   if (ackManagerRejoin) {
     // Change from JOIN must zero resets packet.
     TrackManager::setJoin(false);
-    DCCWaveform::progTrack.clearResets();
+    DCCACK::progTrack->clearResets();
   }
 
   progDriver=TrackManager::getProgDriver();
+  DCCACK::progTrack=&DCCWaveform::progTrack;
   if (progDriver==NULL) {
-    TrackManager::setJoin(ackManagerRejoin);
-    callback(-3); // we dont have a prog track!
-    return;
+    for(const auto& md: TrackManager::getMainDrivers()) {
+      progDriver=md;
+    }
+    if (progDriver==NULL) {
+      TrackManager::setJoin(ackManagerRejoin);
+      callback(-3); // we dont have a prog track!
+      return;
+    }
+    DCCACK::progTrack=&DCCWaveform::mainTrack;
   }
+  
   if (!progDriver->canMeasureCurrent()) {
     TrackManager::setJoin(ackManagerRejoin);
     callback(-2); // our prog track cant measure current
@@ -94,8 +103,8 @@ void  DCCACK::Setup(int cv, byte byteValueOrBitnum, ackOp const program[], ACK_C
 	
     /* TODO !!! in MotorDriver surely!
     if (MotorDriver::commonFaultPin)
-	  DCCWaveform::mainTrack.setPowerMode(POWERMODE::ON);
-        DCCWaveform::progTrack.clearResets();
+	  DCCACK::progTrack->setPowerMode(POWERMODE::ON);
+        DCCACK::progTrack->clearResets();
    **/
       }
 
@@ -119,7 +128,7 @@ const byte RESET_MIN=8;  // tuning of reset counter before sending message
 
 // checkRessets return true if the caller should yield back to loop and try later.
 bool DCCACK::checkResets(uint8_t numResets) {
-  return DCCWaveform::progTrack.getResets() < numResets;
+  return DCCACK::progTrack->getResets() < numResets;
 }
 // Operations applicable to PROG track ONLY.
 // (yes I know I could have subclassed the main track but...) 
@@ -174,7 +183,7 @@ void DCCACK::loop() {
               if (Diag::ACK) DIAG(F("W%d cv=%d bit=%d"),opcode==W1, ackManagerCv,ackManagerBitNum);
               byte instruction = WRITE_BIT | (opcode==W1 ? BIT_ON : BIT_OFF) | ackManagerBitNum;
               byte message[] = {DCC::cv1(BIT_MANIPULATE, ackManagerCv), DCC::cv2(ackManagerCv), instruction };
-              DCCWaveform::progTrack.schedulePacket(message, sizeof(message), PROG_REPEATS);
+              DCCACK::progTrack->schedulePacket(message, sizeof(message), PROG_REPEATS);
               setAckPending();
              callbackState=AFTER_WRITE;
          }
@@ -185,7 +194,7 @@ void DCCACK::loop() {
 	      if (checkResets( RESET_MIN)) return;
               if (Diag::ACK) DIAG(F("WB cv=%d value=%d"),ackManagerCv,ackManagerByte);
               byte message[] = {DCC::cv1(WRITE_BYTE, ackManagerCv), DCC::cv2(ackManagerCv), ackManagerByte};
-              DCCWaveform::progTrack.schedulePacket(message, sizeof(message), PROG_REPEATS);
+              DCCACK::progTrack->schedulePacket(message, sizeof(message), PROG_REPEATS);
               setAckPending();
               callbackState=AFTER_WRITE;
             }
@@ -196,7 +205,7 @@ void DCCACK::loop() {
 	  if (checkResets( RESET_MIN)) return;
           if (Diag::ACK) DIAG(F("VB cv=%d value=%d"),ackManagerCv,ackManagerByte);
           byte message[] = { DCC::cv1(VERIFY_BYTE, ackManagerCv), DCC::cv2(ackManagerCv), ackManagerByte};
-          DCCWaveform::progTrack.schedulePacket(message, sizeof(message), PROG_REPEATS);
+          DCCACK::progTrack->schedulePacket(message, sizeof(message), PROG_REPEATS);
           setAckPending();
         }
         break;
@@ -208,7 +217,7 @@ void DCCACK::loop() {
           if (Diag::ACK) DIAG(F("V%d cv=%d bit=%d"),opcode==V1, ackManagerCv,ackManagerBitNum);
           byte instruction = VERIFY_BIT | (opcode==V0?BIT_OFF:BIT_ON) | ackManagerBitNum;
           byte message[] = {DCC::cv1(BIT_MANIPULATE, ackManagerCv), DCC::cv2(ackManagerCv), instruction };
-          DCCWaveform::progTrack.schedulePacket(message, sizeof(message), PROG_REPEATS);
+          DCCACK::progTrack->schedulePacket(message, sizeof(message), PROG_REPEATS);
           setAckPending();
         }
         break;
@@ -400,7 +409,7 @@ void DCCACK::callback(int value) {
               progDriver->setPower(POWERMODE::OFF);
               /* TODO 
 	      if (MotorDriver::commonFaultPin)
-		DCCWaveform::mainTrack.setPowerMode(POWERMODE::OFF);
+		DCCACK::progTrack->setPowerMode(POWERMODE::OFF);
         **/
            }
           // Restore <1 JOIN> to state before BASELINE
@@ -461,7 +470,7 @@ void DCCACK::checkAck(byte sentResetsSincePacket) {
         ackCheckDuration=millis()-ackCheckStart;
         ackDetected=true;
         ackPending=false;
-        DCCWaveform::progTrack.clearRepeats();  // shortcut remaining repeat packets 
+        DCCACK::progTrack->clearRepeats();  // shortcut remaining repeat packets 
         return;  // we have a genuine ACK result
     }      
     ackPulseStart=0;  // We have detected a too-short or too-long pulse so ignore and wait for next leading edge 

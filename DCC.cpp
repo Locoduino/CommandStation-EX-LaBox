@@ -37,7 +37,7 @@
 #include "CommandDistributor.h"
 #include "TrackManager.h"
 #include "DCCTimer.h"
-#include "HMI/hmi.h"
+#include "hmi.h"
 
 // This module is responsible for converting API calls into
 // messages to be sent to the waveform generator.

@@ -25,6 +25,7 @@
 #define DCCACK_h
 
 #include "MotorDriver.h"
+#include "DCCWaveform.h"
 
 typedef void (*ACK_CALLBACK)(int16_t result);
 
@@ -67,8 +68,6 @@ enum   CALLBACK_STATE : byte {
   WAITING_30,         // waiting to 30ms of power off gap. 
   READY,              // Ready to complete callback  
   }; 
-
-
 
 class DCCACK {
   public:
@@ -130,6 +129,7 @@ class DCCACK {
     static unsigned int minAckPulseDuration ; // micros
     static unsigned int maxAckPulseDuration ; // micros
     static MotorDriver* progDriver;
+    static DCCWaveform* progTrack;
     static volatile uint8_t numAckGaps;
     static volatile uint8_t numAckSamples;
     static uint8_t trailingEdgeCounter;

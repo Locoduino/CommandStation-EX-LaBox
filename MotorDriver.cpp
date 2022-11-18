@@ -148,9 +148,13 @@ MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, i
   if (currentPin==UNUSED_PIN) 
     DIAG(F("** WARNING ** No current or short detection"));
   else  {
+#ifdef ARDUINO_ARCH_ESP32
+    DIAG(F("CurrentPin=%d, Offset=%d, TripValue=%d"),
+    currentPin, senseOffset,rawCurrentTripValue);
+#else
     DIAG(F("CurrentPin=A%d, Offset=%d, TripValue=%d"),
     currentPin-A0, senseOffset,rawCurrentTripValue);
-
+#endif
     // self testing diagnostic for the non-float converters... may be removed when happy
     //  DIAG(F("senseFactorInternal=%d raw2mA(1000)=%d mA2Raw(1000)=%d"),
     //   senseFactorInternal, raw2mA(1000),mA2raw(1000));

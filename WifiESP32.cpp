@@ -27,7 +27,7 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
-#include "HMI/hmi.h"
+#include "hmi.h"
 /*
 #include "soc/rtc_wdt.h"
 #include "esp_task_wdt.h"
@@ -183,7 +183,7 @@ bool WifiESP::setup(const char *SSid,
 	      delay(500);
       }
       if (WiFi.status() == WL_CONNECTED) {
-	      DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
+      	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
 	      wifiUp = true;
 #ifdef USE_HMI
 		  if (hmi::CurrentInterface != NULL)
@@ -204,44 +204,45 @@ bool WifiESP::setup(const char *SSid,
   #endif
       }
     }
-    if (!haveSSID) {
-      // prepare all strings
-      String strSSID("DCC_");
-      String strPass("PASS_");
-      String strMac = WiFi.macAddress();
-      strMac.remove(0,9);
-      strMac.replace(":","");
-      strMac.replace(":","");
-      strSSID.concat(strMac);
-      strPass.concat(strMac);
+  }
 
-      WiFi.mode(WIFI_AP);
+  if (!haveSSID) {
+    // prepare all strings
+    String strSSID("DCC_");
+    String strPass("PASS_");
+    String strMac = WiFi.macAddress();
+    strMac.remove(0,9);
+    strMac.replace(":","");
+    strMac.replace(":","");
+    strSSID.concat(strMac);
+    strPass.concat(strMac);
+
+    WiFi.mode(WIFI_AP);
 #ifdef SERIAL_BT_COMMANDS
-      WiFi.setSleep(true);
+    WiFi.setSleep(true);
 #else
-      WiFi.setSleep(false);
+    WiFi.setSleep(false);
 #endif
-      if (WiFi.softAP(strSSID.c_str(),
-	  	      havePassword ? password : strPass.c_str(),
-	  	      channel, false, 8)) {
-        DIAG(F("Wifi AP SSID %s PASS %s"),strSSID.c_str(),havePassword ? password : strPass.c_str());
-        DIAG(F("Wifi AP IP %s"),WiFi.softAPIP().toString().c_str());
-        wifiUp = true;
-        APmode = true;
+    if (WiFi.softAP(strSSID.c_str(),
+		      havePassword ? password : strPass.c_str(),
+		      channel, false, 8)) {
+      DIAG(F("Wifi AP SSID %s PASS %s"),strSSID.c_str(),havePassword ? password : strPass.c_str());
+      DIAG(F("Wifi AP IP %s"),WiFi.softAPIP().toString().c_str());
+      wifiUp = true;
+      APmode = true;
 #ifdef USE_HMI
-		    if (hmi::CurrentInterface != NULL)
-		    {
-			    hmi::CurrentInterface->WifiConnected(WiFi.softAPIP());
-			    hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-		    }
+		  if (hmi::CurrentInterface != NULL)
+		  {
+			  hmi::CurrentInterface->WifiConnected(WiFi.softAPIP());
+			  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+		  }
 #endif
-      } else {
-        DIAG(F("Could not set up AP with Wifi SSID %s"),strSSID.c_str());
-      }
+    } else {
+      DIAG(F("Could not set up AP with Wifi SSID %s"),strSSID.c_str());
     }
-    }
+  }
 
-    if (!wifiUp) {
+  if (!wifiUp) {
       DIAG(F("Wifi setup all fail (STA and AP mode)"));
       // no idea to go on
       return false;
