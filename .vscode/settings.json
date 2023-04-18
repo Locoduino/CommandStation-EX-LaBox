@@ -10,6 +10,7 @@
         "initializer_list": "cpp",
         "cstdint": "cpp",
         "*.tcc": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "istream": "cpp"
     }
 }

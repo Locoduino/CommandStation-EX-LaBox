@@ -68,6 +68,21 @@ CALLBACK_STATE DCCACK::callbackState=READY;
 ACK_CALLBACK DCCACK::ackManagerCallback;
 
 void  DCCACK::Setup(int cv, byte byteValueOrBitnum, ackOp const program[], ACK_CALLBACK callback) {
+  progDriver=TrackManager::getProgDriver();
+  DCCACK::progTrack=&DCCWaveform::progTrack;
+  if (progDriver==NULL) {
+    for(const auto& md: TrackManager::getMainDrivers()) {
+      progDriver=md;
+      break;
+    }
+    if (progDriver==NULL) {
+      TrackManager::setJoin(ackManagerRejoin);
+      callback(-3); // we dont have a main track!
+      return;
+    }
+    DCCACK::progTrack=&DCCWaveform::mainTrack;
+  }
+  
   ackManagerRejoin=TrackManager::isJoined();
   if (ackManagerRejoin) {
     // Change from JOIN must zero resets packet.
@@ -75,20 +90,6 @@ void  DCCACK::Setup(int cv, byte byteValueOrBitnum, ackOp const program[], ACK_C
     DCCACK::progTrack->clearResets();
   }
 
-  progDriver=TrackManager::getProgDriver();
-  DCCACK::progTrack=&DCCWaveform::progTrack;
-  if (progDriver==NULL) {
-    for(const auto& md: TrackManager::getMainDrivers()) {
-      progDriver=md;
-    }
-    if (progDriver==NULL) {
-      TrackManager::setJoin(ackManagerRejoin);
-      callback(-3); // we dont have a prog track!
-      return;
-    }
-    DCCACK::progTrack=&DCCWaveform::mainTrack;
-  }
-  
   if (!progDriver->canMeasureCurrent()) {
     TrackManager::setJoin(ackManagerRejoin);
     callback(-2); // our prog track cant measure current

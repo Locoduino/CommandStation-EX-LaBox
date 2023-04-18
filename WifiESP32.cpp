@@ -27,6 +27,7 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
+#include "Z21Throttle.h"
 #include "hmi.h"
 /*
 #include "soc/rtc_wdt.h"
@@ -35,6 +36,7 @@
 
 #include "soc/timer_group_struct.h"
 #include "soc/timer_group_reg.h"
+
 void feedTheDog0(){
   // feed dog 0
   TIMERG0.wdt_wprotect=TIMG_WDT_WKEY_VALUE; // write enable
@@ -71,7 +73,7 @@ void disableCoreWDT(byte core){
 class NetworkClient {
 public:
   NetworkClient(WiFiClient c) {
-    wifi = c;
+    this->wifi = c;
   };
   bool ok() {
     return (inUse && wifi.connected());
@@ -208,8 +210,8 @@ bool WifiESP::setup(const char *SSid,
 
   if (!haveSSID) {
     // prepare all strings
-    String strSSID("DCC_");
-    String strPass("PASS_");
+    String strSSID("Labox_");
+    String strPass("Pass_");
     String strMac = WiFi.macAddress();
     strMac.remove(0,9);
     strMac.replace(":","");
@@ -246,10 +248,12 @@ bool WifiESP::setup(const char *SSid,
       DIAG(F("Wifi setup all fail (STA and AP mode)"));
       // no idea to go on
       return false;
-    }
-    server = new WiFiServer(port); // start listening on tcp port
-    server->begin();
+  }
+  server = new WiFiServer(port); // start listening on tcp port
+  server->begin();
     // server started here
+
+  Z21Throttle::setup(WiFi.softAPIP(), port);
 
 #ifdef WIFI_TASK_ON_CORE0
   //start loop task
@@ -284,12 +288,16 @@ const char *wlerror[] = {
 			 "WL_DISCONNECTED"
 };
 
-void WifiESP::loop() {
+void WifiESP::loop()
+{
   int clientId; //tmp loop var
 
   // really no good way to check for LISTEN especially in AP mode?
   wl_status_t wlStatus;
   if (APmode || (wlStatus = WiFi.status()) == WL_CONNECTED) {
+
+    // TCP clients
+
     // loop over all clients and remove inactive
     for (clientId=0; clientId<clients.size(); clientId++) {
       // check if client is there and alive
@@ -337,55 +345,73 @@ void WifiESP::loop() {
 	      }
       }
     } // all clients
-
+    
+    // UDP clients
+    
     WiThrottle::loop(outboundRing);
+    Z21Throttle::loop();
 
     // something to write out?
-    clientId=outboundRing->read();
-    if (clientId >= 0) {
+    clientId = outboundRing->read();
+    if (clientId >= 0)
+    {
       // We have data to send in outboundRing
       // and we have a valid clientId.
       // First read it out to buffer
       // and then look if it can be sent because
       // we can not leave it in the ring for ever
-      int count=outboundRing->count();
+      int count = outboundRing->count();
       {
-	char buffer[count+1]; // one extra for '\0'
-	for(int i=0;i<count;i++) {
-	  int c = outboundRing->read();
-	  if (c >= 0) // Panic check, should never be false
-	    buffer[i] = (char)c;
-	  else {
-	    DIAG(F("Ringread fail at %d"),i);
-	    break;
-	  }
-	}
-	// buffer filled, end with '\0' so we can use it as C string
-	buffer[count]='\0';
-	if((unsigned int)clientId <= clients.size() && clients[clientId].ok()) {
-	  if (Diag::CMD || Diag::WITHROTTLE)
-	    DIAG(F("SEND %d:%s"), clientId, buffer);
-	  clients[clientId].wifi.write(buffer,count);
-	} else {
-	  DIAG(F("Unsent(%d): %s"), clientId, buffer);
-	}
+        char buffer[count + 1]; // one extra for '\0'
+        for (int i = 0; i < count; i++)
+        {
+          int c = outboundRing->read();
+          if (c >= 0) // Panic check, should never be false
+            buffer[i] = (char)c;
+          else
+          {
+            DIAG(F("Ringread fail at %d"), i);
+            break;
+          }
+        }
+        // buffer filled, end with '\0' so we can use it as C string
+        buffer[count] = '\0';
+        if ((unsigned int)clientId <= clients.size() && clients[clientId].ok())
+        {
+          if (Diag::CMD || Diag::WITHROTTLE)
+            DIAG(F("SEND %d:%s"), clientId, buffer);
+          clients[clientId].wifi.write(buffer, count);
+        }
+        else
+        {
+          DIAG(F("Unsent(%d): %s"), clientId, buffer);
+        }
       }
     }
-  } else if (!APmode) { // in STA mode but not connected any more
-    // kick it again
-    if (wlStatus <= 6) {
-      DIAG(F("Wifi aborted with error %s. Kicking Wifi!"), wlerror[wlStatus]);
-      esp_wifi_start();
-      esp_wifi_connect();
-      uint8_t tries=40;
-      while (WiFi.status() != WL_CONNECTED && tries) {
-	Serial.print('.');
-	tries--;
-	delay(500);
+  }
+  else 
+  {
+    if (!APmode)
+    { // in STA mode but not connected any more
+      // kick it again
+      if (wlStatus <= 6)
+      {
+        DIAG(F("Wifi aborted with error %s. Kicking Wifi!"), wlerror[wlStatus]);
+        esp_wifi_start();
+        esp_wifi_connect();
+        uint8_t tries = 40;
+        while (WiFi.status() != WL_CONNECTED && tries)
+        {
+          Serial.print('.');
+          tries--;
+          delay(500);
+        }
       }
-    } else {
-      // all well, probably
-      //DIAG(F("Running BT"));
+      else
+      {
+        // all well, probably
+        // DIAG(F("Running BT"));
+      }
     }
   }
 

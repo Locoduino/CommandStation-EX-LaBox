@@ -51,4 +51,6 @@
 #include "DCCTimer.h"    
 #include "EXRAIL.h"
     
+#include "Throttles.hpp"
+
 #endif

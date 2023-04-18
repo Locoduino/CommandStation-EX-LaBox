@@ -13,7 +13,17 @@
 #include "menumanagement.h"
 #include "globals.h"
 
-int analogReadLocal(int inPin);
+#if defined(ARDUINO_ARCH_ESP32)
+#include "ESP32-fixes.h"
+#include <driver/adc.h>
+#include <soc/sens_reg.h>
+#include <soc/sens_struct.h>
+#undef ADC_INPUT_MAX_VALUE
+#define ADC_INPUT_MAX_VALUE 4095 // 12 bit ADC
+#define pinToADC1Channel(X) (adc1_channel_t)(((X) > 35) ? (X)-36 : (X)-28)
+#endif
+
+int IRAM_ATTR local_adc1_get_raw(int channel);
 
 #ifdef USE_HMI
  // variables must be global due to static methods
@@ -33,6 +43,7 @@ hmi::hmi(TwoWire *twi) : Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT) // ,twi, 
     tabTrains[i].setInfo(0,0,0);
   }
 }
+
 /*!
     @brief  Setup HMI class and start HMI
     @param  None
@@ -82,6 +93,7 @@ void hmi::begin()
   menu->begin();
   _HMIDEBUG_FCT_PRINTLN("hmi::begin().. End");
 }
+
 /*!
     @brief  update, call to refresh screen
     @param  None
@@ -105,17 +117,19 @@ void hmi::update()
   BtnDown->tick();
   BtnSelect->tick();
     
-  /*if (!DCCpp::readWriteCVInProgress && millis() - millisRefreshData > HMI_DataRefesh)
+  if (millis() - millisRefreshData > HMI_DataRefesh)
   {
     readVoltage();
     readCurrent();
     millisRefreshData = millis();
-  }*/
+  }
+
   // Evolve the main state machine
   stateMachine();
 
   _HMIDEBUG_FCT_PRINTLN("hmi::update().. End");
 }
+
 /*!
     @brief  stateMachine
             Evolve the main state machine
@@ -750,8 +764,20 @@ void hmi::addNotification(const char* msg)
 */
 void hmi::readVoltage()
 {
+  MotorDriver *  mainDriver=NULL;
+  for(const auto& md: TrackManager::getMainDrivers()) {
+    mainDriver=md;
+  }
+
+  if (mainDriver == NULL)
+  {
+    voltage = 0;
+    return;
+  }
+
   _HMIDEBUG_FCT_PRINTLN("hmi::readVoltage().. Begin");  
-  voltage = (float) (analogReadLocal(PIN_VOLTAGE_MES) * HMI_VoltageK);
+  voltage = local_adc1_get_raw(pinToADC1Channel(PIN_VOLTAGE_MES)) * HMI_VoltageK;
+
 #ifdef _HMIDEBUG_SIMUL
   voltage = ((float)random(175, 185)) / 10;
 #endif
@@ -767,12 +793,24 @@ void hmi::readVoltage()
 void hmi::readCurrent()
 {
   _HMIDEBUG_FCT_PRINTLN("hmi::readCurrent().. Begin");    
-  current = analogReadLocal(PIN_CURRENT_MES) * HMI_CurrentK ;
+  MotorDriver *  mainDriver=NULL;
+  for(const auto& md: TrackManager::getMainDrivers()) {
+    mainDriver=md;
+  }
+
+  if (mainDriver == NULL)
+  {
+    current = 0;
+    return;
+  }
+
+  //current = mainDriver->getCurrentRaw() * HMI_CurrentK;
   // DB : remplacé par une moyenne de 50 mesures 
   float base = 0;
 	for (int j = 0; j < 50; j++)
 	{
-		float val = (float)analogReadLocal(PIN_CURRENT_MES);
+    float val = local_adc1_get_raw(pinToADC1Channel(PIN_CURRENT_MES));
+		float val1 = (float)mainDriver->getCurrentRaw();
 		base += val;
 	}
 	current = (float) (((base / 50) * HMI_CurrentK) - HMI_deltaCurrent);
@@ -896,73 +934,9 @@ void hmi::showWifiWaiting()
   setTextColor(WHITE);
   
   display();
-  
 
   _HMIDEBUG_FCT_PRINTLN("hmi::showWifiWaiting().. End");
   
 }
-
-#if defined(ARDUINO_ARCH_ESP32)
-#include "soc/sens_reg.h"
-#include "soc/sens_struct.h"
-
-int local_adc1_read(int channel)
-{
-  uint16_t adc_value;
-
-  SENS.sar_read_ctrl.sar1_dig_force = 0; // switch SARADC into RTC channel 
-  SENS.sar_meas_wait2.force_xpd_sar = SENS_FORCE_XPD_SAR_PU; // adc_power_on
-  SENS.sar_meas_wait2.force_xpd_amp = SENS_FORCE_XPD_AMP_PD; // channel is set in the convert function
-
-// disable FSM, it's only used by the LNA.
-  SENS.sar_meas_ctrl.amp_rst_fb_fsm = 0;
-  SENS.sar_meas_ctrl.amp_short_ref_fsm = 0;
-  SENS.sar_meas_ctrl.amp_short_ref_gnd_fsm = 0;
-  SENS.sar_meas_wait1.sar_amp_wait1 = 1;
-  SENS.sar_meas_wait1.sar_amp_wait2 = 1;
-  SENS.sar_meas_wait2.sar_amp_wait3 = 1;
-
-  //set controller
-  SENS.sar_read_ctrl.sar1_dig_force = false;      //RTC controller controls the ADC, not digital controller
-  SENS.sar_meas_start1.meas1_start_force = true;  //RTC controller controls the ADC,not ulp coprocessor
-  SENS.sar_meas_start1.sar1_en_pad_force = true;  //RTC controller controls the data port, not ulp coprocessor
-  SENS.sar_touch_ctrl1.xpd_hall_force = true;     // RTC controller controls the hall sensor power,not ulp coprocessor
-  SENS.sar_touch_ctrl1.hall_phase_force = true;   // RTC controller controls the hall sensor phase,not ulp coprocessor
-
-  //start conversion
-  SENS.sar_meas_start1.sar1_en_pad = (1 << channel); //only one channel is selected.
-  while (SENS.sar_slave_addr1.meas_status != 0);
-  SENS.sar_meas_start1.meas1_start_sar = 0;
-  SENS.sar_meas_start1.meas1_start_sar = 1;
-  while (SENS.sar_meas_start1.meas1_done_sar == 0);
-  adc_value = SENS.sar_meas_start1.meas1_data_sar; // set adc value!
-
-  SENS.sar_meas_wait2.force_xpd_sar = SENS_FORCE_XPD_SAR_PD; // adc power off	return adc_value;
-
-  return adc_value;
-}
-#endif
-
-/** Gets the analog value on the given pin in a fast way for ESP32.
-*/
-int analogReadLocal(int inPin)
-{
-#if defined(ARDUINO_ARCH_ESP32)
-  int pinChannel = digitalPinToAnalogChannel(inPin);
-  return local_adc1_read(pinChannel);
-#else
-  return (float)analogRead(inPin);
-#endif
-}
-
-#if defined(ARDUINO_ARCH_ESP32)
-/** Gets the analog value on the given pin in a fast way for ESP32.
-*/
-int analogReadChannel(int inChannel)
-{
-  return local_adc1_read(inChannel);
-}
-#endif
-
 
 #endif

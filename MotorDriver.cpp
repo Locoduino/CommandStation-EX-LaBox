@@ -128,7 +128,7 @@ MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, i
   }
 
   // This conversion performed at compile time so the remainder of the code never needs
-  // float calculations or libraray code. 
+  // float calculations or library code. 
   senseFactorInternal=sense_factor * senseScale; 
   tripMilliamps=trip_milliamps;
   rawCurrentTripValue=mA2raw(trip_milliamps);
@@ -156,8 +156,8 @@ MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, i
     currentPin-A0, senseOffset,rawCurrentTripValue);
 #endif
     // self testing diagnostic for the non-float converters... may be removed when happy
-    //  DIAG(F("senseFactorInternal=%d raw2mA(1000)=%d mA2Raw(1000)=%d"),
-    //   senseFactorInternal, raw2mA(1000),mA2raw(1000));
+    DIAG(F("senseFactorInternal=%d raw2mA(1000)=%d mA2Raw(1000)=%d"),
+    senseFactorInternal, raw2mA(1000),mA2raw(1000));
   }
 
   // prepare values for current detection

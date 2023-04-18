@@ -22,6 +22,7 @@
 #define WifiESP32_h
 
 #include "FSH.h"
+#include "WiFiClient.h"
 
 class WifiESP
 {
@@ -33,7 +34,9 @@ public:
 		    const int port,
 		    const byte channel);
   static void loop();
+  static int GetOrAddNewClient(WiFiClient inClient, bool inUDPprotocol = false);
 private:
 };
+
 #endif //WifiESP8266_h
 #endif //ESP8266
