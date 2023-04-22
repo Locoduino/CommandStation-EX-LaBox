@@ -82,9 +82,12 @@ void setup()
   DIAG(F("License GPLv3 fsf.org (c) dcc-ex.com"));
   DIAG(F("Platform: %S"), F(ARDUINO_TYPE)); // PMA - temporary
 
+  DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
+  DIAG(F("Labox : 2.1.0"));
+
   CONDITIONAL_LCD_START {
     // This block is still executed for DIAGS if LCD not in use
-    LCD(0,F("DCC++ EX v%S"),F(VERSION));
+    LCD(0,F("CommandStation-EX v%S"),F(VERSION));
     LCD(1,F("Lic GPLv3"));
   }
 
