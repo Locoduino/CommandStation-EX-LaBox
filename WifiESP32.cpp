@@ -116,6 +116,7 @@ bool WifiESP::setup(const char *SSid,
   bool havePassword = true;
   bool haveSSID = true;
   bool wifiUp = false;
+  IPAddress boxIp;
   uint8_t tries = 40;
 
   //#ifdef SERIAL_BT_COMMANDS
@@ -166,6 +167,7 @@ bool WifiESP::setup(const char *SSid,
     if (WiFi.status() == WL_CONNECTED) {
       DIAG(F("Wifi STA IP %s"),WiFi.localIP().toString().c_str());
       wifiUp = true;
+      boxIp = WiFi.localIP();
 #ifdef USE_HMI
 		  if (hmi::CurrentInterface != NULL)
 		  {
@@ -187,6 +189,7 @@ bool WifiESP::setup(const char *SSid,
       if (WiFi.status() == WL_CONNECTED) {
       	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
 	      wifiUp = true;
+        boxIp = WiFi.localIP();
 #ifdef USE_HMI
 		  if (hmi::CurrentInterface != NULL)
 	    {
@@ -232,6 +235,7 @@ bool WifiESP::setup(const char *SSid,
       DIAG(F("Wifi AP IP %s"),WiFi.softAPIP().toString().c_str());
       wifiUp = true;
       APmode = true;
+      boxIp = WiFi.softAPIP();
 #ifdef USE_HMI
 		  if (hmi::CurrentInterface != NULL)
 		  {
@@ -251,9 +255,8 @@ bool WifiESP::setup(const char *SSid,
   }
   server = new WiFiServer(port); // start listening on tcp port
   server->begin();
-    // server started here
-
-  Z21Throttle::setup(WiFi.softAPIP(), port);
+  // server started here
+  Z21Throttle::setup(boxIp, Z21_UDPPORT);
 
 #ifdef WIFI_TASK_ON_CORE0
   //start loop task

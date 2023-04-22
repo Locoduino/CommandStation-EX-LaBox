@@ -36,6 +36,7 @@ class NetworkClientUDP {
 public:
   NetworkClientUDP() {
     this->pudpBuffer = new CircularBuffer(UDP_BUFFERSIZE);
+    this->pudpBuffer->begin(true);
   };
   bool ok() {
     return (inUse);
@@ -46,13 +47,14 @@ public:
   CircularBuffer *pudpBuffer = NULL;
   IPAddress remoteIP;
   int remotePort;
+
   static WiFiUDP client;
 };
 
 class Z21Throttle {
   public:  
     static void loop();
-    static Z21Throttle* getThrottle(CircularBuffer *pudpBuffer, int clientId); 
+    static Z21Throttle* getOrAddThrottle(int clientId); 
     static void markForBroadcast(int cab);
     static void forget(byte clientId);
     static void findUniqThrottle(int id, char *u);
@@ -61,7 +63,7 @@ class Z21Throttle {
     bool parse();
 
   private: 
-    Z21Throttle(CircularBuffer *pudpBuffer, int clientId);
+    Z21Throttle(int clientId);
     ~Z21Throttle();
    
       static const int MAX_MY_LOCO=10;      // maximum number of locos assigned to a single client
@@ -76,7 +78,6 @@ class Z21Throttle {
       bool areYouUsingThrottle(int cab);
       Z21Throttle* nextThrottle;
 
-      CircularBuffer *pudpBuffer;
       int clientid;
       char uniq[17] = "";
        
@@ -92,8 +93,6 @@ class Z21Throttle {
         return count;
       }
 
-      bool heartBeatEnable;
-      unsigned long heartBeat;
       bool initSent; // valid connection established
       bool exRailSent; // valid connection established
       uint16_t mostRecentCab;
@@ -111,7 +110,8 @@ class Z21Throttle {
       void markForBroadcast2(int cab);
     */
       int getOrAddLoco(int cab);
-      void printLocomotives();
+      void printLocomotives(bool addTab = false);
+      static void printThrottles(bool printLocomotives);
 
       // sizes : [       2        ][       2        ][inLengthData]
       // bytes : [length1, length2][Header1, Header2][Data........]

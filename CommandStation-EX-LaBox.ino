@@ -105,10 +105,8 @@ void setup()
   WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL);
 #endif // WIFI_ON
 #else
-  Serial.println("Start wifi");
   // ESP32 needs wifi on always
   WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL);
-  Serial.println("End wifi");
 #endif // ARDUINO_ARCH_ESP32
 
 #if ETHERNET_ON

@@ -4,6 +4,7 @@
 //-------------------------------------------------------------------
 
 #include <Arduino.h>
+#include "DIAG.h"
 
 /** This is a thread-safe buffer of bytes. Bytes are pushed on the top (its head), and got from the bottom of the 
 * buffer (its tail...).

@@ -27,13 +27,11 @@ void CircularBuffer::begin(bool inMultiThread)
 
 bool CircularBuffer::CheckIfBeginDone()
 {
-#ifdef DCCPP_DEBUG_MODE
 	if (this->buffer == NULL)
 	{
-		Serial.println(F("Error : CircularBuffer missing begin !"));
+		DIAG(F("Error : CircularBuffer missing begin !"));
 		return false;
 	}
-#endif
 	return true;
 }
 
@@ -80,12 +78,10 @@ bool CircularBuffer::PushByte(byte inpData)
 		}
 	}
 
-#ifdef DCCPP_DEBUG_MODE
 	if (!ok)
 	{
-		Serial.println(F("Error : the byte has been lost ! Buffer is full !"));
+		DIAG(F("Error : the byte has been lost ! Buffer is full !"));
 	}
-#endif
 
 	END_SEMAPHORE()
 
@@ -116,12 +112,10 @@ bool CircularBuffer::PushBytes(byte* inpData, int inDataLength)
 		}
 	}
 
-#ifdef DCCPP_DEBUG_MODE
 	if (!ok)
 	{
-		Serial.println(F("Error : bytes has been lost ! Buffer is full !"));
+		DIAG(F("Error : bytes has been lost ! Buffer is full !"));
 	}
-#endif
 
 	END_SEMAPHORE()
 	this->GetCount();	// update peakCount...
