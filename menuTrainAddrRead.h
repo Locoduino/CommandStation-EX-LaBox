@@ -6,8 +6,8 @@
  * @Organization : Locoduino.org
  */
 
-#ifndef __MENUSPECIAL__
-#define __MENUSPECIAL__
+#ifndef __MENUTRAINADDRREAD__
+#define __MENUTRAINADDRREAD__
 
 #ifdef USE_HMI
 #include "menuobject.h"
@@ -28,12 +28,10 @@ class menuTrainAddrRead : public menuObject
     void eventUp();
     void eventDown();
     int  eventSelect();
+    void start();
+
   protected:
     //----- Members
-    unsigned long millisDisplay;
-    bool          displayInProgress;
-    int           locoID;
-    char          message[21];
     //----- functions
     void resetMenu();
 };

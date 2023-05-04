@@ -73,7 +73,7 @@ void disableCoreWDT(byte core){
 class NetworkClient {
 public:
   NetworkClient(WiFiClient c) {
-    this->wifi = c;
+    wifi = c;
   };
   bool ok() {
     return (inUse && wifi.connected());
@@ -151,7 +151,7 @@ bool WifiESP::setup(const char *SSid,
     WiFi.setAutoReconnect(true);
 
 #ifdef USE_HMI
-	  if (hmi::CurrentInterface != NULL)
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 	  {
 		  hmi::CurrentInterface->WifiStartConnection(SSid);
 		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -169,7 +169,7 @@ bool WifiESP::setup(const char *SSid,
       wifiUp = true;
       boxIp = WiFi.localIP();
 #ifdef USE_HMI
-		  if (hmi::CurrentInterface != NULL)
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 		  {
 	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
 	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -191,7 +191,7 @@ bool WifiESP::setup(const char *SSid,
 	      wifiUp = true;
         boxIp = WiFi.localIP();
 #ifdef USE_HMI
-		  if (hmi::CurrentInterface != NULL)
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 	    {
 	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
 	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -200,13 +200,13 @@ bool WifiESP::setup(const char *SSid,
       } else {
 	      DIAG(F("Wifi STA mode FAIL. Will revert to AP mode"));
 	      haveSSID=false;
-  #ifdef USE_HMI
-    		if (hmi::CurrentInterface != NULL)
+#ifdef USE_HMI
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
     		{
 	    		hmi::CurrentInterface->WifiEndConnection(SSid);
     			hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
     		}
-  #endif
+#endif
       }
     }
   }
@@ -237,7 +237,7 @@ bool WifiESP::setup(const char *SSid,
       APmode = true;
       boxIp = WiFi.softAPIP();
 #ifdef USE_HMI
-		  if (hmi::CurrentInterface != NULL)
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 		  {
 			  hmi::CurrentInterface->WifiConnected(WiFi.softAPIP());
 			  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -249,9 +249,9 @@ bool WifiESP::setup(const char *SSid,
   }
 
   if (!wifiUp) {
-      DIAG(F("Wifi setup all fail (STA and AP mode)"));
-      // no idea to go on
-      return false;
+    DIAG(F("Wifi setup all fail (STA and AP mode)"));
+    // no idea to go on
+    return false;
   }
   server = new WiFiServer(port); // start listening on tcp port
   server->begin();
@@ -276,9 +276,9 @@ bool WifiESP::setup(const char *SSid,
   // when everything looks good
   DIAG(F("Server starting (core 0) port %d"),port);
 #else
-    DIAG(F("Server will be started on port %d"),port);
+  DIAG(F("Server will be started on port %d"),port);
 #endif
-    return true;
+  return true;
 }
 
 const char *wlerror[] = {
@@ -298,9 +298,6 @@ void WifiESP::loop()
   // really no good way to check for LISTEN especially in AP mode?
   wl_status_t wlStatus;
   if (APmode || (wlStatus = WiFi.status()) == WL_CONNECTED) {
-
-    // TCP clients
-
     // loop over all clients and remove inactive
     for (clientId=0; clientId<clients.size(); clientId++) {
       // check if client is there and alive

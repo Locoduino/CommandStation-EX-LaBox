@@ -223,15 +223,15 @@ void DCCWaveform::begin() {
   MotorDriver *md = TrackManager::getProgDriver();
   if (md) {
     pinpair p = md->getSignalPin();
-    if (rmtProgChannel) {
-      //DIAG(F("added pins %d %d to PROG channel"), p.pin, p.invpin);
-      rmtProgChannel->addPin(p); // add pin to existing prog channel
-    } else {
+      if (rmtProgChannel) {
+        //DIAG(F("added pins %d %d to PROG channel"), p.pin, p.invpin);
+        rmtProgChannel->addPin(p); // add pin to existing prog channel
+      } else {
       //DIAG(F("new PROGchannel with pins %d %d"), p.pin, p.invpin);
-      rmtProgChannel = new RMTChannel(p, false);
+        rmtProgChannel = new RMTChannel(p, false);
+      }
     }
   }
-}
 
 void DCCWaveform::schedulePacket(const byte buffer[], byte byteCount, byte repeats) {
   if (byteCount > MAX_PACKET_SIZE) return; // allow for chksum
@@ -252,11 +252,11 @@ void DCCWaveform::schedulePacket(const byte buffer[], byte byteCount, byte repea
     do {
       if(isMainTrack) {
 	if (rmtMainChannel != NULL)
-	  ret = rmtMainChannel->RMTfillData(pendingPacket, pendingLength, pendingRepeats);
+          ret = rmtMainChannel->RMTfillData(pendingPacket, pendingLength, pendingRepeats);
       } else {
 	if (rmtProgChannel != NULL)
-	  ret = rmtProgChannel->RMTfillData(pendingPacket, pendingLength, pendingRepeats);
-      }
+          ret = rmtProgChannel->RMTfillData(pendingPacket, pendingLength, pendingRepeats);
+        }
     } while(ret > 0);
   }
 }

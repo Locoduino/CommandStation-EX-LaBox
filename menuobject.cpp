@@ -224,13 +224,23 @@ int menuObject::eventSelect()
     case MENUTYPELIST :           // User has selected a sub menu
       return MENUCHANGETOCHILD ;
     break;
-    case MENUSPECIAL :           // User has selected a sub menu
-      return MENUSPECIAL ;
+    case MENUTRAINADDRREAD :           // User has selected a sub menu
+      return MENUTRAINADDRREAD ;
     break;
     default :
       return MENUCHOSEN ;         // It's user selection like Yes or No for exemple
   }
   _HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. End"); 
   return 0;
+}
+/*!
+    @brief  Thing to do before opening the option
+    @param  None
+    @return None (void).
+    @note
+*/
+void menuObject::start()
+{
+
 }
 #endif

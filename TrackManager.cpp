@@ -132,19 +132,19 @@ void TrackManager::setDCSignal(int16_t cab, byte speedbyte) {
 }    
 
 bool TrackManager::setTrackMode(byte trackToSet, TRACK_MODE mode, int16_t dcAddr) {
-    if (trackToSet>lastTrack || track[trackToSet]==NULL) return false;
+  if (trackToSet>lastTrack || track[trackToSet]==NULL) return false;
 
-    //DIAG(F("Track=%c"),trackToSet+'A');
-    // DC tracks require a motorDriver that can set brake!
-    if ((mode==TRACK_MODE_DC || mode==TRACK_MODE_DCX)
-         && !track[trackToSet]->brakeCanPWM()) {
-             DIAG(F("Brake pin can't PWM: No DC"));
-             return false; 
-         }
+  //DIAG(F("Track=%c"),trackToSet+'A');
+  // DC tracks require a motorDriver that can set brake!
+  if ((mode==TRACK_MODE_DC || mode==TRACK_MODE_DCX)
+        && !track[trackToSet]->brakeCanPWM()) {
+            DIAG(F("Brake pin can't PWM: No DC"));
+            return false; 
+  }
 
 #ifdef ARDUINO_ARCH_ESP32
-    // remove pin from MUX matrix and turn it off
-    pinpair p = track[trackToSet]->getSignalPin();
+  // remove pin from MUX matrix and turn it off
+  pinpair p = track[trackToSet]->getSignalPin();
     //DIAG(F("Track=%c remove  pin %d"),trackToSet+'A', p.pin);
     gpio_reset_pin((gpio_num_t)p.pin);
     pinMode(p.pin, OUTPUT); // gpio_reset_pin may reset to input
@@ -154,7 +154,7 @@ bool TrackManager::setTrackMode(byte trackToSet, TRACK_MODE mode, int16_t dcAddr
       pinMode(p.invpin, OUTPUT); // gpio_reset_pin may reset to input
     }
 #endif
-    if (mode==TRACK_MODE_PROG) {
+  if (mode==TRACK_MODE_PROG) {
       // only allow 1 track to be prog
       FOR_EACH_TRACK(t)
 	if (trackMode[t]==TRACK_MODE_PROG && t != trackToSet) {

@@ -11,6 +11,11 @@
         "cstdint": "cpp",
         "*.tcc": "cpp",
         "algorithm": "cpp",
-        "istream": "cpp"
-    }
+        "istream": "cpp",
+        "unordered_set": "cpp",
+        "memory": "cpp",
+        "random": "cpp",
+        "new": "cpp"
+    },
+    "cmake.configureOnOpen": true
 }

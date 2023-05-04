@@ -12,6 +12,7 @@
 #include "icons.h"
 #include "menumanagement.h"
 #include "globals.h"
+#include "menuobject.h"
 
 #if defined(ARDUINO_ARCH_ESP32)
 #include "ESP32-fixes.h"
@@ -24,6 +25,9 @@
 #endif
 
 int IRAM_ATTR local_adc1_get_raw(int channel);
+bool hmi::progMode = false;
+int hmi::EEPROMModeProgAddress = 511;
+
 
 #ifdef USE_HMI
  // variables must be global due to static methods
@@ -77,11 +81,15 @@ void hmi::begin()
   setRotation(HMI_Rotation);
   setTextSize(1);
   setTextColor(WHITE);
-  drawBitmap(0, 0, locoduino_Splash128x44, 128, 44, WHITE);
-  setCursor(0, 48);
-  println("La Box |Locoduino.org");
-  display();
-  delay(2000);
+
+  if (!hmi::progMode) {
+    drawBitmap(0, 0, locoduino_Splash128x44, 128, 44, WHITE);
+    setCursor(0, 48);
+    println("La Box |Locoduino.org");
+    display();
+    delay(2000);
+  }
+
   millisEffect          = millis();
   millisRefreshData     = millisEffect;
   millisRefreshDisplay  = millisEffect;
@@ -91,7 +99,26 @@ void hmi::begin()
   // Make menu
   menu = new MenuManagement(this);
   menu->begin();
+
   _HMIDEBUG_FCT_PRINTLN("hmi::begin().. End");
+}
+
+/*!
+    @brief  Set prog Mode 
+    @param  None
+    @return None (void).
+    @note
+*/
+void hmi::setProgMode()
+{
+  _HMIDEBUG_FCT_PRINTLN("hmi::setProgMode().. Begin");
+
+  hmi::progMode = true;
+  _HMIState = StateParametersMenu;
+  menu->setMenu(menu->trainAddrRead);
+  menu->trainAddrRead->start();
+
+  _HMIDEBUG_FCT_PRINTLN("hmi::setProgMode().. End");
 }
 
 /*!
@@ -145,9 +172,12 @@ void hmi::stateMachine()
     return;
 #endif*/
 
+  if (DCCACK::isActive())
+    return;
+
   _HMIDEBUG_FCT_PRINTLN("hmi::stateMachine().. Begin");
   // Time out in menu, back to dashboard
-  if (_HMIState == StateParametersMenu && (millis() - millisParamsMenu > HMI_TimeOutMenu) )
+  if (!hmi::progMode && _HMIState == StateParametersMenu && (millis() - millisParamsMenu > HMI_TimeOutMenu) )
   {
     _HMIDEBUG_SM_PRINTLN("Timeout Parameters Menu");
     _HMIState = StateExitMenu;

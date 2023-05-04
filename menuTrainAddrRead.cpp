@@ -9,10 +9,43 @@
 
 #ifdef USE_HMI
 #include "menuobject.h"
-#include "menuspecial.h"
+#include "menuTrainAddrRead.h"
 #include "globals.h"
+#include "hmi.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <EEPROM.h>
+
+int locoID = 0;
+bool displayInProgress;
+char message[21];
+void locoIdCallback(int16_t inId)
+{
+  locoID = inId;
+  DIAG(F("locoIdCallback called %d !"), locoID);
+  displayInProgress = false;
+}
+
+void menuTrainAddrRead::start()
+{
+  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::start.. Begin"); 
+
+  if (!hmi::progMode) {
+    if (EEPROM.readByte(hmi::EEPROMModeProgAddress) != 'P') {
+      EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'P');
+      EEPROM.commit();
+    }
+    delay(500);
+    ESP.restart();
+  }
+
+  locoID = 0;
+  void (*ptr)(int16_t) = &locoIdCallback;
+  DCC::getLocoId(ptr);
+  displayInProgress = false;
+  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::start.. End"); 
+}
+
 /*!
     @brief  menuTrainAddrRead Constructor
     @param  Screen, an Adafruit_SSD1306 object to permit to display our menu
@@ -25,8 +58,8 @@
 menuTrainAddrRead::menuTrainAddrRead(Adafruit_SSD1306* screen, menuObject* p, const char* title, int value): menuObject(screen, p, title, value)
 {
   resetMenu();
-
 }
+
 /*!
     @brief  eventUp, Notification of a button event
     @param  None
@@ -64,8 +97,17 @@ int menuTrainAddrRead::eventSelect()
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. Begin"); 
   menuObject::eventSelect();
 
+  // Return to 'Main' mode.
+  if (EEPROM.readByte(hmi::EEPROMModeProgAddress) != 'M') {
+    EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
+    EEPROM.commit();
+  }
+  delay(500);
+  // Reboot ESP32 !
+  ESP.restart();
+
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. End");  
-  return 0;
+  return MENUEXIT;
 }
 /*!
     @brief  Setup HMI class and start HMI
@@ -81,12 +123,6 @@ void menuTrainAddrRead::begin()
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::begin.. End"); 
 }
 
-int locoID = 0;
-void locoId(int16_t inId)
-{
-  locoID = inId;
-}
-
 /*!
     @brief  update, call to refresh screen
     @param  None
@@ -95,43 +131,32 @@ void locoId(int16_t inId)
 */
 void menuTrainAddrRead::update()
 {
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::update.. Begin"); 
+  _HMIDEBUG_FCT_PRINTLN(F("menuTrainAddrRead::update.. Begin")); 
 
   if(!displayInProgress)
   {
     display->clearDisplay();
+    displayInProgress = true;
   }
+
   display->setTextSize(1);
   display->setCursor(5, 53);
   display->println(TXT_MenuAddrRead);
   display->display(); 
-  if(!displayInProgress)
-  {
-    digitalWrite(PIN_LEDBUILTIN, true);
-    displayInProgress = true;
-    millisDisplay = millis();
-    void (*ptr)(int16_t) = &locoId;
-    DCC::getLocoId(ptr);
-    digitalWrite(PIN_LEDBUILTIN, false);
-  }
   if(locoID > 0)
-    sprintf(message,"%4d",locoID);
+  {
+    sprintf(message,"%04d",locoID);
+  }
   else
-    sprintf(message,"ERROR");
+    sprintf(message,"----");
+
   display->setTextColor(WHITE);
   display->setTextSize(3);
   display->setCursor(20, 15);
   display->println(message);  
 
   display->display();   
-  // Waiting
-  if(millis() - millisDisplay > 10000)
-  {
-      displayInProgress = false ;
-      exitAsk = true;
-  }
-
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::update.. End"); 
+  _HMIDEBUG_FCT_PRINTLN(F("menuTrainAddrRead::update.. End")); 
 }
 /*!
     @brief  resetMenu, 
@@ -144,8 +169,7 @@ void menuTrainAddrRead::resetMenu()
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::resetMenu.. Begin"); 
   menuObject::resetMenu();
 
-  millisDisplay = 0;
-  displayInProgress = false ;
+  displayInProgress = false;
 
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::resetMenu.. End"); 
   

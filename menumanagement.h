@@ -33,11 +33,14 @@ class MenuManagement
     void BtnDownPressed();
     void BtnSelectPressed();
     void resetMenu();
+
+    //----- menu for prog mode
+    menuObject* trainAddrRead;
+
   protected:
     //----- Members
     menuObject* listMenu[50];
     menuObject* baseMenu;
-    menuObject* trainAddrRead;
     menuObject* onOffLine;
     menuObject* onOffLineOn;
     menuObject* onOffLineOff;
@@ -81,6 +84,9 @@ class MenuManagement
     byte  nbMenuItems;
     //----- functions
     //void addMenuInList(menuObject* item);
+
+  public:
+      void setMenu(menuObject* menu)  { this->menuState = MENUTRAINADDRREAD; this->activeMenu = menu; this->update(); }
 };
 #endif
 

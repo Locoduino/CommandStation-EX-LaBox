@@ -49,6 +49,7 @@
  */
 
 #include "DCCEX.h"
+#include "EEPROM.h"
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -83,7 +84,7 @@ void setup()
   DIAG(F("Platform: %S"), F(ARDUINO_TYPE)); // PMA - temporary
 
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("Labox : 2.1.0"));
+  DIAG(F("Labox : 2.2.0"));
 
   CONDITIONAL_LCD_START {
     // This block is still executed for DIAGS if LCD not in use
@@ -92,11 +93,15 @@ void setup()
   }
 
 #ifdef USE_HMI
-  // setup led !
-  pinMode(PIN_LEDBUILTIN, OUTPUT);
-  digitalWrite(PIN_LEDBUILTIN, HIGH);
+  EEPROM.begin(512);
+  byte mode = EEPROM.read(hmi::EEPROMModeProgAddress);
 
-  //----------- Start HMI -------------
+  if (mode == 'M') hmi::progMode = false;
+  if (mode == 'P') hmi::progMode = true;
+
+  DIAG(F("Mode %s"), hmi::progMode?"Prog":"Main");
+
+  // must be done before Wifi setup
   boxHMI.begin();
 #endif
 
@@ -123,8 +128,18 @@ void setup()
   // Note: this provides DCC with two motor drivers, main and prog, which handle the motor shield(s)
   // Standard supported devices have pre-configured macros but custome hardware installations require
   //  detailed pin mappings and may also require modified subclasses of the MotorDriver to implement specialist logic.
-  // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.h
-  TrackManager::Setup(MOTOR_SHIELD_TYPE);
+  // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.hrr
+
+  if (hmi::progMode) {
+    DIAG(F("Labox Prog mode."));
+    TrackManager::Setup(F("ESP32"), NULL, LABOX_MOTOR_SHIELD);
+  }
+  else {
+    DIAG(F("Labox Main mode."));
+    TrackManager::Setup(F("ESP32"), LABOX_MOTOR_SHIELD);
+  }
+
+  //  TrackManager::Setup(MOTOR_SHIELD_TYPE);
 
   // Start RMFT aka EX-RAIL (ignored if no automnation)
   RMFT::begin();
@@ -144,8 +159,12 @@ void setup()
   #endif
   LCD(3, F("Ready"));
   CommandDistributor::broadcastPower();
+
 #ifdef USE_HMI
-  digitalWrite(PIN_LEDBUILTIN, LOW);
+  if (hmi::progMode) {
+    // must be done after all other setups.
+    boxHMI.setProgMode();
+  }
 #endif
 }
 

@@ -155,9 +155,9 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
 }
 
 void RMTChannel::RMTprefill() {
-  rmt_fill_tx_items(channel, preamble, preambleLen, 0);
-  rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
-}
+    rmt_fill_tx_items(channel, preamble, preambleLen, 0);
+    rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
+  }
 
 const byte transmitMask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 
@@ -200,18 +200,18 @@ void IRAM_ATTR RMTChannel::RMTinterrupt() {
   //no rmt_tx_start(channel,true) as we run in loop mode
   //preamble is always loaded at beginning of buffer
   packetCounter++;
-  if (!dataReady && dataRepeat == 0) { // we did run empty
-    rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
-    return; // nothing to do about that
-  }
+    if (!dataReady && dataRepeat == 0) { // we did run empty
+      rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
+      return; // nothing to do about that
+    }
 
-  // take care of incoming data
-  if (dataReady) {            // if we have new data, fill while preamble is running
-    rmt_fill_tx_items(channel, data, dataLen, preambleLen-1);
-    dataReady = false;
-  }
-  if (dataRepeat > 0)         // if a repeat count was specified, work on that
-    dataRepeat--;
+    // take care of incoming data
+    if (dataReady) {            // if we have new data, fill while preamble is running
+      rmt_fill_tx_items(channel, data, dataLen, preambleLen-1);
+      dataReady = false;
+    }
+    if (dataRepeat > 0)         // if a repeat count was specified, work on that
+      dataRepeat--;
 }
 
 bool RMTChannel::addPin(byte pin, bool inverted) {

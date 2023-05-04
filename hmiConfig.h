@@ -68,7 +68,7 @@
 #define MENUEXIT                301
 #define MENUCHANGETOCHILD       302
 #define MENUCHOSEN              303
-#define MENUSPECIAL             304
+#define MENUTRAINADDRREAD       304
 #define MENUTYPECOMEBCK         0x8000
 #define MENUTYPELIST            0x7999
 #define MENUACTION              0x7998

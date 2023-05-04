@@ -7,6 +7,7 @@
 #define VERSION "4.2.4 rc1"
 // 4.2.4 ESP32 experimental BT support
 //       More DC configurations possible and lower frequency
+//       Handle decoders that do not ack at write better
 // 4.2.3 Bugfix direction when togging between MAIN and DC
 //       Bugfix return fail when F/f argument out of range
 //       More error checking for out of bounds motor driver current trip limit

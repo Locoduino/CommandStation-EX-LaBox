@@ -45,6 +45,7 @@ class menuObject
     virtual void eventDown();
     virtual int  eventSelect();
     virtual void resetMenu();
+    virtual void start();
 
   protected:
     //----- Members
