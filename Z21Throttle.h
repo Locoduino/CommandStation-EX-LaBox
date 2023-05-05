@@ -1,5 +1,5 @@
 /*
- *  © 2023 Thierry Paris
+ *  © 2023 Thierry Paris / Locoduino
  *  All rights reserved.
  *  
  *  This is free software: you can redistribute it and/or modify
@@ -33,120 +33,110 @@ struct MYLOCOZ21 {
 };
 
 class NetworkClientUDP {
-public:
-  NetworkClientUDP() {
-    this->pudpBuffer = new CircularBuffer(UDP_BUFFERSIZE);
-    this->pudpBuffer->begin(true);
-  };
-  bool ok() {
-    return (inUse);
-  };
+	public:
+	NetworkClientUDP() {
+		this->pudpBuffer = new CircularBuffer(UDP_BUFFERSIZE);
+		this->pudpBuffer->begin(true);
+	};
+	bool ok() {
+		return (inUse);
+	};
 
-  bool inUse = true;
-  bool connected = false;
-  CircularBuffer *pudpBuffer = NULL;
-  IPAddress remoteIP;
-  int remotePort;
+	bool inUse = true;
+	bool connected = false;
+	CircularBuffer *pudpBuffer = NULL;
+	IPAddress remoteIP;
+	int remotePort;
 
-  static WiFiUDP client;
+	static WiFiUDP client;
 };
 
 class Z21Throttle {
-  public:  
-    static void loop();
-    static Z21Throttle* getOrAddThrottle(int clientId); 
-    static void markForBroadcast(int cab);
-    static void forget(byte clientId);
-    static void findUniqThrottle(int id, char *u);
-    static void setup(IPAddress ip, int port);
+	public:  
+		static void loop();
+		static Z21Throttle* getOrAddThrottle(int clientId); 
+		static void markForBroadcast(int cab);
+		static void forget(byte clientId);
+		static void findUniqThrottle(int id, char *u);
+		static void setup(IPAddress ip, int port);
 
-    bool parse();
+		bool parse();
 
-  private: 
-    Z21Throttle(int clientId);
-    ~Z21Throttle();
-   
-      static const int MAX_MY_LOCO=10;      // maximum number of locos assigned to a single client
-      static const int HEARTBEAT_SECONDS=10; // heartbeat at 4secs to provide messaging transport
-      static const int ESTOP_SECONDS=20;     // eStop if no incoming messages for more than 8secs
-      static Z21Throttle* firstThrottle;
-    	static byte commBuffer[100];
-	    static byte replyBuffer[20];
-      static char LorS(int cab); 
-      static bool isThrottleInUse(int cab);
-      static void setSendTurnoutList();
-      bool areYouUsingThrottle(int cab);
-      Z21Throttle* nextThrottle;
+	private: 
+		Z21Throttle(int clientId);
+		~Z21Throttle();
 
-      int clientid;
-      char uniq[17] = "";
-       
-      MYLOCOZ21 myLocos[MAX_MY_LOCO];   
+		static const int MAX_MY_LOCO=10;      // maximum number of locos assigned to a single client
+		static const int HEARTBEAT_SECONDS=10; // heartbeat at 4secs to provide messaging transport
+		static const int ESTOP_SECONDS=20;     // eStop if no incoming messages for more than 8secs
+		static Z21Throttle* firstThrottle;
+		static byte commBuffer[100];
+		static byte replyBuffer[20];
+		static char LorS(int cab); 
+		static bool isThrottleInUse(int cab);
+		static void setSendTurnoutList();
+		bool areYouUsingThrottle(int cab);
+		Z21Throttle* nextThrottle;
 
-      int CountLocos()
-      {  
-        int count = 0;
-        for (int loco=0;loco<MAX_MY_LOCO;loco++)
-          if (myLocos[loco].throttle != '\0')
-            count++;
+		int clientid;
+		char uniq[17] = "";
 
-        return count;
-      }
+		MYLOCOZ21 myLocos[MAX_MY_LOCO];   
 
-      bool initSent; // valid connection established
-      bool exRailSent; // valid connection established
-      uint16_t mostRecentCab;
-      int turnoutListHash;  // used to check for changes to turnout list
-      bool lastPowerState;  // last power state sent to this client
-     	int32_t broadcastFlags;
+		int CountLocos() {  
+			int count = 0;
+			for (int loco=0;loco<MAX_MY_LOCO;loco++)
+				if (myLocos[loco].throttle != '\0')
+					count++;
 
-    /*
-      int DCCToWiTSpeed(int DCCSpeed);
-      int WiTToDCCSpeed(int WiTSpeed);
-      void multithrottle(RingStream * stream, byte * cmd);
-      void locoAction(RingStream * stream, byte* aval, char throttleChar, int cab);
-      void accessory(RingStream *, byte* cmd);
-      void checkHeartbeat(RingStream * stream); 
-      void markForBroadcast2(int cab);
-    */
-      int getOrAddLoco(int cab);
-      void printLocomotives(bool addTab = false);
-      static void printThrottles(bool printLocomotives);
+			return count;
+		}
 
-      // sizes : [       2        ][       2        ][inLengthData]
-      // bytes : [length1, length2][Header1, Header2][Data........]
-      bool notify(unsigned int inHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
+		bool initSent; // valid connection established
+		bool exRailSent; // valid connection established
+		uint16_t mostRecentCab;
+		int turnoutListHash;  // used to check for changes to turnout list
+		bool lastPowerState;  // last power state sent to this client
+		int32_t broadcastFlags;
 
-      // sizes : [       2        ][       2        ][   1   ][inLengthData]
-      // bytes : [length1, length2][Header1, Header2][XHeader][Data........]
-      bool notify(unsigned int inHeader, unsigned int inXHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
+		int getOrAddLoco(int cab);
+		void printLocomotives(bool addTab = false);
+		static void printThrottles(bool printLocomotives);
 
-      // sizes : [       2        ][       2        ][   1   ][ 1 ][inLengthData]
-      // bytes : [length1, length2][Header1, Header2][XHeader][DB0][Data........]
-      bool notify(unsigned int inHeader, unsigned int inXHeader, byte inDB0, byte* inpData, unsigned int inLengthData, bool inXorInData);
+		// sizes : [       2        ][       2        ][inLengthData]
+		// bytes : [length1, length2][Header1, Header2][Data........]
+		bool notify(unsigned int inHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
 
-      void notifyStatus();
-      void notifyLocoInfo(byte inMSB, byte inLSB);
-      void notifyTurnoutInfo(byte inMSB, byte inLSB);
-      void notifyLocoMode(byte inMSB, byte inLSB);
-      void notifyFirmwareVersion();
-      void notifyHWInfo();
-      void notifyCvNACK(int inCvAddress);
-      void notifyCvRead(int inCvAddress, int inValue);
-      void write(byte* inpData, int inLengthData);
+		// sizes : [       2        ][       2        ][   1   ][inLengthData]
+		// bytes : [length1, length2][Header1, Header2][XHeader][Data........]
+		bool notify(unsigned int inHeader, unsigned int inXHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
 
-      void setSpeed(byte inNbSteps, byte inDB1, byte inDB2, byte inDB3);
-      void setFunction(byte inDB1, byte inDB2, byte inDB3);
-      void cvReadProg(byte inDB1, byte inDB2);
-      void cvWriteProg(byte inDB1, byte inDB2, byte inDB3);
-      void cvReadMain(byte inDB1, byte inDB2);
-      void cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4);
+		// sizes : [       2        ][       2        ][   1   ][ 1 ][inLengthData]
+		// bytes : [length1, length2][Header1, Header2][XHeader][DB0][Data........]
+		bool notify(unsigned int inHeader, unsigned int inXHeader, byte inDB0, byte* inpData, unsigned int inLengthData, bool inXorInData);
 
-       // callback stuff to support prog track acquire
-      static Z21Throttle * stashInstance;
-      static byte         stashClient;
-      static char         stashThrottleChar;
-      static void         getLocoCallback(int16_t locoid);
+		void notifyStatus();
+		void notifyLocoInfo(byte inMSB, byte inLSB);
+		void notifyTurnoutInfo(byte inMSB, byte inLSB);
+		void notifyLocoMode(byte inMSB, byte inLSB);
+		void notifyFirmwareVersion();
+		void notifyHWInfo();
+		void notifyCvNACK(int inCvAddress);
+		void notifyCvRead(int inCvAddress, int inValue);
+		void write(byte* inpData, int inLengthData);
+
+		void setSpeed(byte inNbSteps, byte inDB1, byte inDB2, byte inDB3);
+		void setFunction(byte inDB1, byte inDB2, byte inDB3);
+		void cvReadProg(byte inDB1, byte inDB2);
+		void cvWriteProg(byte inDB1, byte inDB2, byte inDB3);
+		void cvReadMain(byte inDB1, byte inDB2);
+		void cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4);
+
+		// callback stuff to support prog track acquire
+		static Z21Throttle * stashInstance;
+		static byte         stashClient;
+		static char         stashThrottleChar;
+		static void         getLocoCallback(int16_t locoid);
 };
 
 #define Z21_UDPPORT		21105
@@ -213,16 +203,16 @@ class Z21Throttle {
 
 // Broadcast flags
 
-#define BROADCAST_BASE							0x00000001
-#define BROADCAST_RBUS							0x00000002
-#define BROADCAST_RAILCOM						0x00000004
-#define BROADCAST_SYSTEM						0x00000100
-#define BROADCAST_BASE_LOCOINFO			0x00010000
-#define BROADCAST_LOCONET						0x01000000
-#define BROADCAST_LOCONET_LOCO			0x02000000
-#define BROADCAST_LOCONET_SWITCH		0x04000000
+#define BROADCAST_BASE				0x00000001
+#define BROADCAST_RBUS				0x00000002
+#define BROADCAST_RAILCOM			0x00000004
+#define BROADCAST_SYSTEM			0x00000100
+#define BROADCAST_BASE_LOCOINFO		0x00010000
+#define BROADCAST_LOCONET			0x01000000
+#define BROADCAST_LOCONET_LOCO		0x02000000
+#define BROADCAST_LOCONET_SWITCH	0x04000000
 #define BROADCAST_LOCONET_DETECTOR	0x08000000
-#define BROADCAST_RAILCOM_AUTO			0x00040000
-#define BROADCAST_CAN								0x00080000
+#define BROADCAST_RAILCOM_AUTO		0x00040000
+#define BROADCAST_CAN				0x00080000
 
 #endif

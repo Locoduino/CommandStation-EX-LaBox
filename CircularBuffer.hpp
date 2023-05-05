@@ -1,3 +1,21 @@
+/*
+ *  © 2023 Thierry Paris / Locoduino
+ *  All rights reserved.
+ *  
+ *  This is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  It is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with CommandStation.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 //-------------------------------------------------------------------
 #ifndef __CircularBuffer_Hpp__
 #define __CircularBuffer_Hpp__
@@ -6,7 +24,7 @@
 #include <Arduino.h>
 #include "DIAG.h"
 
-/** This is a thread-safe buffer of bytes. Bytes are pushed on the top (its head), and got from the bottom of the 
+/** This is a thread-safe buffer of bytes, binary or not. Bytes are pushed on the top (its head), and got from the bottom of the 
 * buffer (its tail...).
 */
 class CircularBuffer
@@ -29,7 +47,7 @@ public:
 	CircularBuffer(int inSize);
 
 	/** Initialize the list.
-	@param inMultiThread	If the buffer is used in multi-thread environnement, initialize the semaphore.
+	@param inMultiThread	If the buffer is used in multi-thread environnement, initialize the semaphore before calling this begin().
 	*/
 	void begin(bool inMultiThread = false);
 
