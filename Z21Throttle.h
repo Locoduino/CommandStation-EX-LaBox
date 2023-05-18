@@ -60,7 +60,14 @@ class Z21Throttle {
 		static void findUniqThrottle(int id, char *u);
 		static void setup(IPAddress ip, int port);
 
+		void notifyCvNACK(int inCvAddress);
+		void notifyCvRead(int inCvAddress, int inValue);
+		
 		bool parse();
+
+		static Z21Throttle *readWriteThrottle;	// NULL if no throttle is reading or writing a CV...
+		static int cvAddress;
+		static int cvValue;
 
 	private: 
 		Z21Throttle(int clientId);
@@ -121,8 +128,6 @@ class Z21Throttle {
 		void notifyLocoMode(byte inMSB, byte inLSB);
 		void notifyFirmwareVersion();
 		void notifyHWInfo();
-		void notifyCvNACK(int inCvAddress);
-		void notifyCvRead(int inCvAddress, int inValue);
 		void write(byte* inpData, int inLengthData);
 
 		void setSpeed(byte inNbSteps, byte inDB1, byte inDB2, byte inDB3);

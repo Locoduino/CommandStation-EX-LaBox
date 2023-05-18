@@ -43,6 +43,10 @@ Z21Throttle *Z21Throttle::firstThrottle=NULL;
 byte Z21Throttle::commBuffer[100];
 byte Z21Throttle::replyBuffer[20];
 
+Z21Throttle* Z21Throttle::readWriteThrottle = NULL;
+int Z21Throttle::cvAddress = -1;
+int Z21Throttle::cvValue = -1;
+
 void printClientsUDP();
 
 WiFiUDP NetworkClientUDP::client;
@@ -58,7 +62,6 @@ void Z21Throttle::setup(IPAddress ip, int port) {
 }
 
 int readUdpPacket() {
-	bool added = false;
 	byte udp[UDPBYTE_SIZE];
 	memset(udp, 0, UDPBYTE_SIZE);
 	int len = NetworkClientUDP::client.read(udp, UDPBYTE_SIZE);
@@ -219,7 +222,7 @@ Z21Throttle::Z21Throttle(int inClientId) {
 	initSent=false; // prevent sending heartbeats before connection completed
 	turnoutListHash = -1;  // make sure turnout list is sent once
 	exRailSent=false;
-	mostRecentCab=0;                
+	mostRecentCab=0;     
 	for (int loco=0;loco<MAX_MY_LOCO; loco++)
 		myLocos[loco].throttle='\0';
 }
@@ -377,7 +380,6 @@ int Z21Throttle::getOrAddLoco(int cab) {
 				myLocos[locoToAdd].functionMap = DCC::getFunctionMap(cab); 
 				myLocos[locoToAdd].broadcastPending = true; // means speed/dir will be sent later
 				mostRecentCab = cab;
-				int fkeys=29;
 				myLocos[locoToAdd].functionToggles = 1<<2; // F2 (HORN)  is a non-toggle
 				return locoToAdd;
 			}
@@ -536,30 +538,47 @@ void Z21Throttle::setFunction(byte inDB1, byte inDB2, byte inDB3) {
 // TODO Pass through a text message to avoid multi thread locks...
 //
 
+void Z21CvValueCallback(int16_t inValue)
+{
+	Z21Throttle::cvValue = inValue;
+
+	if (inValue == -1)
+		Z21Throttle::readWriteThrottle->notifyCvNACK(Z21Throttle::cvAddress);
+	else
+		Z21Throttle::readWriteThrottle->notifyCvRead(Z21Throttle::cvAddress, inValue);
+
+	Z21Throttle::readWriteThrottle = NULL;
+}
+
 void Z21Throttle::cvReadProg(byte inDB1, byte inDB2) {
+	if (Z21Throttle::readWriteThrottle != NULL)
+		return;
+
 	int cvAddress = ((inDB1 & 0x3F) << 8) + inDB2 + 1;
 
 	if (Diag::Z21THROTTLE) DIAG(F("Z21 Throttle %d : cvRead Prog %d"), clientid, cvAddress);
 
-	int val = 0;//DCC::readCV(cvAddress);
+	Z21Throttle::readWriteThrottle = this;
+	Z21Throttle::cvAddress = cvAddress - 1;
 
-	if (val == -1)
-		notifyCvNACK(cvAddress - 1);
-	else
-		notifyCvRead(cvAddress - 1, val);
+	void (*ptr)(int16_t) = &Z21CvValueCallback;
+	DCC::readCV(cvAddress, ptr);
 }
 
+// Working as cvReadProg for the moment...
 void Z21Throttle::cvReadMain(byte inDB1, byte inDB2) {
+	if (Z21Throttle::readWriteThrottle != NULL)
+		return;
+
 	int cvAddress = ((inDB1 & 0x3F) << 8) + inDB2 + 1;
 
 	if (Diag::Z21THROTTLE) DIAG(F("Z21 Throttle %d : cvRead Main cv %d"), clientid, cvAddress);
 
-	int val = 0;//DCC::readCV(cvAddress);
+	Z21Throttle::readWriteThrottle = this;
+	Z21Throttle::cvAddress = cvAddress - 1;
 
-	if (val == -1)
-		notifyCvNACK(cvAddress - 1);
-	else
-		notifyCvRead(cvAddress - 1, val);
+	void (*ptr)(int16_t) = &Z21CvValueCallback;
+	DCC::readCV(cvAddress, ptr);
 }
 
 //
@@ -567,33 +586,35 @@ void Z21Throttle::cvReadMain(byte inDB1, byte inDB2) {
 //
 
 void Z21Throttle::cvWriteProg(byte inDB1, byte inDB2, byte inDB3) {
+	if (Z21Throttle::readWriteThrottle != NULL)
+		return;
+
 	int cvAddress = ((inDB1 & 0x3F) << 8) + inDB2 + 1;
 
 	if (Diag::Z21THROTTLE) DIAG(F("Z21 Throttle %d : cvWrite Prog cv %d value %d"), clientid, cvAddress, inDB3);
 
-	bool ret = false;
-	/*if (DCC::IsProgTrackDeclared())
-		ret = DCC::writeCvProg(cvAddress, inDB3);
-	else
-		ret = DCC::writeCvMain(cvAddress, inDB3);*/
+	Z21Throttle::readWriteThrottle = this;
+	Z21Throttle::cvAddress = cvAddress - 1;
 
-	if (!ret)
-		notifyCvNACK(cvAddress - 1);
-	else
-		notifyCvRead(cvAddress - 1, inDB3);
+	void (*ptr)(int16_t) = &Z21CvValueCallback;
+	DCC::writeCVByte(cvAddress, inDB3, ptr);
 }
 
+// Working as cvReadProg for the moment...
 void Z21Throttle::cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4) {
+	if (Z21Throttle::readWriteThrottle != NULL)
+		return;
+
 	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
 	int cvAddress = ((inDB3 & B00000011) << 8) + inDB4 + 1;
 
 	if (Diag::Z21THROTTLE) DIAG(F("Z21 Throttle %d : cvRead Pom Loco %d cv %d"), clientid, locoAddress, cvAddress);
 
-	int val = 0;//DCC::readCv(cvAddress);
-	if (val == -1)
-		notifyCvNACK(cvAddress - 1);
-	else
-		notifyCvRead(cvAddress - 1, val);
+	Z21Throttle::readWriteThrottle = this;
+	Z21Throttle::cvAddress = cvAddress - 1;
+
+	void (*ptr)(int16_t) = &Z21CvValueCallback;
+	DCC::readCV(cvAddress, ptr);
 }
 
 bool Z21Throttle::parse() {

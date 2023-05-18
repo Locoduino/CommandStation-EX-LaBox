@@ -29,10 +29,11 @@
 /*
  *  © 2021 Neil McKechnie
  *  © 2020-2021 Chris Harlow, Harald Barth, David Cutting,
- *  Fred Decker, Gregor Baues, Anthony W - Dayton
+ *  			Fred Decker, Gregor Baues, Anthony W - Dayton
+ *  © 2023 Thierry Paris for Locoduino.
  *  All rights reserved.
  *
- *  This file is part of CommandStation-EX
+ *  This file is part of CommandStation-EX-Labox
  *
  *  This is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -101,28 +102,34 @@ void setup()
 
   DIAG(F("Mode %s"), hmi::progMode?"Prog":"Main");
 
+	if (hmi::progMode) {
+		// Reset to Main mode for next reboot.
+		EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
+		EEPROM.commit();
+	}
+
   // must be done before Wifi setup
   boxHMI.begin();
 #endif
 
-  // Responsibility 2: Start all the communications before the DCC engine
-  // Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
-  // Start Ethernet if it exists
-#ifndef ARDUINO_ARCH_ESP32
-#if WIFI_ON
-  WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL);
-#endif // WIFI_ON
-#else
-  // ESP32 needs wifi on always
-  WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL);
-#endif // ARDUINO_ARCH_ESP32
+	// Responsibility 2: Start all the communications before the DCC engine
+	// Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
+	// Start Ethernet if it exists
+	#ifndef ARDUINO_ARCH_ESP32
+	#if WIFI_ON
+	WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL);
+	#endif // WIFI_ON
+	#else
+	// ESP32 needs wifi on always
+	WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL);
+	#endif // ARDUINO_ARCH_ESP32
 
-#if ETHERNET_ON
-  EthernetInterface::setup();
-#endif // ETHERNET_ON
+	#if ETHERNET_ON
+	EthernetInterface::setup();
+	#endif // ETHERNET_ON
 
-  // Initialise HAL layer before reading EEprom or setting up MotorDrivers 
-  IODevice::begin();
+	// Initialise HAL layer before reading EEprom or setting up MotorDrivers 
+	IODevice::begin();
 
   // Responsibility 3: Start the DCC engine.
   // Note: this provides DCC with two motor drivers, main and prog, which handle the motor shield(s)
@@ -179,20 +186,20 @@ void loop()
   // Responsibility 2: handle any incoming commands on USB connection
   SerialManager::loop();
 
-  // Responsibility 3: Optionally handle any incoming WiFi traffic
-#ifndef ARDUINO_ARCH_ESP32
-#if WIFI_ON
-  WifiInterface::loop();
-#endif //WIFI_ON
-#else  //ARDUINO_ARCH_ESP32
-#ifndef WIFI_TASK_ON_CORE0
-  WifiESP::loop();
-#endif
-#endif //ARDUINO_ARCH_ESP32
-#if ETHERNET_ON
-  EthernetInterface::loop();
-#endif
-
+	// Responsibility 3: Optionally handle any incoming WiFi traffic
+	#ifndef ARDUINO_ARCH_ESP32
+	#if WIFI_ON
+	WifiInterface::loop();
+	#endif //WIFI_ON
+	#else  //ARDUINO_ARCH_ESP32
+	#ifndef WIFI_TASK_ON_CORE0
+	WifiESP::loop();
+	#endif
+	#endif //ARDUINO_ARCH_ESP32
+	#if ETHERNET_ON
+	EthernetInterface::loop();
+	#endif
+  
   RMFT::loop();  // ignored if no automation
 
   #if defined(LCN_SERIAL)

@@ -97,18 +97,13 @@ int menuTrainAddrRead::eventSelect()
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. Begin"); 
   menuObject::eventSelect();
 
-  // Return to 'Main' mode.
-  if (EEPROM.readByte(hmi::EEPROMModeProgAddress) != 'M') {
-    EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
-    EEPROM.commit();
-  }
-  delay(500);
   // Reboot ESP32 !
   ESP.restart();
 
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. End");  
   return MENUEXIT;
 }
+
 /*!
     @brief  Setup HMI class and start HMI
     @param  None
