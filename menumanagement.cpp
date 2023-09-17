@@ -13,7 +13,6 @@
 #include "hmi.h"
 #include "menumanagement.h"
 #include "menuobject.h"
-#include "menusetvalue.h"
 #include "menuinformation.h"
 #include "menuTrainAddrRead.h"
 #include "globals.h"
@@ -63,7 +62,6 @@ MenuManagement::MenuManagement(hmi*  screen)
     can_gw      = new menuObject(display, can, TXT_MenuCAN_GW, MENUTYPELIST);
       can_gw_on = new menuObject(display, can_gw, TXT_MenuOn,     1);
       can_gw_off= new menuObject(display, can_gw, TXT_MenuOff,    2);
-    canSetAddr  = new menuSetValue(display,     can,TXT_MenuCANAddr, 0, 255, 3);
     canInfo     = new menuInformation(display,  can,TXT_MenuCANInfo, MENUACTION);
   infoSystem    = new menuInformation(display, baseMenu, TXT_MenuInfosSys, MENUACTION);
   reset         = new menuObject(display, baseMenu, TXT_MenuSoftReset, MENUTYPELIST);
@@ -158,6 +156,12 @@ void MenuManagement::BtnSelectPressed()
   _HMIDEBUG_FCT_PRINTLN("MenuManagement::BtnSelectPressed.. Begin"); 
 
   int status = activeMenu->eventSelect();
+	
+	if (hmi::progMode) 
+	{
+		return;
+	}
+
   switch(status)
   {
     case MENUEXIT :

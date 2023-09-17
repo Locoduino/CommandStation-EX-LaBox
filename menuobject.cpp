@@ -34,7 +34,7 @@ menuObject::menuObject(Adafruit_SSD1306* screen, menuObject* p, const char* titl
 {
   parent = p;
   display = screen;
-  selectedMenu  = 0 ;        
+  selectedMenu  = NULL ;        
   nbSubMenu     = 0;
   value         = val;
   position      = 0;
@@ -104,7 +104,7 @@ void menuObject::begin()
 void menuObject::update()
 {
   _HMIDEBUG_FCT_PRINTLN("menuObject::update.. Begin"); 
- display->clearDisplay();
+  display->clearDisplay();
   display->setTextSize(1);
   display->setTextColor(WHITE);
   display->setCursor(5, 53);
@@ -167,7 +167,7 @@ void menuObject::resetMenu()
       subMenu[i]->resetMenu();
     }
   }
-  selectedMenu            = 0 ;        
+  selectedMenu            = NULL ;        
   position                = 0 ;
   firstListIndex          = 0 ;  
   ListIndexMaxVisible     = 0 ;  
@@ -214,24 +214,28 @@ void menuObject::eventDown()
 */
 int menuObject::eventSelect()
 {
-  _HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. Begin"); 
+	_HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. Begin"); 
 
-  switch(selectedMenu->value)
-  {
-    case MENUTYPECOMEBCK :        // User has selected come back
-      return MENUEXIT ;
-    break;
-    case MENUTYPELIST :           // User has selected a sub menu
-      return MENUCHANGETOCHILD ;
-    break;
-    case MENUTRAINADDRREAD :           // User has selected a sub menu
-      return MENUTRAINADDRREAD ;
-    break;
-    default :
-      return MENUCHOSEN ;         // It's user selection like Yes or No for exemple
-  }
-  _HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. End"); 
-  return 0;
+	if (selectedMenu != NULL)
+	{
+		switch(selectedMenu->value)
+		{
+			case MENUTYPECOMEBCK:        // User has selected come back
+				return MENUEXIT;
+				break;
+			case MENUTYPELIST:           // User has selected a sub menu
+				return MENUCHANGETOCHILD;
+				break;
+			case MENUTRAINADDRREAD:           // User has selected a sub menu
+				return MENUTRAINADDRREAD;
+				break;
+			default:
+				return MENUCHOSEN;         // It's user selection like Yes or No for exemple
+		}
+	}
+
+	_HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. End"); 
+	return 0;
 }
 /*!
     @brief  Thing to do before opening the option

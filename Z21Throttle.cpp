@@ -774,6 +774,9 @@ bool Z21Throttle::parse() {
 					done = true;
 					break;
 				case LAN_X_HEADER_SET_TURNOUT:
+					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d TURNOUT "), this->clientid);
+					//done = true;
+					break;
 				case 0x22:
 					break;
 			}

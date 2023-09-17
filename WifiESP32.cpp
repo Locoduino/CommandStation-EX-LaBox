@@ -151,7 +151,7 @@ bool WifiESP::setup(const char *SSid,
     WiFi.setAutoReconnect(true);
 
 #ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+	  if (!hmi::progMode && !hmi::silentBootMode && hmi::CurrentInterface != NULL)
 	  {
 		  hmi::CurrentInterface->WifiStartConnection(SSid);
 		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -312,6 +312,7 @@ void WifiESP::loop()
     }
     if (server->hasClient()) {
       WiFiClient client;
+
       while (client = server->available()) {
 	      for (clientId=0; clientId<clients.size(); clientId++) {
 	        if (clients[clientId].recycle(client)) {

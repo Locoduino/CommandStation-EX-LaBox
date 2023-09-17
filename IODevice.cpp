@@ -252,13 +252,14 @@ void IODevice::addDevice(IODevice *newDevice) {
   // Link new object to the end of the chain.  Thereby, the first devices to be declared/created
   // will be located faster by findDevice than those which are created later.
   // Ideally declare/create the digital IO pins first, then servos, then more esoteric devices.
-  IODevice *lastDevice;
+  IODevice *lastDevice = NULL;
   if (_firstDevice == 0)
     _firstDevice = newDevice;
   else {
     for (IODevice *dev = _firstDevice; dev != 0; dev = dev->_nextDevice)
       lastDevice = dev;
-    lastDevice->_nextDevice = newDevice;
+	if (lastDevice != NULL)
+    	lastDevice->_nextDevice = newDevice;
   }
   newDevice->_nextDevice = 0;
 

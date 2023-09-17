@@ -99,7 +99,6 @@ void  DCCACK::Setup(int cv, byte byteValueOrBitnum, ackOp const program[], ACK_C
    **/
       }
 
-
   ackManagerCv = cv;
   ackManagerProg = program;
   ackManagerProgStart = program;

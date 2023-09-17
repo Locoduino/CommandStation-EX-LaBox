@@ -85,7 +85,7 @@ void setup()
   DIAG(F("Platform: %S"), F(ARDUINO_TYPE)); // PMA - temporary
 
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("Labox : 2.2.0"));
+  DIAG(F("Labox : 2.2.2"));
 
   CONDITIONAL_LCD_START {
     // This block is still executed for DIAGS if LCD not in use
@@ -97,8 +97,10 @@ void setup()
   EEPROM.begin(512);
   byte mode = EEPROM.read(hmi::EEPROMModeProgAddress);
 
-  if (mode == 'M') hmi::progMode = false;
+  hmi::progMode = false;
+  hmi::silentBootMode = false;
   if (mode == 'P') hmi::progMode = true;
+  if (mode == 'B') hmi::silentBootMode = true;
 
   DIAG(F("Mode %s"), hmi::progMode?"Prog":"Main");
 
@@ -172,6 +174,12 @@ void setup()
     // must be done after all other setups.
     boxHMI.setProgMode();
   }
+	if (hmi::silentBootMode) {
+		// Reset to Main mode for next reboot.
+		EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
+		EEPROM.commit();
+	}
+
 #endif
 }
 

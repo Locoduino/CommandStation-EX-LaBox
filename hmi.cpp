@@ -26,6 +26,7 @@
 
 int IRAM_ATTR local_adc1_get_raw(int channel);
 bool hmi::progMode = false;
+bool hmi::silentBootMode = false;
 int hmi::EEPROMModeProgAddress = 511;
 
 
@@ -82,7 +83,7 @@ void hmi::begin()
   setTextSize(1);
   setTextColor(WHITE);
 
-  if (!hmi::progMode) {
+  if (!hmi::progMode && !hmi::silentBootMode) {
     drawBitmap(0, 0, locoduino_Splash128x44, 128, 44, WHITE);
     setCursor(0, 48);
     println("La Box |Locoduino.org");
@@ -319,7 +320,6 @@ void hmi::dashboard()
 {
   _HMIDEBUG_FCT_PRINTLN("hmi::Dashboard().. Begin");
   static int toggleEffect = 0;
-  static int toggleData = 0;
   int effect = 0;
 
 /*#ifdef ARDUINO_ARCH_ESP32
@@ -743,6 +743,7 @@ void hmi::setTrainState(int addr, uint8_t order, uint8_t value, bool state)
     break;
     case HMI_NbMemorisedTrain : 
       i--; // We remove one to place on the last index of the table
+	   [[fallthrough]];
     default :
 
 #ifdef _HMIDEBUG_LEVEL3_PRINTLN
@@ -839,8 +840,7 @@ void hmi::readCurrent()
   float base = 0;
 	for (int j = 0; j < 50; j++)
 	{
-    float val = local_adc1_get_raw(pinToADC1Channel(PIN_CURRENT_MES));
-		float val1 = (float)mainDriver->getCurrentRaw();
+		float val = (float)mainDriver->getCurrentRaw();
 		base += val;
 	}
 	current = (float) (((base / 50) * HMI_CurrentK) - HMI_deltaCurrent);

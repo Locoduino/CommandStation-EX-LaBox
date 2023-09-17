@@ -95,7 +95,6 @@ class DCCACK {
     return ackRetryPSum;
   };
 
-
   private:
     static const byte SET_SPEED = 0x3f;
     static const byte WRITE_BYTE = 0x7C;

@@ -86,7 +86,7 @@ void hmiTrain::setInfo(int _addr, uint8_t _order, uint8_t _value, bool _function
       mode = _order;
     break;
     case HMI_OrderFunction :
-      if(_value >= 0 && _value <= HMITrain_NbMaxFunctions && function[_value] != _functionState)
+      if(_value <= HMITrain_NbMaxFunctions && function[_value] != _functionState)
       {
         function[_value] = _functionState;
         if(_value!=0 ) lastFunction = _value ;   //   Exception for function 0 (lights)
@@ -112,7 +112,7 @@ void hmiTrain::dashboard(int pos_x1, int pos_y1, int pos_x2, int pos_y2)
   //-------------------- Barres graph -------------------------
   int offsetYBarresGraph = 22 ;
   int offsetXBarresGraph = 3 ;
-  int nbRect = (pos_y2 - pos_y1 - 15) / (HMITrain_RectHeight+HMITrain_RectSpace) ;
+  //int nbRect = (pos_y2 - pos_y1 - 15) / (HMITrain_RectHeight+HMITrain_RectSpace) ;
   int step = 1;
   int nbStep = (pos_y2 - pos_y1 - 15) / (HMITrain_RectHeight+HMITrain_RectSpace) ;
   int ratioSpeed = HMITrain_NbStep / nbStep;
@@ -186,7 +186,9 @@ void hmiTrain::dashboard1T()
   int offsetXBarresGraph = 45 ;
   //int nbRect = (SCREEN_WIDTH - offsetXBarresGraph - 15) / (HMITrain_RectWidth+HMITrain_RectSpace) ;
   int step = 1;
+#ifdef _HMIDEBUG_LEVEL2
   int nbStep = (SCREEN_WIDTH - offsetXBarresGraph - 15) / (HMITrain_RectWidth+HMITrain_RectSpace) ;
+#endif
   int ratioSpeed = 14; // SCREEN_WIDTH / 9 blocks
   int x = offsetXBarresGraph ;
 
@@ -318,7 +320,7 @@ void hmiTrain::drawFunctionSymbol(int pos_x, int pos_y, int functionNumber)
 hmiTrain & hmiTrain::operator=(const hmiTrain & _hmiTrain)
 {
   _HMIDEBUG_FCT_PRINTLN("hmiTrain::operator=.. Begin"); 
-  if(&_hmiTrain && &_hmiTrain != this)
+  if(&_hmiTrain != this)
   {
     display = _hmiTrain.display ;
     speed   = _hmiTrain.speed ;
