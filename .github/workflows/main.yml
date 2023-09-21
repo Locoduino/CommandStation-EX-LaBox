@@ -14,6 +14,6 @@ jobs:
     - name: Install PlatformIO Core
       run: pip install -U platformio
     - name: Copy generic config over
-      run: cp config.example.h config.h
-    - name: Compile Command Station (AVR)
+      run: cp config_Labox.h config.h
+    - name: Compile Command Station Labox (ESP32)
       run: python -m platformio run
