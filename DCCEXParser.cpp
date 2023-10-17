@@ -121,7 +121,7 @@ Once a new OPCODE is decided upon, update this list.
     for (int16_t i=0;;i+=sizeof(flashList[0])) {                            \
         int16_t value=GETHIGHFLASHW(flashList,i);       \
         if (value==INT16_MAX) break;                            \
-        if (value != 0) StringFormatter::send(stream,F(" %d"),value);	\
+        StringFormatter::send(stream,F(" %d"),value);	\
     }                                   
 
 
@@ -729,11 +729,15 @@ void DCCEXParser::parseOne(Print *stream, byte *com, RingStream * ringStream)
                     SENDFLASHLIST(stream,RMFT2::rosterIdList)
                 }
                 else {
-		  const FSH * functionNames= RMFT2::getRosterFunctions(id);
-		  StringFormatter::send(stream,F(" %d \"%S\" \"%S\""), 
-					id, RMFT2::getRosterName(id),
-					functionNames == NULL ? RMFT2::getRosterFunctions(0) : functionNames);
-		}
+                    auto rosterName= RMFT2::getRosterName(id);
+                    if (!rosterName) rosterName=F("");
+
+                    auto functionNames= RMFT2::getRosterFunctions(id);
+                    if (!functionNames) functionNames=RMFT2::getRosterFunctions(0);
+                    if (!functionNames) functionNames=F("");
+                    StringFormatter::send(stream,F(" %d \"%S\" \"%S\""), 
+					                            id, rosterName, functionNames);
+                }
 #endif          
                 StringFormatter::send(stream, F(">\n"));      
                 return; 
@@ -985,7 +989,7 @@ bool DCCEXParser::parseD(Print *stream, int16_t params, int16_t p[])
 
     case HASH_KEYWORD_RAM: // <D RAM>
         StringFormatter::send(stream, F("Free memory=%d\n"), DCCTimer::getMinimumFreeMemory());
-        break;
+        return true;
 
 #ifndef DISABLE_PROG
     case HASH_KEYWORD_ACK: // <D ACK ON/OFF> <D ACK [LIMIT|MIN|MAX|RETRY] Value>
