@@ -25,13 +25,14 @@
 #include "MotorDriver.h"
 #include "DCCTimer.h"
 #include "DIAG.h"
+#include "hmi.h"
 #include"CommandDistributor.h"
 // Virtualised Motor shield multi-track hardware Interface
 #define FOR_EACH_TRACK(t) for (byte t=0;t<=lastTrack;t++)
     
 #define APPLY_BY_MODE(findmode,function) \
         FOR_EACH_TRACK(t) \
-	    if (track[t]->getMode()==findmode)	\
+	    if (track[t] != NULL && track[t]->getMode()==findmode)	\
                 track[t]->function;
 #ifndef DISABLE_PROG
 const int16_t HASH_KEYWORD_PROG = -29718;
@@ -126,11 +127,11 @@ void TrackManager::Setup(const FSH * shieldname,
   // Fault pin config for odd motor boards (example pololu)
   FOR_EACH_TRACK(t) {
     for (byte s=t+1;s<=lastTrack;s++) {
-      if (track[t]->getFaultPin() != UNUSED_PIN &&
-	  track[t]->getFaultPin() == track[s]->getFaultPin()) {
-	track[t]->setCommonFaultPin();
-	track[s]->setCommonFaultPin();
-	DIAG(F("Common Fault pin tracks %c and %c"), t+'A', s+'A');
+      if (track[t] != NULL && track[t]->getFaultPin() != UNUSED_PIN &&
+	  					track[t]->getFaultPin() == track[s]->getFaultPin()) {
+				track[t]->setCommonFaultPin();
+				track[s]->setCommonFaultPin();
+				DIAG(F("Common Fault pin tracks %c and %c"), t+'A', s+'A');
       }
     }
   }
@@ -223,7 +224,7 @@ bool TrackManager::setTrackMode(byte trackToSet, TRACK_MODE mode, int16_t dcAddr
 #endif
       // only allow 1 track to be prog
       FOR_EACH_TRACK(t)
-	if (track[t]->getMode()==TRACK_MODE_PROG && t != trackToSet) {
+	if (track[t] != NULL && track[t]->getMode()==TRACK_MODE_PROG && t != trackToSet) {
 	  track[t]->setPower(POWERMODE::OFF);
 	  track[t]->setMode(TRACK_MODE_NONE);
 	  track[t]->makeProgTrack(false);     // revoke prog track special handling
@@ -398,7 +399,7 @@ void TrackManager::loop() {
 
 MotorDriver * TrackManager::getProgDriver() {
     FOR_EACH_TRACK(t)
-      if (track[t]->getMode()==TRACK_MODE_PROG) return track[t];
+      if (track[t] != NULL && track[t]->getMode()==TRACK_MODE_PROG) return track[t];
     return NULL;
 } 
 
@@ -406,7 +407,7 @@ MotorDriver * TrackManager::getProgDriver() {
 std::vector<MotorDriver *>TrackManager::getMainDrivers() {
   std::vector<MotorDriver *>  v;
   FOR_EACH_TRACK(t)
-    if (track[t]->getMode()==TRACK_MODE_MAIN) v.push_back(track[t]);
+    if (track[t] != NULL && track[t]->getMode()==TRACK_MODE_MAIN) v.push_back(track[t]);
   return v;
 }
 #endif
@@ -425,6 +426,15 @@ void TrackManager::setPower2(bool setProg,POWERMODE mode) {
                 driver->setBrake(true);
                 driver->setBrake(false); // DCC runs with brake off
                 driver->setPower(mode);  
+#ifdef USE_HMI
+              	if (hmi::CurrentInterface != NULL)
+                {
+                  if (mode == POWERMODE::ON)
+                    hmi::CurrentInterface->DCCOn();
+                  if (mode == POWERMODE::OFF)
+                    hmi::CurrentInterface->DCCOff();
+                }
+#endif
                 break; 
             case TRACK_MODE_DC:
             case TRACK_MODE_DCX:
@@ -452,7 +462,7 @@ void TrackManager::setPower2(bool setProg,POWERMODE mode) {
   
 POWERMODE TrackManager::getProgPower() {
     FOR_EACH_TRACK(t)
-      if (track[t]->getMode()==TRACK_MODE_PROG) 
+      if (track[t] != NULL && track[t]->getMode()==TRACK_MODE_PROG) 
 	return track[t]->getPower();
     return POWERMODE::OFF;   
   }
@@ -469,19 +479,23 @@ void TrackManager::reportObsoleteCurrent(Print* stream) {
 void TrackManager::reportCurrent(Print* stream) {
     StringFormatter::send(stream,F("<jI"));
     FOR_EACH_TRACK(t) {
+			if (track[t] != NULL) {
          StringFormatter::send(stream, F(" %d"),
          (track[t]->getPower()==POWERMODE::OVERLOAD) ? -1 :
             track[t]->raw2mA(track[t]->getCurrentRaw(false)));
          }
+			}
     StringFormatter::send(stream,F(">\n"));    
 }
 
 void TrackManager::reportGauges(Print* stream) {
     StringFormatter::send(stream,F("<jG"));
     FOR_EACH_TRACK(t) {
+			if (track[t] != NULL) {
          StringFormatter::send(stream, F(" %d"),
             track[t]->raw2mA(track[t]->getRawCurrentTripValue()));
          }
+		}
     StringFormatter::send(stream,F(">\n"));    
 }
 
@@ -497,7 +511,7 @@ void TrackManager::setJoin(bool joined) {
 #ifdef ARDUINO_ARCH_ESP32
   if (joined) {
     FOR_EACH_TRACK(t) {
-      if (track[t]->getMode()==TRACK_MODE_PROG) {
+      if (track[t] != NULL && track[t]->getMode()==TRACK_MODE_PROG) {
 	tempProgTrack = t;
 	setTrackMode(t, TRACK_MODE_MAIN);
 	break;

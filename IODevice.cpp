@@ -24,7 +24,7 @@
 #include "IODevice.h"
 #include "DIAG.h" 
 #include "FSH.h"
-#include "IO_MCP23017.h"
+//#include "IO_MCP23017.h"
 #include "DCCTimer.h"
 
 #if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_MEGAAVR)
@@ -63,6 +63,7 @@ void IODevice::begin() {
   if (exrailHalSetup)
     exrailHalSetup();
 
+/*
   // Predefine two PCA9685 modules 0x40-0x41 if no conflicts
   // Allocates 32 pins 100-131
   if (checkNoOverlap(100, 16, 0x40)) {
@@ -88,6 +89,7 @@ void IODevice::begin() {
   } else {
     DIAG(F("Default MCP23017 at I2C 0x21 disabled due to configured user device"));
   }
+	*/
 }
 
 // reset() function to reinitialise all devices

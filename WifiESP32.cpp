@@ -30,6 +30,8 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
+#include "Z21Throttle.h"
+#include "hmi.h"
 /*
 #include "soc/rtc_wdt.h"
 #include "esp_task_wdt.h"
@@ -123,6 +125,7 @@ bool WifiESP::setup(const char *SSid,
   bool havePassword = true;
   bool haveSSID = true;
   bool wifiUp = false;
+	IPAddress boxIp;
   uint8_t tries = 40;
 
   //#ifdef SERIAL_BT_COMMANDS
@@ -156,6 +159,15 @@ bool WifiESP::setup(const char *SSid,
     WiFi.setSleep(false);
 #endif
     WiFi.setAutoReconnect(true);
+
+#ifdef USE_HMI
+	  if (!hmi::progMode && !hmi::silentBootMode && hmi::CurrentInterface != NULL)
+	  {
+		  hmi::CurrentInterface->WifiStartConnection(SSid);
+		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  }
+#endif
+
     WiFi.begin(SSid, password);
     while (WiFi.status() != WL_CONNECTED && tries) {
       Serial.print('.');
@@ -165,6 +177,14 @@ bool WifiESP::setup(const char *SSid,
     if (WiFi.status() == WL_CONNECTED) {
       DIAG(F("Wifi STA IP %s"),WiFi.localIP().toString().c_str());
       wifiUp = true;
+      boxIp = WiFi.localIP();
+#ifdef USE_HMI
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+		  {
+	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
+	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  	}
+#endif
     } else {
       DIAG(F("Could not connect to Wifi SSID %s"),SSid);
       DIAG(F("Forcing one more Wifi restart"));
@@ -179,15 +199,30 @@ bool WifiESP::setup(const char *SSid,
       if (WiFi.status() == WL_CONNECTED) {
 	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
 	wifiUp = true;
+        boxIp = WiFi.localIP();
+#ifdef USE_HMI
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+	    {
+	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
+	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	  	}
+#endif
       } else {
 	DIAG(F("Wifi STA mode FAIL. Will revert to AP mode"));
 	haveSSID=false;
+#ifdef USE_HMI
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+    		{
+	    		hmi::CurrentInterface->WifiEndConnection(SSid);
+    			hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+    		}
+#endif
       }
     }
   }
   if (!haveSSID || forceAP) {
     // prepare all strings
-    String strSSID(forceAP ? SSid : "DCCEX_");
+    String strSSID(forceAP ? SSid : "Labox_");
     String strPass(forceAP ? password : "PASS_");
     if (!forceAP) {
       String strMac = WiFi.macAddress();
@@ -213,6 +248,14 @@ bool WifiESP::setup(const char *SSid,
       DIAG(F("Wifi AP IP %s"),WiFi.softAPIP().toString().c_str());
       wifiUp = true;
       APmode = true;
+      boxIp = WiFi.softAPIP();
+#ifdef USE_HMI
+	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+		  {
+			  hmi::CurrentInterface->WifiConnected(WiFi.softAPIP());
+			  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+		  }
+#endif
     } else {
       DIAG(F("Could not set up AP with Wifi SSID %s"),strSSID.c_str());
     }
@@ -236,6 +279,7 @@ bool WifiESP::setup(const char *SSid,
   server = new WiFiServer(port); // start listening on tcp port
   server->begin();
   // server started here
+  Z21Throttle::setup(boxIp, Z21_UDPPORT);
 
 #ifdef WIFI_TASK_ON_CORE0
   //start loop task
@@ -301,6 +345,10 @@ void WifiESP::loop() {
 	  NetworkClient nc(client);
 	  clients.push_back(nc);
 	  DIAG(F("New client %d, %s"), clientId, client.remoteIP().toString().c_str());
+	#ifdef USE_HMI
+	    	  if (hmi::CurrentInterface != NULL)
+			      hmi::CurrentInterface->NewClient(clientId, client.remoteIP(), 0);
+  #endif
 	}
       }
     }
@@ -321,6 +369,7 @@ void WifiESP::loop() {
     } // all clients
 
     WiThrottle::loop(outboundRing);
+    Z21Throttle::loop();
 
     // something to write out?
     clientId=outboundRing->read();

@@ -29,13 +29,8 @@
 /*
  *  © 2021 Neil McKechnie
  *  © 2020-2021 Chris Harlow, Harald Barth, David Cutting,
-<<<<<<< HEAD:CommandStation-EX-LaBox.ino
  *  			Fred Decker, Gregor Baues, Anthony W - Dayton
  *  © 2023 Thierry Paris for Locoduino.
-=======
- *  Fred Decker, Gregor Baues, Anthony W - Dayton
- *  © 2023 Nathan Kellenicki
->>>>>>> upstream/master:CommandStation-EX.ino
  *  All rights reserved.
  *
  *  This file is part of CommandStation-EX-Labox
@@ -55,11 +50,7 @@
  */
 
 #include "DCCEX.h"
-<<<<<<< HEAD:CommandStation-EX-LaBox.ino
 #include "EEPROM.h"
-=======
-#include "Display_Implementation.h"
->>>>>>> upstream/master:CommandStation-EX.ino
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -92,14 +83,6 @@ void setup()
 
   DIAG(F("License GPLv3 fsf.org (c) dcc-ex.com"));
 
-<<<<<<< HEAD:CommandStation-EX-LaBox.ino
-  DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("Labox : 2.2.2"));
-
-  CONDITIONAL_LCD_START {
-    // This block is still executed for DIAGS if LCD not in use
-    LCD(0,F("CommandStation-EX v%S"),F(VERSION));
-=======
 // Initialise HAL layer before reading EEprom or setting up MotorDrivers 
   IODevice::begin();
 
@@ -109,14 +92,15 @@ void setup()
   // Set up MotorDrivers early to initialize all pins
   TrackManager::Setup(MOTOR_SHIELD_TYPE);
 
+  DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
+  DIAG(F("Labox : 2.3.0"));
+  
   DISPLAY_START (
     // This block is still executed for DIAGS if display not in use
-    LCD(0,F("DCC-EX v%S"),F(VERSION));
->>>>>>> upstream/master:CommandStation-EX.ino
+    LCD(0,F("CommandStation-EX v%S"),F(VERSION));
     LCD(1,F("Lic GPLv3"));
   );
 
-<<<<<<< HEAD:CommandStation-EX-LaBox.ino
 #ifdef USE_HMI
   EEPROM.begin(512);
   byte mode = EEPROM.read(hmi::EEPROMModeProgAddress);
@@ -143,11 +127,11 @@ void setup()
 	// Start Ethernet if it exists
 	#ifndef ARDUINO_ARCH_ESP32
 	#if WIFI_ON
-	WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL);
+	WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
 	#endif // WIFI_ON
 	#else
 	// ESP32 needs wifi on always
-	WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL);
+	WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
 	#endif // ARDUINO_ARCH_ESP32
 
 	#if ETHERNET_ON
@@ -173,26 +157,9 @@ void setup()
   }
 
   //  TrackManager::Setup(MOTOR_SHIELD_TYPE);
-=======
-  // Responsibility 2: Start all the communications before the DCC engine
-  // Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
-  // Start Ethernet if it exists
-#ifndef ARDUINO_ARCH_ESP32
-#if WIFI_ON
-  WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
-#endif // WIFI_ON
-#else
-  // ESP32 needs wifi on always
-  WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
-#endif // ARDUINO_ARCH_ESP32
-
-#if ETHERNET_ON
-  EthernetInterface::setup();
-#endif // ETHERNET_ON
   
   // Responsibility 3: Start the DCC engine.
   DCC::begin();
->>>>>>> upstream/master:CommandStation-EX.ino
 
   // Start RMFT aka EX-RAIL (ignored if no automnation)
   RMFT::begin();

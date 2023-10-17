@@ -15,7 +15,6 @@
 #include "menuobject.h"
 
 #if defined(ARDUINO_ARCH_ESP32)
-#include "ESP32-fixes.h"
 #include <driver/adc.h>
 #include <soc/sens_reg.h>
 #include <soc/sens_struct.h>
