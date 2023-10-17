@@ -3,7 +3,7 @@
  *  © 2021 Neil McKechnie
  *  © 2021 Mike S
  *  © 2021 Fred Decker
- *  © 2020-2021 Harald Barth
+ *  © 2020-2022 Harald Barth
  *  © 2020-2021 Chris Harlow
  *
  *  This file is part of CommandStation-EX
@@ -43,106 +43,124 @@
 #undef USB_SERIAL     // Teensy has this defined by default...
 #define USB_SERIAL Serial
 
-#if defined(ARDUINO_AVR_UNO)
-#define ARDUINO_TYPE "UNO"
-#undef HAS_ENOUGH_MEMORY
-#elif defined(ARDUINO_AVR_NANO)
-#define ARDUINO_TYPE "NANO"
-#undef HAS_ENOUGH_MEMORY
-#elif defined(ARDUINO_AVR_MEGA)
-#define ARDUINO_TYPE "MEGA"
-#elif defined(ARDUINO_AVR_MEGA2560)
-#define ARDUINO_TYPE "MEGA"
-#elif defined(ARDUINO_ARCH_MEGAAVR)
-#define ARDUINO_TYPE "MEGAAVR"
-#undef HAS_ENOUGH_MEMORY
-#elif defined(ARDUINO_TEENSY31)
-#define ARDUINO_TYPE "TEENSY3132"
-#undef USB_SERIAL
-#define USB_SERIAL SerialUSB
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-// Teensy support for native I2C is awaiting development 
-#ifndef I2C_NO_INTERRUPTS
- #define I2C_NO_INTERRUPTS
-#endif
-#elif defined(ARDUINO_TEENSY35)
-#define ARDUINO_TYPE "TEENSY35"
-#undef USB_SERIAL
-#define USB_SERIAL SerialUSB
-// Teensy support for I2C is awaiting development 
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-// Teensy support for native I2C is awaiting development 
-#ifndef I2C_NO_INTERRUPTS
- #define I2C_NO_INTERRUPTS
-#endif
-#elif defined(ARDUINO_TEENSY36)
-#define ARDUINO_TYPE "TEENSY36"
-#undef USB_SERIAL
-#define USB_SERIAL SerialUSB
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-// Teensy support for native I2C is awaiting development 
-#ifndef I2C_NO_INTERRUPTS
- #define I2C_NO_INTERRUPTS
-#endif
-#elif defined(ARDUINO_TEENSY40)
-#define ARDUINO_TYPE "TEENSY40"
-#undef USB_SERIAL
-#define USB_SERIAL SerialUSB
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-// Teensy support for native I2C is awaiting development 
-#ifndef I2C_NO_INTERRUPTS
- #define I2C_NO_INTERRUPTS
-#endif
-#elif defined(ARDUINO_TEENSY41)
-#define ARDUINO_TYPE "TEENSY41"
-#undef USB_SERIAL
-#define USB_SERIAL SerialUSB
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-// Teensy support for native I2C is awaiting development 
-#ifndef I2C_NO_INTERRUPTS
-  #define I2C_NO_INTERRUPTS
-#endif
-#elif defined(ARDUINO_ARCH_ESP8266)
-#define ARDUINO_TYPE "ESP8266"
-#elif defined(ARDUINO_ARCH_ESP32)
-#define ARDUINO_TYPE "ESP32"
-#elif defined(ARDUINO_ARCH_SAMD)
-#define ARDUINO_TYPE "SAMD21"
-#undef USB_SERIAL
-#define USB_SERIAL SerialUSB
-// SAMD no EEPROM by default 
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-#elif defined(ARDUINO_ARCH_STM32)
-#define ARDUINO_TYPE "STM32"
-// STM32 no EEPROM by default 
-#ifndef DISABLE_EEPROM
-  #define DISABLE_EEPROM
-#endif
-// STM32 support for native I2C is awaiting development 
-#ifndef I2C_NO_INTERRUPTS
- #define I2C_NO_INTERRUPTS
-#endif
+// Include extended addresses unless specifically excluded
+#define I2C_EXTENDED_ADDRESS
 
+#if defined(ARDUINO_AVR_UNO)
+  #define ARDUINO_TYPE "UNO"
+  #undef HAS_ENOUGH_MEMORY
+  #define NO_EXTENDED_CHARACTERS
+  #undef I2C_EXTENDED_ADDRESS
+#elif defined(ARDUINO_AVR_NANO)
+  #define ARDUINO_TYPE "NANO"
+  #undef HAS_ENOUGH_MEMORY
+  #define NO_EXTENDED_CHARACTERS
+  #undef I2C_EXTENDED_ADDRESS
+#elif defined(ARDUINO_AVR_MEGA)
+  #define ARDUINO_TYPE "MEGA"
+#elif defined(ARDUINO_AVR_MEGA2560)
+  #define ARDUINO_TYPE "MEGA"
+#elif defined(ARDUINO_ARCH_MEGAAVR)
+  #define ARDUINO_TYPE "MEGAAVR"
+  #undef HAS_ENOUGH_MEMORY
+  #define NO_EXTENDED_CHARACTERS
+  #undef I2C_EXTENDED_ADDRESS
+#elif defined(ARDUINO_TEENSY31)
+  #define ARDUINO_TYPE "TEENSY3132"
+  #undef USB_SERIAL
+  #define USB_SERIAL SerialUSB
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+  // Teensy support for native I2C is awaiting development 
+  #ifndef I2C_USE_WIRE
+  #define I2C_USE_WIRE
+  #endif
+#elif defined(ARDUINO_TEENSY35)
+  #define ARDUINO_TYPE "TEENSY35"
+  #undef USB_SERIAL
+  #define USB_SERIAL SerialUSB
+  // Teensy support for I2C is awaiting development 
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+  // Teensy support for native I2C is awaiting development 
+  #ifndef I2C_USE_WIRE
+  #define I2C_USE_WIRE
+  #endif
+#elif defined(ARDUINO_TEENSY36)
+  #define ARDUINO_TYPE "TEENSY36"
+  #undef USB_SERIAL
+  #define USB_SERIAL SerialUSB
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+  // Teensy support for native I2C is awaiting development 
+  #ifndef I2C_USE_WIRE
+  #define I2C_USE_WIRE
+  #endif
+#elif defined(ARDUINO_TEENSY40)
+  #define ARDUINO_TYPE "TEENSY40"
+  #undef USB_SERIAL
+  #define USB_SERIAL SerialUSB
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+  // Teensy support for native I2C is awaiting development 
+  #ifndef I2C_USE_WIRE
+  #define I2C_USE_WIRE
+  #endif
+#elif defined(ARDUINO_TEENSY41)
+  #define ARDUINO_TYPE "TEENSY41"
+  #undef USB_SERIAL
+  #define USB_SERIAL SerialUSB
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+  // Teensy support for native I2C is awaiting development 
+  #ifndef I2C_USE_WIRE
+    #define I2C_USE_WIRE
+  #endif
+#elif defined(ARDUINO_ARCH_ESP8266)
+  #define ARDUINO_TYPE "ESP8266"
+  #warning "ESP8266 platform untested, you are on your own"
+#elif defined(ARDUINO_ARCH_ESP32)
+  #define ARDUINO_TYPE "ESP32"
+  #ifndef DISABLE_EEPROM
+  #define DISABLE_EEPROM
+  #endif
+#elif defined(ARDUINO_ARCH_SAMD)
+  #define ARDUINO_TYPE "SAMD21"
+  #undef USB_SERIAL
+  #define USB_SERIAL SerialUSB
+  // SAMD no EEPROM by default 
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+#elif defined(ARDUINO_ARCH_STM32)
+  #define ARDUINO_TYPE "STM32"
+  // STM32 no EEPROM by default 
+  #ifndef DISABLE_EEPROM
+    #define DISABLE_EEPROM
+  #endif
+  // STM32 support for native I2C is awaiting development 
+  #ifndef I2C_USE_WIRE
+  #define I2C_USE_WIRE
+  #endif
 
 /* TODO when ready 
 #elif defined(ARDUINO_ARCH_RP2040)
-#define ARDUINO_TYPE "RP2040"
+  #define ARDUINO_TYPE "RP2040"
 */
 
 #else
-#define CPU_TYPE_ERROR
+  #define CPU_TYPE_ERROR
+#endif
+
+// replace board type if provided by compiler
+#ifdef BOARD_NAME
+  #undef ARDUINO_TYPE
+  #define ARDUINO_TYPE BOARD_NAME
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,6 +180,15 @@
   #endif
 #else
   #define WIFI_ON false
+#endif
+
+#ifndef WIFI_FORCE_AP
+  #define WIFI_FORCE_AP false
+#else
+  #if WIFI_FORCE_AP==true || WIFI_FORCE_AP==false
+  #else
+    #error WIFI_FORCE_AP needs to be true or false
+  #endif
 #endif
 
 #if ENABLE_ETHERNET
@@ -187,7 +214,7 @@
 #define WIFI_SERIAL_LINK_SPEED 115200
 
 #if __has_include ( "myAutomation.h")
-  #if defined(HAS_ENOUGH_MEMORY) || defined(DISABLE_EEPROM)
+  #if defined(HAS_ENOUGH_MEMORY) || defined(DISABLE_EEPROM) || defined(DISABLE_PROG)
     #define EXRAIL_ACTIVE
   #else
     #define EXRAIL_WARNING

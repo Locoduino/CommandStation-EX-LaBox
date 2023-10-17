@@ -27,6 +27,10 @@
 #include "IODevice.h"
 #include "DCCTimer.h"
 
+// use powers of two so we can do logical and/or on the track modes in if clauses.
+enum TRACK_MODE : byte {TRACK_MODE_NONE = 1, TRACK_MODE_MAIN = 2, TRACK_MODE_PROG = 4,
+                        TRACK_MODE_DC = 8, TRACK_MODE_DCX = 16, TRACK_MODE_EXT = 32};
+
 #define setHIGH(fastpin)  *fastpin.inout |= fastpin.maskHIGH
 #define setLOW(fastpin)   *fastpin.inout &= fastpin.maskLOW
 #define isHIGH(fastpin)   (*fastpin.inout & fastpin.maskHIGH)
@@ -74,8 +78,9 @@
 // Virtualised Motor shield 1-track hardware Interface
 
 #ifndef UNUSED_PIN     // sync define with the one in MotorDrivers.h
-#define UNUSED_PIN 127 // inside int8_t
+#define UNUSED_PIN 255 // inside uint8_t
 #endif
+#define MAX_PIN 254
 
 class pinpair {
 public:
@@ -106,13 +111,13 @@ extern volatile portreg_t shadowPORTA;
 extern volatile portreg_t shadowPORTB;
 extern volatile portreg_t shadowPORTC;
 
-enum class POWERMODE : byte { OFF, ON, OVERLOAD };
+enum class POWERMODE : byte { OFF, ON, OVERLOAD, ALERT };
 
 class MotorDriver {
   public:
     
-    MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, int8_t brake_pin, 
-                byte current_pin, float senseFactor, unsigned int tripMilliamps, byte faultPin);
+    MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, int16_t brake_pin, 
+                byte current_pin, float senseFactor, unsigned int tripMilliamps, int16_t fault_pin);
     void setPower( POWERMODE mode);
     POWERMODE getPower() { return powerMode;}
     // as the port registers can be shadowed to get syncronized DCC signals
@@ -144,6 +149,7 @@ class MotorDriver {
     };
     inline pinpair getSignalPin() { return pinpair(signalPin,signalPin2); };
     void setDCSignal(byte speedByte);
+    void throttleInrush(bool on);
     inline void detachDCSignal() {
 #if defined(__arm__)
       pinMode(brakePin, OUTPUT);
@@ -153,8 +159,7 @@ class MotorDriver {
       setDCSignal(128);
 #endif
     };
-    int  getCurrentRaw();
-    int getCurrentRawInInterrupt();
+    int  getCurrentRaw(bool fromISR=false);
     unsigned int raw2mA( int raw);
     unsigned int mA2raw( unsigned int mA);
     inline bool brakeCanPWM() {
@@ -175,7 +180,10 @@ class MotorDriver {
     bool isPWMCapable();
     bool canMeasureCurrent();
     bool trackPWM = false; // this track uses PWM timer to generate the DCC waveform
-    static bool commonFaultPin; // This is a stupid motor shield which has only a common fault pin for both outputs
+    bool commonFaultPin = false; // This is a stupid motor shield which has only a common fault pin for both outputs
+    inline byte setCommonFaultPin() {
+      return commonFaultPin = true;
+    }
     inline byte getFaultPin() {
 	return faultPin;
     }
@@ -183,18 +191,56 @@ class MotorDriver {
       isProgTrack = on;
     }
     void checkPowerOverload(bool useProgLimit, byte trackno);
+    inline void setTrackLetter(char c) {
+      trackLetter = c;
+    };
+    // this returns how much time has passed since the last power change. If it
+    // was really long ago (approx > 52min) advance counter approx 35 min so that
+    // we are at 18 minutes again. Times for 32 bit unsigned long.
+    inline unsigned long microsSinceLastPowerChange(POWERMODE mode) {
+      unsigned long now = micros();
+      unsigned long diff = now - lastPowerChange[(int)mode];
+      if (diff > (1UL << (7 *sizeof(unsigned long)))) // 2^(4*7)us = 268.4 seconds
+        lastPowerChange[(int)mode] = now - 30000000UL;           // 30 seconds ago
+      return diff;
+    };
+#ifdef ANALOG_READ_INTERRUPT
+    bool sampleCurrentFromHW();
+    void startCurrentFromHW();
+#endif
+  inline void setMode(TRACK_MODE m) {
+    trackMode = m;
+  };
+  inline TRACK_MODE getMode() {
+    return trackMode;
+  };
   private:
+    char trackLetter = '?';
     bool isProgTrack = false; // tells us if this is a prog track
     void  getFastPin(const FSH* type,int pin, bool input, FASTPIN & result);
-    void  getFastPin(const FSH* type,int pin, FASTPIN & result) {
+    inline void  getFastPin(const FSH* type,int pin, FASTPIN & result) {
 	getFastPin(type, pin, 0, result);
-    }
+    };
+    // side effect sets lastCurrent and tripValue
+    inline bool checkCurrent(bool useProgLimit) {
+      tripValue= useProgLimit?progTripValue:getRawCurrentTripValue();
+      lastCurrent = getCurrentRaw();
+      if (lastCurrent < 0)
+	lastCurrent = -lastCurrent;
+      return lastCurrent >= tripValue;
+    };
+    // side effect sets lastCurrent
+    inline bool checkFault() {
+      lastCurrent = getCurrentRaw();
+      return lastCurrent < 0;
+    };
     VPIN powerPin;
     byte signalPin, signalPin2, currentPin, faultPin, brakePin;
     FASTPIN fastSignalPin, fastSignalPin2, fastBrakePin,fastFaultPin;
     bool dualSignal;       // true to use signalPin2
     bool invertBrake;       // brake pin passed as negative means pin is inverted
     bool invertPower;       // power pin passed as negative means pin is inverted
+    bool invertFault;       // fault pin passed as negative means pin is inverted
     
     // Raw to milliamp conversion factors avoiding float data types.
     // Milliamps=rawADCreading * sensefactorInternal / senseScale
@@ -208,23 +254,43 @@ class MotorDriver {
     int rawCurrentTripValue;
     // current sampling
     POWERMODE powerMode;
-    unsigned long lastSampleTaken;
-    unsigned int sampleDelay;
+    POWERMODE lastPowerMode;
+    unsigned long lastPowerChange[4];         // timestamp in microseconds
+    unsigned long lastBadSample;              // timestamp in microseconds
+    // used to sync restore time when common Fault pin detected
+    static unsigned long globalOverloadStart; // timestamp in microseconds
     int progTripValue;
-    int  lastCurrent;
+    int  lastCurrent; //temp value
+    int  tripValue;   //temp value
+#ifdef ANALOG_READ_INTERRUPT
+    volatile unsigned long sampleCurrentTimestamp;
+    volatile uint16_t sampleCurrent;
+#endif
     int maxmA;
     int tripmA;
 
-    // Wait times for power management. Unit: milliseconds
-    static const int  POWER_SAMPLE_ON_WAIT = 100;
-    static const int  POWER_SAMPLE_OFF_WAIT = 1000;
-    static const int  POWER_SAMPLE_OVERLOAD_WAIT = 20;
+    // Times for overload management. Unit: microseconds.
+    // Base for wait time until power is turned on again
+    static const unsigned long POWER_SAMPLE_OVERLOAD_WAIT =     40000UL;
+    // Time after we consider all faults old and forgotten
+    static const unsigned long POWER_SAMPLE_ALL_GOOD =        5000000UL;
+    // Time after which we consider a ALERT over 
+    static const unsigned long POWER_SAMPLE_ALERT_GOOD =        20000UL;
+    // How long to ignore fault pin if current is under limit
+    static const unsigned long POWER_SAMPLE_IGNORE_FAULT_LOW = 100000UL;
+    // How long to ignore fault pin if current is higher than limit
+    static const unsigned long POWER_SAMPLE_IGNORE_FAULT_HIGH =  5000UL;
+    // How long to wait between overcurrent and turning off
+    static const unsigned long POWER_SAMPLE_IGNORE_CURRENT  =  100000UL;
+    // Upper limit for retry period
+    static const unsigned long POWER_SAMPLE_RETRY_MAX =      10000000UL;
     
     // Trip current for programming track, 250mA. Change only if you really
     // need to be non-NMRA-compliant because of decoders that are not either.
     static const int TRIP_CURRENT_PROG=250;
     unsigned long power_sample_overload_wait = POWER_SAMPLE_OVERLOAD_WAIT;
     unsigned int power_good_counter = 0;
+    TRACK_MODE trackMode = TRACK_MODE_NONE; // we assume track not assigned at startup
 
 };
 #endif

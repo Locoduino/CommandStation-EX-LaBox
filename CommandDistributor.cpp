@@ -2,6 +2,7 @@
  *  © 2022 Harald Barth
  *  © 2020-2021 Chris Harlow
  *  © 2020 Gregor Baues
+ *  © 2022 Colin Murdoch
  *  All rights reserved.
  *
  *  This file is part of CommandStation-EX
@@ -29,6 +30,11 @@
 #include "DCCWaveform.h"
 #include "DCC.h"
 #include "TrackManager.h"
+#include "StringFormatter.h"
+
+// variables to hold clock time
+int16_t lastclocktime;
+int8_t lastclockrate;
 
 
 #if WIFI_ON || ETHERNET_ON || defined(SERIAL1_COMMANDS) || defined(SERIAL2_COMMANDS) || defined(SERIAL3_COMMANDS)
@@ -43,7 +49,7 @@ template<typename... Targs> void CommandDistributor::broadcastReply(clientType t
 // on a single USB connection config, write direct to Serial and ignore flush/shove
 template<typename... Targs> void CommandDistributor::broadcastReply(clientType type, Targs... msg){
   (void)type; //shut up compiler warning
-  StringFormatter::send(&Serial, msg...);
+  StringFormatter::send(&USB_SERIAL, msg...);
 }
 #endif 
 
@@ -97,7 +103,7 @@ void  CommandDistributor::parse(byte clientId,byte * buffer, RingStream * stream
 }
 
 void CommandDistributor::forget(byte clientId) {
-  // keep for later if (clients[clientId]==WITHROTTLE_TYPE) WiThrottle::forget(clientId);
+  if (clients[clientId]==WITHROTTLE_TYPE) WiThrottle::forget(clientId);
   clients[clientId]=NONE_TYPE;
 }
 #endif 
@@ -155,9 +161,83 @@ void  CommandDistributor::broadcastTurnout(int16_t id, bool isClosed ) {
 #endif
 }
 
+void  CommandDistributor::broadcastClockTime(int16_t time, int8_t rate) {
+  // The JMRI clock command is of the form : PFT65871<;>4
+  // The CS broadcast is of the form "<jC mmmm nn" where mmmm is time minutes and dd speed
+  // The string below contains serial and Withrottle protocols which should
+  // be safe for both types.
+  broadcastReply(COMMAND_TYPE, F("<jC %d %d>\n"),time, rate);
+#ifdef CD_HANDLE_RING
+  broadcastReply(WITHROTTLE_TYPE, F("PFT%l<;>%d\n"), (int32_t)time*60, rate);
+#endif
+}
+
+void CommandDistributor::setClockTime(int16_t clocktime, int8_t clockrate, byte opt) {
+  // opt - case 1 save the latest time if changed
+  //       case 2 broadcast the time when requested
+  //       case 3 display latest time
+  switch (opt)
+  {
+    case 1:
+      if (clocktime != lastclocktime){
+        // CAH. DIAG removed because LCD does it anyway. 
+        LCD(6,F("Clk Time:%d Sp %d"), clocktime, clockrate);
+        // look for an event for this time
+        RMFT2::clockEvent(clocktime,1);
+        // Now tell everyone else what the time is.
+        CommandDistributor::broadcastClockTime(clocktime, clockrate);
+        lastclocktime = clocktime;
+        lastclockrate = clockrate;
+      }
+      return;
+
+    case 2:
+      CommandDistributor::broadcastClockTime(lastclocktime, lastclockrate);
+      return;
+  }
+ 
+}
+
+int16_t CommandDistributor::retClockTime() {
+  return lastclocktime;
+}
+
 void  CommandDistributor::broadcastLoco(byte slot) {
   DCC::LOCO * sp=&DCC::speedTable[slot];
   broadcastReply(COMMAND_TYPE, F("<l %d %d %d %l>\n"), sp->loco,slot,sp->speedCode,sp->functions);
+#ifdef SABERTOOTH
+  if (Serial2 && sp->loco == SABERTOOTH) {
+    static uint8_t rampingmode = 0;
+    bool direction = (sp->speedCode & 0x80) !=0; // true for forward
+    int32_t speed = sp->speedCode & 0x7f;
+    if (speed == 1) { // emergency stop
+      if (rampingmode != 1) {
+	rampingmode = 1;
+	Serial2.print("R1: 0\r\n");
+	Serial2.print("R2: 0\r\n");
+      }
+      Serial2.print("MD: 0\r\n");
+    } else {
+      if (speed != 0) {
+        // speed is here 2 to 127
+	speed = (speed - 1) * 1625 / 100;
+	speed = speed * (direction ? 1 : -1);
+	// speed is here -2047 to 2047
+      }
+      if (rampingmode != 2) {
+	rampingmode = 2;
+	Serial2.print("R1: 2047\r\n");
+	Serial2.print("R2: 2047\r\n");
+      }
+      Serial2.print("M1: ");
+      Serial2.print(speed);
+      Serial2.print("\r\n");
+      Serial2.print("M2: ");
+      Serial2.print(speed);
+      Serial2.print("\r\n");
+    }
+  }
+#endif
 #ifdef CD_HANDLE_RING
   WiThrottle::markForBroadcast(sp->loco);
 #endif
@@ -181,9 +261,10 @@ void  CommandDistributor::broadcastPower() {
   LCD(2,F("Power %S%S"),state=='1'?F("On"):F("Off"),reason);  
 }
 
-void CommandDistributor::broadcastText(const FSH * msg) {
-  broadcastReply(COMMAND_TYPE, F("<I %S>\n"),msg);
-#ifdef CD_HANDLE_RING
-  broadcastReply(WITHROTTLE_TYPE, F("Hm%S\n"), msg);
-#endif
+void CommandDistributor::broadcastRaw(clientType type, char * msg) {
+  broadcastReply(type, F("%s"),msg);
+}
+
+void CommandDistributor::broadcastTrackState(const FSH* format,byte trackLetter,int16_t dcAddr) {
+  broadcastReply(COMMAND_TYPE, format,trackLetter,dcAddr);
 }

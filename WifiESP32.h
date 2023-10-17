@@ -1,5 +1,6 @@
 /*
- *  © 2021, Harald Barth.
+ *  © 2021 Harald Barth
+ *  © 2023 Nathan Kellenicki
  *
  *  This file is part of CommandStation-EX
  *
@@ -32,7 +33,8 @@ public:
 		    const char *wifiPassword,
 		    const char *hostname,
 		    const int port,
-		    const byte channel);
+		    const byte channel,
+			const bool forceAP);
   static void loop();
   static int GetOrAddNewClient(WiFiClient inClient, bool inUDPprotocol = false);
 private:

@@ -1,6 +1,8 @@
 /*
  *  © 2021 Neil McKechnie
  *  © 2020-2022 Chris Harlow
+ *  © 2022 Colin Murdoch
+ *  © 2023 Harald Barth
  *  All rights reserved.
  *  
  *  This file is part of CommandStation-EX
@@ -43,7 +45,10 @@ enum OPCODE : byte {OPCODE_THROW,OPCODE_CLOSE,
              OPCODE_RED,OPCODE_GREEN,OPCODE_AMBER,OPCODE_DRIVE,
              OPCODE_SERVO,OPCODE_SIGNAL,OPCODE_TURNOUT,OPCODE_WAITFOR,
              OPCODE_PAD,OPCODE_FOLLOW,OPCODE_CALL,OPCODE_RETURN,
-             OPCODE_JOIN,OPCODE_UNJOIN,OPCODE_READ_LOCO1,OPCODE_READ_LOCO2,OPCODE_POM,
+#ifndef DISABLE_PROG
+             OPCODE_JOIN,OPCODE_UNJOIN,OPCODE_READ_LOCO1,OPCODE_READ_LOCO2,
+#endif
+             OPCODE_POM,
              OPCODE_START,OPCODE_SETLOCO,OPCODE_SENDLOCO,OPCODE_FORGET,
              OPCODE_PAUSE, OPCODE_RESUME,OPCODE_POWEROFF,OPCODE_POWERON,
              OPCODE_ONCLOSE, OPCODE_ONTHROW, OPCODE_SERVOTURNOUT, OPCODE_PINTURNOUT,
@@ -54,6 +59,9 @@ enum OPCODE : byte {OPCODE_THROW,OPCODE_CLOSE,
              OPCODE_ENDTASK,OPCODE_ENDEXRAIL,
              OPCODE_SET_TRACK,
              OPCODE_ONRED,OPCODE_ONAMBER,OPCODE_ONGREEN,
+             OPCODE_ONCHANGE,
+             OPCODE_ONCLOCKTIME,
+             OPCODE_ONTIME,
 
              // OPcodes below this point are skip-nesting IF operations
              // placed here so that they may be skipped as a group
@@ -64,8 +72,21 @@ enum OPCODE : byte {OPCODE_THROW,OPCODE_CLOSE,
              OPCODE_IFTIMEOUT,
              OPCODE_IF,OPCODE_IFNOT,
              OPCODE_IFRANDOM,OPCODE_IFRESERVE,
-             OPCODE_IFCLOSED,OPCODE_IFTHROWN
+             OPCODE_IFCLOSED,OPCODE_IFTHROWN,
+             OPCODE_IFRE,
+             OPCODE_IFLOCO
              };
+
+// Ensure thrunge_lcd is put last as there may be more than one display, 
+// sequentially numbered from thrunge_lcd.
+enum thrunger: byte {
+  thrunge_print, thrunge_broadcast, thrunge_withrottle,
+  thrunge_serial,thrunge_parse,
+  thrunge_serial1, thrunge_serial2, thrunge_serial3,
+  thrunge_serial4, thrunge_serial5, thrunge_serial6,
+  thrunge_lcn, 
+  thrunge_lcd,  // Must be last!!
+  };
 
 
  
@@ -107,16 +128,17 @@ class LookList {
     static void createNewTask(int route, uint16_t cab);
     static void turnoutEvent(int16_t id, bool closed);  
     static void activateEvent(int16_t addr, bool active);
+    static void changeEvent(int16_t id, bool change);
+    static void clockEvent(int16_t clocktime, bool change);
     static const int16_t SERVO_SIGNAL_FLAG=0x4000;
     static const int16_t ACTIVE_HIGH_SIGNAL_FLAG=0x2000;
     static const int16_t DCC_SIGNAL_FLAG=0x1000;
     static const int16_t SIGNAL_ID_MASK=0x0FFF;
- 
  // Throttle Info Access functions built by exrail macros 
   static const byte rosterNameCount;
-  static const int16_t FLASH routeIdList[];
-  static const int16_t FLASH automationIdList[];
-  static const int16_t FLASH rosterIdList[];
+  static const int16_t HIGHFLASH routeIdList[];
+  static const int16_t HIGHFLASH automationIdList[];
+  static const int16_t HIGHFLASH rosterIdList[];
   static const FSH *  getRouteDescription(int16_t id);
   static char   getRouteType(int16_t id);
   static const FSH *  getTurnoutDescription(int16_t id);
@@ -137,6 +159,7 @@ private:
     static LookList* LookListLoader(OPCODE op1,
                       OPCODE op2=OPCODE_ENDEXRAIL,OPCODE op3=OPCODE_ENDEXRAIL);
     static void handleEvent(const FSH* reason,LookList* handlers, int16_t id);
+    static uint16_t getOperand(int progCounter,byte n);
     static RMFT2 * loopTask;
     static RMFT2 * pausingTask;
     void delayMe(long millisecs);
@@ -148,10 +171,12 @@ private:
     void kill(const FSH * reason=NULL,int operand=0);          
     void printMessage(uint16_t id);  // Built by RMFTMacros.h
     void printMessage2(const FSH * msg);
+    void thrungeString(uint32_t strfar, thrunger mode, byte id=0);
+    uint16_t getOperand(byte n); 
     
    static bool diag;
-   static const  FLASH  byte RouteCode[];
-   static const  FLASH  int16_t SignalDefinitions[];
+   static const  HIGHFLASH  byte RouteCode[];
+   static const  HIGHFLASH  int16_t SignalDefinitions[];
    static byte flags[MAX_FLAGS];
    static LookList * sequenceLookup;
    static LookList * onThrowLookup;
@@ -161,7 +186,8 @@ private:
    static LookList * onRedLookup;
    static LookList * onAmberLookup;
    static LookList * onGreenLookup;
-  
+   static LookList * onChangeLookup;
+   static LookList * onClockLookup;
     
   // Local variables - exist for each instance/task 
     RMFT2 *next;   // loop chain 

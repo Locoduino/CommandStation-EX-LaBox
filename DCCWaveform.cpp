@@ -80,11 +80,13 @@ void DCCWaveform::interruptHandler() {
   // Set the signal state for both tracks
   TrackManager::setDCCSignal(sigMain);
   TrackManager::setPROGSignal(sigProg);
-  
+
+  // Refresh the values in the ADCee object buffering the values of the ADC HW
+  ADCee::scan();
+
   // Move on in the state engine
   mainTrack.state=stateTransform[mainTrack.state];    
   progTrack.state=stateTransform[progTrack.state];    
-
 
   // WAVE_PENDING means we dont yet know what the next bit is
   if (mainTrack.state==WAVE_PENDING) mainTrack.interrupt2();  
@@ -245,6 +247,9 @@ void DCCWaveform::schedulePacket(const byte buffer[], byte byteCount, byte repea
   pendingPacket[byteCount] = checksum;
   pendingLength = byteCount + 1;
   pendingRepeats = repeats;
+// DIAG repeated commands (accesories)
+//  if (pendingRepeats > 0)
+//    DIAG(F("Repeats=%d on %s track"), pendingRepeats, isMainTrack ? "MAIN" : "PROG");
   // The resets will be zero not only now but as well repeats packets into the future
   clearResets(repeats+1);
   {

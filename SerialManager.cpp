@@ -1,5 +1,5 @@
  /*
- *  © 2022 Paul M Antoine
+ *  © 2022 Paul M. Antoine
  *  © 2021 Chris Harlow
  *  © 2022 Harald Barth
  *  All rights reserved.
@@ -86,6 +86,9 @@ void SerialManager::init() {
     new SerialManager(&SerialBT);
     delay(1000);
   }
+#endif
+#ifdef SABERTOOTH
+  Serial2.begin(9600, SERIAL_8N1, 16, 17); // GPIO 16 RXD2; GPIO 17 TXD2 on ESP32
 #endif
 }
 

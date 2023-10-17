@@ -78,6 +78,23 @@ int DCCTimer::freeMemory() {
 ////////////////////////////////////////////////////////////////////////
 
 #ifdef ARDUINO_ARCH_ESP32
+#include <driver/adc.h>
+#include <soc/sens_reg.h>
+#include <soc/sens_struct.h>
+#undef ADC_INPUT_MAX_VALUE
+#define ADC_INPUT_MAX_VALUE 4095 // 12 bit ADC
+#define pinToADC1Channel(X) (adc1_channel_t)(((X) > 35) ? (X)-36 : (X)-28)
+
+int IRAM_ATTR local_adc1_get_raw(int channel) {
+  uint16_t adc_value;
+  SENS.sar_meas_start1.sar1_en_pad = (1 << channel); // only one channel is selected
+  while (SENS.sar_slave_addr1.meas_status != 0);
+  SENS.sar_meas_start1.meas1_start_sar = 0;
+  SENS.sar_meas_start1.meas1_start_sar = 1;
+  while (SENS.sar_meas_start1.meas1_done_sar == 0);
+  adc_value = SENS.sar_meas_start1.meas1_data_sar;
+  return adc_value;
+}
 
 #include "DCCTimer.h"
 INTERRUPT_CALLBACK interruptHandler=0;
@@ -133,5 +150,68 @@ int DCCTimer::freeMemory() {
 void DCCTimer::reset() {
    ESP.restart();
 }
+
+#include "esp32-hal.h"
+#include "soc/soc_caps.h"
+
+
+#ifdef SOC_LEDC_SUPPORT_HS_MODE
+#define LEDC_CHANNELS           (SOC_LEDC_CHANNEL_NUM<<1)
+#else
+#define LEDC_CHANNELS           (SOC_LEDC_CHANNEL_NUM)
 #endif
+
+static int8_t pin_to_channel[SOC_GPIO_PIN_COUNT] = { 0 };
+static int cnt_channel = LEDC_CHANNELS;
+
+void DCCTimer::DCCEXanalogWriteFrequency(uint8_t pin, uint32_t frequency) {
+  if (pin < SOC_GPIO_PIN_COUNT) {
+    if (pin_to_channel[pin] != 0) {
+      ledcSetup(pin_to_channel[pin], frequency, 8);
+    }
+  }
+}
+
+void DCCTimer::DCCEXanalogWrite(uint8_t pin, int value) {
+  if (pin < SOC_GPIO_PIN_COUNT) {
+    if (pin_to_channel[pin] == 0) {
+      if (!cnt_channel) {
+          log_e("No more PWM channels available! All %u already used", LEDC_CHANNELS);
+          return;
+      }
+      pin_to_channel[pin] = --cnt_channel;
+      ledcSetup(cnt_channel, 1000, 8);
+      ledcAttachPin(pin, cnt_channel);
+    } else {
+      ledcAttachPin(pin, pin_to_channel[pin]);
+    }
+    ledcWrite(pin_to_channel[pin], value);
+  }
+}
+
+int ADCee::init(uint8_t pin) {
+  pinMode(pin, ANALOG);
+  adc1_config_width(ADC_WIDTH_BIT_12);
+  adc1_config_channel_atten(pinToADC1Channel(pin),ADC_ATTEN_DB_11);
+  return adc1_get_raw(pinToADC1Channel(pin));
+}
+int16_t ADCee::ADCmax() {
+  return 4095;
+}
+/*
+ * Read function ADCee::read(pin) to get value instead of analogRead(pin)
+ */
+int ADCee::read(uint8_t pin, bool fromISR) {
+  return local_adc1_get_raw(pinToADC1Channel(pin));
+}
+/*
+ * Scan function that is called from interrupt
+ */
+void ADCee::scan() {
+}
+
+void ADCee::begin() {
+}
+
+#endif //ESP32
 

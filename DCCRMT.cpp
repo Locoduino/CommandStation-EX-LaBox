@@ -21,6 +21,7 @@
 #include "defines.h"
 #include "DIAG.h"
 #include "DCCRMT.h"
+#include "DCCTimer.h"
 #include "DCCWaveform.h" // for MAX_PACKET_SIZE
 #include "soc/gpio_sig_map.h"
 
@@ -67,6 +68,8 @@ RMTChannel *channelHandle[8] = { 0 };
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
   RMTChannel *tt = channelHandle[channel];
   if (tt) tt->RMTinterrupt();
+  if (channel == 0)
+    DCCTimer::updateMinimumFreeMemoryISR(0);
 }
 
 RMTChannel::RMTChannel(pinpair pins, bool isMain) {
@@ -155,9 +158,9 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
 }
 
 void RMTChannel::RMTprefill() {
-    rmt_fill_tx_items(channel, preamble, preambleLen, 0);
-    rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
-  }
+  rmt_fill_tx_items(channel, preamble, preambleLen, 0);
+  rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
+}
 
 const byte transmitMask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 
@@ -191,8 +194,10 @@ int RMTChannel::RMTfillData(const byte buffer[], byte byteCount, byte repeatCoun
   setDCCBit1(data + bitcounter-1);     // overwrite previous zero bit with one bit
   setEOT(data + bitcounter++);         // EOT marker
   dataLen = bitcounter;
+  noInterrupts();                      // keep dataReady and dataRepeat consistnet to each other
   dataReady = true;
   dataRepeat = repeatCount+1;         // repeatCount of 0 means send once
+  interrupts();
   return 0;
 }
 
@@ -200,18 +205,20 @@ void IRAM_ATTR RMTChannel::RMTinterrupt() {
   //no rmt_tx_start(channel,true) as we run in loop mode
   //preamble is always loaded at beginning of buffer
   packetCounter++;
-    if (!dataReady && dataRepeat == 0) { // we did run empty
-      rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
-      return; // nothing to do about that
-    }
+  if (!dataReady && dataRepeat == 0) { // we did run empty
+    rmt_fill_tx_items(channel, idle, idleLen, preambleLen-1);
+    return; // nothing to do about that
+  }
 
-    // take care of incoming data
-    if (dataReady) {            // if we have new data, fill while preamble is running
-      rmt_fill_tx_items(channel, data, dataLen, preambleLen-1);
-      dataReady = false;
-    }
-    if (dataRepeat > 0)         // if a repeat count was specified, work on that
-      dataRepeat--;
+  // take care of incoming data
+  if (dataReady) {            // if we have new data, fill while preamble is running
+    rmt_fill_tx_items(channel, data, dataLen, preambleLen-1);
+    dataReady = false;
+    if (dataRepeat == 0)       // all data should go out at least once
+      DIAG(F("Channel %d DCC signal lost data"), channel);
+  }
+  if (dataRepeat > 0)         // if a repeat count was specified, work on that
+    dataRepeat--;
 }
 
 bool RMTChannel::addPin(byte pin, bool inverted) {

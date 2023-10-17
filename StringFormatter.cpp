@@ -18,7 +18,7 @@
  */
 #include "StringFormatter.h"
 #include <stdarg.h>
-#include "LCDDisplay.h"
+#include "DisplayInterface.h"
 
 bool Diag::ACK=false;
 bool Diag::CMD=true;
@@ -48,10 +48,17 @@ void StringFormatter::lcd(byte row, const FSH* input...) {
   send2(&USB_SERIAL,input,args);
   send(&USB_SERIAL,F(" *>\n"));
   
-  if (!LCDDisplay::lcdDisplay) return;
-  LCDDisplay::lcdDisplay->setRow(row);    
+  DisplayInterface::setRow(row);    
   va_start(args, input);
-  send2(LCDDisplay::lcdDisplay,input,args);
+  send2(DisplayInterface::getDisplayHandler(),input,args);
+}
+
+void StringFormatter::lcd2(uint8_t display, byte row, const FSH* input...) {
+  va_list args;
+
+  DisplayInterface::setRow(display, row);    
+  va_start(args, input);
+  send2(DisplayInterface::getDisplayHandler(),input,args);
 }
 
 void StringFormatter::send(Print * stream, const FSH* input...) {
@@ -73,7 +80,7 @@ void StringFormatter::send2(Print * stream,const FSH* format, va_list args) {
   char* flash=(char*)format;
   for(int i=0; ; ++i) {
     char c=GETFLASH(flash+i);
-    if (c=='\0') return;
+    if (c=='\0') break; // to va_end()
     if(c!='%') { stream->print(c); continue; }
 
     bool formatContinues=false;
@@ -94,9 +101,6 @@ void StringFormatter::send2(Print * stream,const FSH* format, va_list args) {
       { 
         const FSH*  flash= (const FSH*)va_arg(args, char*);
 
-#ifndef ARDUINO_ARCH_ESP32
-	// On ESP32 the reading flashstring from rinstream code
-	// crashes, so don't use the flashstream hack on ESP32
 #if WIFI_ON | ETHERNET_ON
         // RingStream has special logic to handle flash strings
         // but is not implemented unless wifi or ethernet are enabled.
@@ -105,16 +109,35 @@ void StringFormatter::send2(Print * stream,const FSH* format, va_list args) {
               ((RingStream *)stream)->printFlash(flash);
               else 
 #endif
-#endif
         stream->print(flash);
         break;
              }
+      case 'P': stream->print((uint32_t)va_arg(args, void*), HEX); break;
       case 'd': printPadded(stream,va_arg(args, int), formatWidth, formatLeft); break;
       case 'u': printPadded(stream,va_arg(args, unsigned int), formatWidth, formatLeft); break;
       case 'l': printPadded(stream,va_arg(args, long), formatWidth, formatLeft); break;
       case 'b': stream->print(va_arg(args, int), BIN); break;
       case 'o': stream->print(va_arg(args, int), OCT); break;
-      case 'x': stream->print(va_arg(args, int), HEX); break;
+      case 'x': stream->print((unsigned int)va_arg(args, unsigned int), HEX); break;
+      case 'X': stream->print((unsigned long)va_arg(args, unsigned long), HEX); break;
+      case 'M':
+      { // this prints a unsigned long microseconds time in readable format
+	unsigned long time = va_arg(args, long);
+	if (time >= 2000) {
+	  time = time / 1000;
+	  if (time >= 2000) {
+	    printPadded(stream, time/1000, formatWidth, formatLeft);
+	    stream->print(F("sec"));
+	  } else {
+	    printPadded(stream,time, formatWidth, formatLeft);
+	    stream->print(F("msec"));
+	  }
+	} else {
+	  printPadded(stream,time, formatWidth, formatLeft);
+	  stream->print(F("usec"));
+	}
+      }
+      break;
       //case 'f': stream->print(va_arg(args, double), 2); break;
       //format width prefix
       case '-': 
@@ -171,8 +194,8 @@ void StringFormatter::printEscape(Print * stream, char c) {
      case '\r': stream->print(F("\\r")); break; 
      case '\0': stream->print(F("\\0")); return; 
      case '\t': stream->print(F("\\t")); break;
-     case '\\': stream->print(F("\\")); break;
-     default: stream->print(c);
+     case '\\': stream->print(F("\\\\")); break;
+     default: stream->write(c);
   }
  }
 

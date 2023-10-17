@@ -27,9 +27,6 @@
 #include "MotorDriver.h"
 // Virtualised Motor shield multi-track hardware Interface
 
-enum TRACK_MODE : byte {TRACK_MODE_OFF, TRACK_MODE_MAIN, TRACK_MODE_PROG,
-                        TRACK_MODE_DC, TRACK_MODE_DCX, TRACK_MODE_EXT};
-
 // These constants help EXRAIL macros say SET_TRACK(2,mode) OR SET_TRACK(C,mode) etc.
 const byte TRACK_NUMBER_0=0, TRACK_NUMBER_A=0;    
 const byte TRACK_NUMBER_1=1, TRACK_NUMBER_B=1;    
@@ -75,11 +72,23 @@ class TrackManager {
     static void setJoin(bool join);
     static bool isJoined() { return progTrackSyncMain;}
     static void setJoinRelayPin(byte joinRelayPin);
+    static void sampleCurrent();
+    static void reportGauges(Print* stream);
+    static void reportCurrent(Print* stream);
+    static void reportObsoleteCurrent(Print* stream); 
+    static void streamTrackState(Print* stream, byte t);
+
     static int16_t joinRelay;
     static bool progTrackSyncMain;  // true when prog track is a siding switched to main
-     static bool progTrackBoosted;   // true when prog track is not current limited
-   
-    
+    static bool progTrackBoosted;   // true when prog track is not current limited
+
+#ifdef DEBUG_ADC
+  public:
+#else
+  private:
+#endif
+    static MotorDriver* track[MAX_TRACKS];
+
   private:
     static void addTrack(byte t, MotorDriver* driver);
     static byte lastTrack;
@@ -87,8 +96,6 @@ class TrackManager {
     static POWERMODE mainPowerGuess;
     static void applyDCSpeed(byte t);
 
-    static MotorDriver* track[MAX_TRACKS];
-    static TRACK_MODE trackMode[MAX_TRACKS]; 
     static int16_t trackDCAddr[MAX_TRACKS];  // dc address if TRACK_MODE_DC or TRACK_MODE_DCX
 #ifdef ARDUINO_ARCH_ESP32
     static byte tempProgTrack; // holds the prog track number during join

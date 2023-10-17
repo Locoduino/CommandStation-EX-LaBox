@@ -151,7 +151,7 @@ byte DCCACK::getAck() {
       return(0);  // pending set off but not detected means no ACK.   
 }
 
-
+#ifndef DISABLE_PROG
 void DCCACK::loop() {
   while (ackManagerProg) {
     byte opcode=GETFLASH(ackManagerProg);
@@ -350,7 +350,7 @@ void DCCACK::callback(int value) {
 
     switch (callbackState) {
       case AFTER_READ:
-         if (ackManagerRejoin && autoPowerOff) {
+         if (ackManagerRejoin && !autoPowerOff) {
                 progDriver->setPower(POWERMODE::OFF);
                 callbackStart=millis();
                 callbackState=WAITING_30;
@@ -413,7 +413,7 @@ void DCCACK::callback(int value) {
           (ackManagerCallback)( value);
     }
 }
-
+#endif
 
 void DCCACK::checkAck(byte sentResetsSincePacket) {
     if (!ackPending) return; 
@@ -424,7 +424,7 @@ void DCCACK::checkAck(byte sentResetsSincePacket) {
         return; 
     }
       
-    int current=progDriver->getCurrentRawInInterrupt();
+    int current=progDriver->getCurrentRaw(true); // true means "from interrupt"
     numAckSamples++;
     if (current > ackMaxCurrent) ackMaxCurrent=current;
     // An ACK is a pulse lasting between minAckPulseDuration and maxAckPulseDuration uSecs (refer @haba)

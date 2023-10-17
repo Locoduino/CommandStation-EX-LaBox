@@ -1,6 +1,7 @@
 /*
- *  © 2021-2022 Chris Harlow
- *  © 2020,2021 Chris Harlow. All rights reserved.
+ *  © 2020-2022 Chris Harlow. All rights reserved.
+ *  © 2022 Colin Murdoch
+ *  © 2023 Harald Barth
  *  
  *  This file is part of CommandStation-EX
  *
@@ -28,6 +29,7 @@
 #undef AFTER
 #undef ALIAS
 #undef AMBER
+#undef ANOUT
 #undef AT
 #undef ATGTE
 #undef ATLT
@@ -65,6 +67,7 @@
 #undef IFCLOSED
 #undef IFGREEN
 #undef IFGTE
+#undef IFLOCO
 #undef IFLT
 #undef IFNOT
 #undef IFRANDOM 
@@ -72,11 +75,13 @@
 #undef IFRESERVE
 #undef IFTHROWN
 #undef IFTIMEOUT
+#undef IFRE
 #undef INVERT_DIRECTION 
 #undef JOIN 
 #undef KILLALL
 #undef LATCH 
 #undef LCD 
+#undef SCREEN
 #undef LCN 
 #undef MOVETT
 #undef ONACTIVATE
@@ -85,14 +90,20 @@
 #undef ONDEACTIVATE
 #undef ONDEACTIVATEL 
 #undef ONCLOSE
+#undef ONTIME
+#undef ONCLOCKTIME
+#undef ONCLOCKMINS
 #undef ONGREEN
 #undef ONRED
 #undef ONTHROW 
+#undef ONCHANGE
 #undef PARSE
 #undef PAUSE
 #undef PIN_TURNOUT 
 #undef PRINT
+#ifndef DISABLE_PROG
 #undef POM
+#endif
 #undef POWEROFF
 #undef POWERON
 #undef READ_LOCO 
@@ -110,6 +121,9 @@
 #undef SERIAL1 
 #undef SERIAL2 
 #undef SERIAL3 
+#undef SERIAL4 
+#undef SERIAL5 
+#undef SERIAL6 
 #undef SERVO 
 #undef SERVO2 
 #undef SERVO_TURNOUT 
@@ -124,11 +138,13 @@
 #undef STOP 
 #undef THROW  
 #undef TURNOUT 
+#undef TURNOUTL
 #undef UNJOIN
 #undef UNLATCH 
 #undef VIRTUAL_SIGNAL
 #undef VIRTUAL_TURNOUT
 #undef WAITFOR
+#undef WITHROTTLE
 #undef XFOFF
 #undef XFON
 
@@ -138,6 +154,7 @@
 #define AFTER(sensor_id)
 #define ALIAS(name,value...)
 #define AMBER(signal_id)
+#define ANOUT(vpin,value,param1,param2)
 #define AT(sensor_id)
 #define ATGTE(sensor_id,value) 
 #define ATLT(sensor_id,value) 
@@ -175,6 +192,7 @@
 #define IFCLOSED(turnout_id) 
 #define IFGREEN(signal_id)
 #define IFGTE(sensor_id,value) 
+#define IFLOCO(loco_id)
 #define IFLT(sensor_id,value) 
 #define IFNOT(sensor_id)
 #define IFRANDOM(percent)
@@ -182,27 +200,35 @@
 #define IFTHROWN(turnout_id) 
 #define IFRESERVE(block)
 #define IFTIMEOUT
+#define IFRE(sensor_id,value)
 #define INVERT_DIRECTION 
 #define JOIN 
 #define KILLALL
 #define LATCH(sensor_id) 
-#define LCD(row,msg) 
+#define LCD(row,msg)
+#define SCREEN(display,row,msg)
 #define LCN(msg) 
 #define MOVETT(id,steps,activity)
 #define ONACTIVATE(addr,subaddr)
 #define ONACTIVATEL(linear)
 #define ONAMBER(signal_id) 
+#define ONTIME(value)
+#define ONCLOCKTIME(hours,mins)
+#define ONCLOCKMINS(mins)
 #define ONDEACTIVATE(addr,subaddr)
 #define ONDEACTIVATEL(linear) 
 #define ONCLOSE(turnout_id)
 #define ONGREEN(signal_id) 
 #define ONRED(signal_id) 
 #define ONTHROW(turnout_id) 
+#define ONCHANGE(sensor_id)
 #define PAUSE
 #define PIN_TURNOUT(id,pin,description...) 
 #define PRINT(msg) 
 #define PARSE(msg)
+#ifndef DISABLE_PROG
 #define POM(cv,value)
+#endif
 #define POWEROFF
 #define POWERON
 #define READ_LOCO 
@@ -220,6 +246,9 @@
 #define SERIAL1(msg) 
 #define SERIAL2(msg) 
 #define SERIAL3(msg) 
+#define SERIAL4(msg) 
+#define SERIAL5(msg) 
+#define SERIAL6(msg) 
 #define SERVO(id,position,profile) 
 #define SERVO2(id,position,duration) 
 #define SERVO_SIGNAL(vpin,redpos,amberpos,greenpos)
@@ -234,11 +263,13 @@
 #define STOP 
 #define THROW(id)  
 #define TURNOUT(id,addr,subaddr,description...) 
+#define TURNOUTL(id,addr,description...) 
 #define UNJOIN 
 #define UNLATCH(sensor_id) 
 #define VIRTUAL_SIGNAL(id) 
 #define VIRTUAL_TURNOUT(id,description...) 
 #define WAITFOR(pin)
+#define WITHROTTLE(msg)
 #define XFOFF(cab,func)
 #define XFON(cab,func)
 #endif

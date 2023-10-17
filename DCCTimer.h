@@ -1,7 +1,7 @@
 /*
- *  © 2022 Paul M Antoine
+ *  © 2022-2023 Paul M. Antoine
  *  © 2021 Mike S
- *  © 2021 Harald Barth
+ *  © 2021-2023 Harald Barth
  *  © 2021 Fred Decker
  *  All rights reserved.
  *  
@@ -62,6 +62,9 @@ class DCCTimer {
   static bool isPWMPin(byte pin);
   static void setPWM(byte pin, bool high);
   static void clearPWM();
+  static void DCCEXanalogWriteFrequency(uint8_t pin, uint32_t frequency);
+  static void DCCEXanalogWrite(uint8_t pin, int value);
+
 // Update low ram level.  Allow for extra bytes to be specified
 // by estimation or inspection, that may be used by other 
 // called subroutines.  Must be called with interrupts disabled.
@@ -93,4 +96,41 @@ private:
 
 };
 
+// Class ADCee implements caching of the ADC value for platforms which
+// have a too slow ADC read to wait for. On these platforms the ADC is
+// scanned continiously in the background from an ISR. On such
+// architectures that use the analog read during DCC waveform with
+// specially configured ADC, for example AVR, init must be called
+// PRIOR to the start of the waveform. It returns the current value so
+// that an offset can be initialized.
+class ADCee {
+public:
+  // begin is called for any setup that must be done before
+  // **init** can be called. On some architectures this involves ADC
+  // initialisation and clock routing, sampling times etc.
+  static void begin();
+  // init adds the pin to the list of scanned pins (if this
+  // platform's implementation scans pins) and returns the first
+  // read value (which is why it required begin to have been called first!)
+  // It must be called before the regular scan is started.
+  static int init(uint8_t pin);
+  // read does read the pin value from the scanned cache or directly
+  // if this is a platform that does not scan. fromISR is a hint if
+  // it was called from ISR because for some implementations that
+  // makes a difference.
+  static int read(uint8_t pin, bool fromISR=false);
+  // returns possible max value that the ADC can return
+  static int16_t ADCmax();
+private:
+  // On platforms that scan, it is called from waveform ISR
+  // only on a regular basis.
+  static void scan();
+  // bit array of used pins (max 16)
+  static uint16_t usedpins;
+  static uint8_t highestPin;
+  // cached analog values (malloc:ed to actual number of ADC channels)
+  static int *analogvals;
+  // friend so that we can call scan() and begin()
+  friend class DCCWaveform;
+  };
 #endif

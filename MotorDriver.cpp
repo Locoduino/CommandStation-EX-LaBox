@@ -1,8 +1,8 @@
 /*
- *  © 2022 Paul M Antoine
+ *  © 2022-2023 Paul M Antoine
  *  © 2021 Mike S
  *  © 2021 Fred Decker
- *  © 2020-2022 Harald Barth
+ *  © 2020-2023 Harald Barth
  *  © 2020-2021 Chris Harlow
  *  All rights reserved.
  *  
@@ -26,39 +26,17 @@
 #include "DCCWaveform.h"
 #include "DCCTimer.h"
 #include "DIAG.h"
-#define ADC_INPUT_MAX_VALUE 1023 // 10 bit ADC
 
-#if defined(ARDUINO_ARCH_ESP32)
-#include "ESP32-fixes.h"
-#include <driver/adc.h>
-#include <soc/sens_reg.h>
-#include <soc/sens_struct.h>
-#undef ADC_INPUT_MAX_VALUE
-#define ADC_INPUT_MAX_VALUE 4095 // 12 bit ADC
-#define pinToADC1Channel(X) (adc1_channel_t)(((X) > 35) ? (X)-36 : (X)-28)
-
-int IRAM_ATTR local_adc1_get_raw(int channel) {
-  uint16_t adc_value;
-  SENS.sar_meas_start1.sar1_en_pad = (1 << channel); // only one channel is selected
-  while (SENS.sar_slave_addr1.meas_status != 0);
-  SENS.sar_meas_start1.meas1_start_sar = 0;
-  SENS.sar_meas_start1.meas1_start_sar = 1;
-  while (SENS.sar_meas_start1.meas1_done_sar == 0);
-  adc_value = SENS.sar_meas_start1.meas1_data_sar;
-  return adc_value;
-}
-
-#endif
-
-bool MotorDriver::commonFaultPin=false;
+unsigned long MotorDriver::globalOverloadStart = 0;
 
 volatile portreg_t shadowPORTA;
 volatile portreg_t shadowPORTB;
 volatile portreg_t shadowPORTC;
 
-MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, int8_t brake_pin,
-                         byte current_pin, float sense_factor, unsigned int trip_milliamps, byte fault_pin) {
-  powerPin=power_pin;
+MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, int16_t brake_pin,
+                         byte current_pin, float sense_factor, unsigned int trip_milliamps, int16_t fault_pin) {
+  const FSH * warnString = F("** WARNING **");
+
   invertPower=power_pin < 0;
   if (invertPower) {
     powerPin = 0-power_pin;
@@ -94,46 +72,76 @@ MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, i
     dualSignal=true;
     getFastPin(F("SIG2"),signalPin2,fastSignalPin2);
     pinMode(signalPin2, OUTPUT);
+
+    fastSignalPin2.shadowinout = NULL;
+    if (HAVE_PORTA(fastSignalPin2.inout == &PORTA)) {
+      DIAG(F("Found PORTA pin %d"),signalPin2);
+      fastSignalPin2.shadowinout = fastSignalPin2.inout;
+      fastSignalPin2.inout = &shadowPORTA;
+    }
+    if (HAVE_PORTB(fastSignalPin2.inout == &PORTB)) {
+      DIAG(F("Found PORTB pin %d"),signalPin2);
+      fastSignalPin2.shadowinout = fastSignalPin2.inout;
+      fastSignalPin2.inout = &shadowPORTB;
+    }
+    if (HAVE_PORTC(fastSignalPin2.inout == &PORTC)) {
+      DIAG(F("Found PORTC pin %d"),signalPin2);
+      fastSignalPin2.shadowinout = fastSignalPin2.inout;
+      fastSignalPin2.inout = &shadowPORTC;
+    }
   }
   else dualSignal=false; 
   
-  brakePin=brake_pin;
   if (brake_pin!=UNUSED_PIN){
     invertBrake=brake_pin < 0;
-    brakePin=invertBrake ? 0-brake_pin : brake_pin;
+    if (invertBrake)
+      brake_pin = 0-brake_pin;
+    if (brake_pin > MAX_PIN)
+      DIAG(F("%S Brake pin %d > %d"), warnString, brake_pin, MAX_PIN);
+    brakePin=(byte)brake_pin;
     getFastPin(F("BRAKE"),brakePin,fastBrakePin);
     // if brake is used for railcom  cutout we need to do PORTX register trick here as well
     pinMode(brakePin, OUTPUT);
     setBrake(true);  // start with brake on in case we hace DC stuff going on
+  } else {
+    brakePin=UNUSED_PIN;
   }
-  else brakePin=UNUSED_PIN;
   
   currentPin=current_pin;
   if (currentPin!=UNUSED_PIN) {
-#ifdef ARDUINO_ARCH_ESP32
-    pinMode(currentPin, ANALOG);
-    adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(pinToADC1Channel(currentPin),ADC_ATTEN_DB_11);
-    senseOffset = adc1_get_raw(pinToADC1Channel(currentPin));
-#else
-    pinMode(currentPin, INPUT);
-    senseOffset=analogRead(currentPin); // value of sensor at zero current
-#endif
+    int ret = ADCee::init(currentPin);
+    if (ret < -1010) { // XXX give value a name later
+      DIAG(F("ADCee::init error %d, disable current pin %d"), ret, currentPin);
+      currentPin = UNUSED_PIN;
+    }
   }
+  senseOffset=0; // value can not be obtained until waveform is activated
 
-  faultPin=fault_pin;
-  if (faultPin != UNUSED_PIN) {
+  if (fault_pin != UNUSED_PIN) {
+    invertFault=fault_pin < 0;
+    if (invertFault)
+      fault_pin =  0-fault_pin;
+    if (fault_pin > MAX_PIN)
+      DIAG(F("%S Fault pin %d > %d"), warnString, fault_pin, MAX_PIN);
+    faultPin=(byte)fault_pin;
+    DIAG(F("Fault pin = %d invert %d"), faultPin, invertFault);
     getFastPin(F("FAULT"),faultPin, 1 /*input*/, fastFaultPin);
     pinMode(faultPin, INPUT);
+  } else {
+      faultPin=UNUSED_PIN;
   }
 
   // This conversion performed at compile time so the remainder of the code never needs
   // float calculations or library code. 
   senseFactorInternal=sense_factor * senseScale; 
   tripMilliamps=trip_milliamps;
-  rawCurrentTripValue=mA2raw(trip_milliamps);
+#ifdef MAX_CURRENT
+  if (MAX_CURRENT > 0 && MAX_CURRENT < tripMilliamps)
+    tripMilliamps = MAX_CURRENT;
+#endif
+  rawCurrentTripValue=mA2raw(tripMilliamps);
 
-  if (rawCurrentTripValue + senseOffset > ADC_INPUT_MAX_VALUE) {
+  if (rawCurrentTripValue + senseOffset > ADCee::ADCmax()) {
     // This would mean that the values obtained from the ADC never
     // can reach the trip value. So independent of the current, the
     // short circuit protection would never trip. So we adjust the
@@ -141,26 +149,21 @@ MotorDriver::MotorDriver(int16_t power_pin, byte signal_pin, byte signal_pin2, i
     // maximum value instead.
 
     //    DIAG(F("Changing short detection value from %d to %d mA"),
-    // raw2mA(rawCurrentTripValue), raw2mA(ADC_INPUT_MAX_VALUE-senseOffset));
-    rawCurrentTripValue=ADC_INPUT_MAX_VALUE-senseOffset;
+    // raw2mA(rawCurrentTripValue), raw2mA(ADCee::ADCmax()-senseOffset));
+    rawCurrentTripValue=ADCee::ADCmax()-senseOffset;
   }
 
   if (currentPin==UNUSED_PIN) 
-    DIAG(F("** WARNING ** No current or short detection"));
+    DIAG(F("%S No current or short detection"), warnString);
   else  {
-    DIAG(F("CurrentPin=A%d, Offset=%d, TripValue=%d"),
-    currentPin-A0, senseOffset,rawCurrentTripValue);
+    DIAG(F("Pin %d Max %dmA (%d)"), currentPin, raw2mA(rawCurrentTripValue), rawCurrentTripValue);
 
     // self testing diagnostic for the non-float converters... may be removed when happy
     //  DIAG(F("senseFactorInternal=%d raw2mA(1000)=%d mA2Raw(1000)=%d"),
     //   senseFactorInternal, raw2mA(1000),mA2raw(1000));
   }
 
-  // prepare values for current detection
-  sampleDelay = 0;
-  lastSampleTaken = millis();
   progTripValue = mA2raw(TRIP_CURRENT_PROG); 
-
 }
 
 bool MotorDriver::isPWMCapable() {
@@ -169,18 +172,25 @@ bool MotorDriver::isPWMCapable() {
 
 
 void MotorDriver::setPower(POWERMODE mode) {
-  bool on=mode==POWERMODE::ON;
+  if (powerMode == mode) return;
+  //DIAG(F("Track %c POWERMODE=%d"), trackLetter, (int)mode);
+  lastPowerChange[(int)mode] = micros();
+  if (mode == POWERMODE::OVERLOAD)
+    globalOverloadStart = lastPowerChange[(int)mode];
+  bool on=(mode==POWERMODE::ON || mode ==POWERMODE::ALERT);
   if (on) {
-    noInterrupts();
+    // when switching a track On, we need to check the crrentOffset with the pin OFF
+    if (powerMode==POWERMODE::OFF && currentPin!=UNUSED_PIN) {
+        senseOffset = ADCee::read(currentPin);
+        DIAG(F("Track %c sensOffset=%d"),trackLetter,senseOffset);
+    }
+
     IODevice::write(powerPin,invertPower ? LOW : HIGH);
-    interrupts();
     if (isProgTrack)
       DCCWaveform::progTrack.clearResets();
   }
   else {
-      noInterrupts();
       IODevice::write(powerPin,invertPower ? HIGH : LOW);
-      interrupts();
   }
   powerMode=mode; 
 }
@@ -207,57 +217,137 @@ bool MotorDriver::canMeasureCurrent() {
   return currentPin!=UNUSED_PIN;
 }
 /*
- * Return the current reading as pin reading 0 to 1023. If the fault
- * pin is activated return a negative current to show active fault pin.
- * As there is no -0, create a little and return -1 in that case.
+ * Return the current reading as pin reading 0 to max resolution (1024 or 4096).
+ * If the fault pin is activated return a negative current to show active fault pin.
+ * As there is no -0, cheat a little and return -1 in that case.
  * 
  * senseOffset handles the case where a shield returns values above or below 
  * a central value depending on direction.
+ *
+ * Bool fromISR should be adjusted dependent how function is called
  */
-int MotorDriver::getCurrentRaw() {
+int MotorDriver::getCurrentRaw(bool fromISR) {
+  (void)fromISR;
   if (currentPin==UNUSED_PIN) return 0; 
   int current;
-  // This function should NOT be called in an interruot so we 
-  // dont need to fart about saving and restoring CPU specific 
-  // interrupt registers. 
-#ifdef ARDUINO_ARCH_ESP32
-  current = local_adc1_get_raw(pinToADC1Channel(currentPin))-senseOffset;
-#else
-  noInterrupts();
-  current = analogRead(currentPin)-senseOffset;
-  interrupts();
-#endif
+  current = ADCee::read(currentPin, fromISR);
+  // here one can diag raw value
+  // if (fromISR == false) DIAG(F("%c: %d"), trackLetter, current);
+  current = current-senseOffset;     // adjust with offset
   if (current<0) current=0-current;
-  if ((faultPin != UNUSED_PIN)  && isLOW(fastFaultPin) && powerMode==POWERMODE::ON)
+  // current >= 0 here, we use negative current as fault pin flag
+  if ((faultPin != UNUSED_PIN) && powerPin) {
+    if (invertFault ? isHIGH(fastFaultPin) : isLOW(fastFaultPin))
       return (current == 0 ? -1 : -current);
+  }
   return current;
-   
 }
 
+#ifdef ANALOG_READ_INTERRUPT
+/*
+ * This should only be called in interrupt context
+ * Copies current value from HW to cached value in
+ * Motordriver.
+ */
+#pragma GCC push_options
+#pragma GCC optimize ("-O3")
+bool MotorDriver::sampleCurrentFromHW() {
+  byte low, high;
+  //if (!bit_is_set(ADCSRA, ADIF))
+  if (bit_is_set(ADCSRA, ADSC))
+    return false;
+  //  if ((ADMUX & mask) != (currentPin - A0))
+  //    return false;
+  low = ADCL; //must read low before high
+  high = ADCH;
+  bitSet(ADCSRA, ADIF);
+  sampleCurrent = (high << 8) | low;
+  sampleCurrentTimestamp = millis();
+  return true;
+}
+void MotorDriver::startCurrentFromHW() {
+#if defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560)
+  const byte mask = 7;
+#else
+  const byte mask = 31;
+#endif
+  ADMUX=(1<<REFS0)|((currentPin-A0) & mask); //select AVCC as reference and set MUX
+  bitSet(ADCSRA,ADSC); // start conversion
+}
+#pragma GCC pop_options
+#endif //ANALOG_READ_INTERRUPT
+
+#if defined(ARDUINO_ARCH_ESP32)
+#ifdef VARIABLE_TONES
+uint16_t taurustones[28] = { 165, 175, 196, 220,
+			     247, 262, 294, 330,
+			     349, 392, 440, 494,
+			     523, 587, 659, 698,
+			     494, 440, 392, 249,
+			     330, 284, 262, 247,
+			     220, 196, 175, 165 };
+#endif
+#endif
 void MotorDriver::setDCSignal(byte speedcode) {
   if (brakePin == UNUSED_PIN)
     return;
-#if defined(ARDUINO_ARCH_ESP32)
-  DCCEXanalogWriteFrequency(brakePin, 100); // set DC PWM frequency to 100Hz XXX May move to setup
-#endif
+  switch(brakePin) {
 #if defined(ARDUINO_AVR_UNO)
-  TCCR2B = (TCCR2B & B11111000) | B00000110; // set divisor on timer 2 to result in (approx) 122.55Hz
+    // Not worth doin something here as:
+    // If we are on pin 9 or 10 we are on Timer1 and we can not touch Timer1 as that is our DCC source.
+    // If we are on pin 5 or 6 we are on Timer 0 ad we can not touch Timer0 as that is millis() etc.
+    // We are most likely not on pin 3 or 11 as no known motor shield has that as brake.
 #endif
 #if defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560)
-  TCCR2B = (TCCR2B & B11111000) | B00000110; // set divisor on timer 2 to result in (approx) 122.55Hz
-  TCCR4B = (TCCR4B & B11111000) | B00000100; // same for timer 4 but maxcount and thus divisor differs
+  case 9:
+  case 10:
+    // Timer2 (is differnet)
+    TCCR2A = (TCCR2A & B11111100) | B00000001; // set WGM1=0 and WGM0=1 phase correct PWM
+    TCCR2B = (TCCR2B & B11110000) | B00000110; // set WGM2=0 ; set divisor on timer 2 to 1/256 for 122.55Hz
+    //DIAG(F("2 A=%x B=%x"), TCCR2A, TCCR2B);
+    break;
+  case 6:
+  case 7:
+  case 8:
+    // Timer4
+    TCCR4A = (TCCR4A & B11111100) | B00000001; // set WGM0=1 and WGM1=0 for normal PWM 8-bit
+    TCCR4B = (TCCR4B & B11100000) | B00000100; // set WGM2=0 and WGM3=0 for normal PWM 8 bit and div 1/256 for 122.55Hz
+    break;
+  case 46:
+  case 45:
+  case 44:
+    // Timer5
+    TCCR5A = (TCCR5A & B11111100) | B00000001; // set WGM0=1 and WGM1=0 for normal PWM 8-bit
+    TCCR5B = (TCCR5B & B11100000) | B00000100; // set WGM2=0 and WGM3=0 for normal PWM 8 bit and div 1/256 for 122.55Hz
+    break;
 #endif
+  default:
+    break;
+  }
   // spedcoode is a dcc speed & direction
   byte tSpeed=speedcode & 0x7F; // DCC Speed with 0,1 stop and speed steps 2 to 127
   byte tDir=speedcode & 0x80;
   byte brake;
+#if defined(ARDUINO_ARCH_ESP32)
+  {
+    int f = 131;
+#ifdef VARIABLE_TONES
+    if (tSpeed > 2) {
+      if (tSpeed <= 58) {
+	f = taurustones[ (tSpeed-2)/2 ] ;
+      }
+    }
+#endif
+    DCCTimer::DCCEXanalogWriteFrequency(brakePin, f); // set DC PWM frequency to 100Hz XXX May move to setup
+  }
+#endif
   if (tSpeed <= 1) brake = 255;
   else if (tSpeed >= 127) brake = 0;
   else  brake = 2 * (128-tSpeed);
   if (invertBrake)
     brake=255-brake;
 #if defined(ARDUINO_ARCH_ESP32)
-  DCCEXanalogWrite(brakePin,brake);
+  DCCTimer::DCCEXanalogWrite(brakePin,brake);
 #else
   analogWrite(brakePin,brake);
 #endif
@@ -286,24 +376,66 @@ void MotorDriver::setDCSignal(byte speedcode) {
     interrupts();
   }
 }
-
-int MotorDriver::getCurrentRawInInterrupt() {
-  
-  // IMPORTANT:  This function must be called in Interrupt() time within the 56uS timer
-  //             The default analogRead takes ~100uS which is catastrphic
-  //             so DCCTimer has set the sample time to be much faster.  
-  if (currentPin==UNUSED_PIN) return 0; 
-#ifdef ARDUINO_ARCH_ESP32 //On ESP we do all in loop() instead of in interrupt
-  return getCurrentRaw();
+void MotorDriver::throttleInrush(bool on) {
+  if (brakePin == UNUSED_PIN)
+    return;
+  if ( !(trackMode & (TRACK_MODE_MAIN | TRACK_MODE_PROG | TRACK_MODE_EXT)))
+    return;
+  byte duty = on ? 208 : 0;
+  if (invertBrake)
+    duty = 255-duty;
+#if defined(ARDUINO_ARCH_ESP32)
+  if(on) {
+    DCCTimer::DCCEXanalogWrite(brakePin,duty);
+    DCCTimer::DCCEXanalogWriteFrequency(brakePin, 62500);
+  } else {
+    ledcDetachPin(brakePin);
+  }
 #else
-  return analogRead(currentPin)-senseOffset;
+  if(on){
+    switch(brakePin) {
+#if defined(ARDUINO_AVR_UNO)
+      // Not worth doin something here as:
+      // If we are on pin 9 or 10 we are on Timer1 and we can not touch Timer1 as that is our DCC source.
+      // If we are on pin 5 or 6 we are on Timer 0 ad we can not touch Timer0 as that is millis() etc.
+      // We are most likely not on pin 3 or 11 as no known motor shield has that as brake.
 #endif
-}  
-
+#if defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560)
+    case 9:
+    case 10:
+      // Timer2 (is different)
+      TCCR2A = (TCCR2A & B11111100) | B00000011; // set WGM0=1 and WGM1=1 for fast PWM
+      TCCR2B = (TCCR2B & B11110000) | B00000001; // set WGM2=0 and prescaler div=1 (max)
+      DIAG(F("2 A=%x B=%x"), TCCR2A, TCCR2B);
+      break;
+    case 6:
+    case 7:
+    case 8:
+      // Timer4
+      TCCR4A = (TCCR4A & B11111100) | B00000001; // set WGM0=1 and WGM1=0 for fast PWM 8-bit
+      TCCR4B = (TCCR4B & B11100000) | B00001001; // set WGM2=1 and WGM3=0 for fast PWM 8 bit and div=1 (max)
+      break;
+    case 46:
+    case 45:
+    case 44:
+      // Timer5
+      TCCR5A = (TCCR5A & B11111100) | B00000001; // set WGM0=1 and WGM1=0 for fast PWM 8-bit
+      TCCR5B = (TCCR5B & B11100000) | B00001001; // set WGM2=1 and WGM3=0 for fast PWM 8 bit and div=1 (max)
+      break;
+#endif
+    default:
+      break;
+    }
+  }
+  analogWrite(brakePin,duty);
+#endif
+}
 unsigned int MotorDriver::raw2mA( int raw) {
+  //DIAG(F("%d = %d * %d / %d"), (int32_t)raw * senseFactorInternal / senseScale, raw, senseFactorInternal, senseScale);
   return (int32_t)raw * senseFactorInternal / senseScale;
 }
 unsigned int MotorDriver::mA2raw( unsigned int mA) {
+  //DIAG(F("%d = %d * %d / %d"), (int32_t)mA * senseScale / senseFactorInternal, mA, senseScale, senseFactorInternal);
   return (int32_t)mA * senseScale / senseFactorInternal;
 }
 
@@ -326,64 +458,170 @@ void  MotorDriver::getFastPin(const FSH* type,int pin, bool input, FASTPIN & res
     // DIAG(F(" port=0x%x, inoutpin=0x%x, isinput=%d, mask=0x%x"),port, result.inout,input,result.maskHIGH);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////
+// checkPowerOverload(useProgLimit, trackno)
+// bool useProgLimit: Trackmanager knows if this track is in prog mode or in main mode
+// byte trackno: trackmanager knows it's number (could be skipped?)
+//
+// Short ciruit handling strategy:
+//
+// There are the following power states: ON ALERT OVERLOAD OFF
+// OFF state is only changed to/from manually. Power is on
+// during ON and ALERT. Power is off during OVERLOAD and OFF.
+// The overload mechanism changes between the other states like
+//
+// ON -1-> ALERT -2-> OVERLOAD -3-> ALERT -4-> ON
+// or
+// ON -1-> ALERT -4-> ON
+//
+// Times are in class MotorDriver (MotorDriver.h).
+//
+// 1. ON to ALERT:
+// Transition on fault pin condition or current overload
+//
+// 2. ALERT to OVERLOAD:
+// Transition happens if different timeouts have elapsed.
+// If only the fault pin is active, timeout is
+// POWER_SAMPLE_IGNORE_FAULT_LOW (100ms)
+// If only overcurrent is detected, timeout is
+// POWER_SAMPLE_IGNORE_CURRENT (100ms)
+// If fault pin and overcurrent are active, timeout is
+// POWER_SAMPLE_IGNORE_FAULT_HIGH (5ms)
+// Transition to OVERLOAD turns off power to the affected
+// output (unless fault pins are shared)
+// If the transition conditions are not fullfilled,
+// transition according to 4 is tested.
+//
+// 3. OVERLOAD to ALERT
+// Transiton happens when timeout has elapsed, timeout
+// is named power_sample_overload_wait. It is started
+// at POWER_SAMPLE_OVERLOAD_WAIT (40ms) at first entry
+// to OVERLOAD and then increased by a factor of 2
+// at further entries to the OVERLOAD condition. This
+// happens until POWER_SAMPLE_RETRY_MAX (10sec) is reached.
+// power_sample_overload_wait is reset by a poweroff or
+// a POWER_SAMPLE_ALL_GOOD (5sec) period during ON.
+// After timeout power is turned on again and state
+// goes back to ALERT.
+//
+// 4. ALERT to ON
+// Transition happens by watching the current and fault pin
+// samples during POWER_SAMPLE_ALERT_GOOD (20ms) time. If
+// values have been good during that time, transition is
+// made back to ON. Note that even if state is back to ON,
+// the power_sample_overload_wait time is first reset
+// later (see above).
+//
+// The time keeping is handled by timestamps lastPowerChange[]
+// which are set by each power change and by lastBadSample which
+// keeps track if conditions during ALERT have been good enough
+// to go back to ON. The time differences are calculated by
+// microsSinceLastPowerChange().
+//
+
 void MotorDriver::checkPowerOverload(bool useProgLimit, byte trackno) {
-  if (millis() - lastSampleTaken  < sampleDelay) return;
-  lastSampleTaken = millis();
-  int tripValue= useProgLimit?progTripValue:getRawCurrentTripValue();
-  
-  // Trackname for diag messages later
+
   switch (powerMode) {
-    case POWERMODE::OFF:
-      sampleDelay = POWER_SAMPLE_OFF_WAIT;
-      break;
-    case POWERMODE::ON:
-      // Check current
-      lastCurrent=getCurrentRaw();
-      if (lastCurrent < 0) {
-	  // We have a fault pin condition to take care of
-	  lastCurrent = -lastCurrent;
-	  setPower(POWERMODE::OVERLOAD); // Turn off, decide later how fast to turn on again
-	  if (commonFaultPin) {
-	      if (lastCurrent < tripValue) {
-		      setPower(POWERMODE::ON); // maybe other track
-	      }
-	      // Write this after the fact as we want to turn on as fast as possible
-	      // because we don't know which output actually triggered the fault pin
-	      DIAG(F("COMMON FAULT PIN ACTIVE: POWERTOGGLE TRACK %c"), trackno + 'A');
-	  } else {
-	    DIAG(F("TRACK %c FAULT PIN ACTIVE - OVERLOAD"), trackno + 'A');
-	      if (lastCurrent < tripValue) {
-		  lastCurrent = tripValue; // exaggerate
-	      }
-	  }
-      }
-      if (lastCurrent < tripValue) {
-        sampleDelay = POWER_SAMPLE_ON_WAIT;
-	if(power_good_counter<100)
-	  power_good_counter++;
-	else
-	  if (power_sample_overload_wait>POWER_SAMPLE_OVERLOAD_WAIT) power_sample_overload_wait=POWER_SAMPLE_OVERLOAD_WAIT;
+
+  case POWERMODE::OFF: {
+    lastPowerMode = POWERMODE::OFF;
+    power_sample_overload_wait = POWER_SAMPLE_OVERLOAD_WAIT;
+    break;
+  }
+
+  case POWERMODE::ON: {
+    lastPowerMode = POWERMODE::ON;
+    bool cF = checkFault();
+    bool cC = checkCurrent(useProgLimit);
+    if(cF || cC ) {
+      if (cC) {
+	unsigned int mA=raw2mA(lastCurrent);
+	DIAG(F("TRACK %c ALERT %s %dmA"), trackno + 'A',
+	     cF ? "FAULT" : "",
+	     mA);
       } else {
-        setPower(POWERMODE::OVERLOAD);
-        unsigned int mA=raw2mA(lastCurrent);
-        unsigned int maxmA=raw2mA(tripValue);
-	      power_good_counter=0;
-        sampleDelay = power_sample_overload_wait;
-        DIAG(F("TRACK %c POWER OVERLOAD %dmA (limit %dmA) shutdown for %dms"), trackno + 'A', mA, maxmA, sampleDelay);
-	if (power_sample_overload_wait >= 10000)
-	    power_sample_overload_wait = 10000;
-	else
-	    power_sample_overload_wait *= 2;
+	DIAG(F("TRACK %c ALERT FAULT"), trackno + 'A');
       }
+      setPower(POWERMODE::ALERT);
       break;
-    case POWERMODE::OVERLOAD:
-      // Try setting it back on after the OVERLOAD_WAIT
+    }
+    // all well
+    if (microsSinceLastPowerChange(POWERMODE::ON) > POWER_SAMPLE_ALL_GOOD) {
+      power_sample_overload_wait = POWER_SAMPLE_OVERLOAD_WAIT;
+    }
+    break;
+  }
+
+  case POWERMODE::ALERT: {
+    // set local flags that handle how much is output to diag (do not output duplicates)
+    bool notFromOverload = (lastPowerMode != POWERMODE::OVERLOAD);
+    bool powerModeChange = (powerMode != lastPowerMode);
+    unsigned long now = micros();
+    if (powerModeChange)
+      lastBadSample = now;
+    lastPowerMode = POWERMODE::ALERT;
+    // check how long we have been in this state
+    unsigned long mslpc = microsSinceLastPowerChange(POWERMODE::ALERT);
+    if(checkFault()) {
+      throttleInrush(true);
+      lastBadSample = now;
+      unsigned long timeout = checkCurrent(useProgLimit) ? POWER_SAMPLE_IGNORE_FAULT_HIGH : POWER_SAMPLE_IGNORE_FAULT_LOW;
+      if ( mslpc < timeout) {
+	if (powerModeChange)
+	  DIAG(F("TRACK %c FAULT PIN (%M ignore)"), trackno + 'A', timeout);
+	break;
+      }
+      DIAG(F("TRACK %c FAULT PIN detected after %4M. Pause %4M)"), trackno + 'A', mslpc, power_sample_overload_wait);
+      throttleInrush(false);
+      setPower(POWERMODE::OVERLOAD);
+      break;
+    }
+    if (checkCurrent(useProgLimit)) {
+      lastBadSample = now;
+      if (mslpc < POWER_SAMPLE_IGNORE_CURRENT) {
+	if (powerModeChange) {
+	  unsigned int mA=raw2mA(lastCurrent);
+	  DIAG(F("TRACK %c CURRENT (%M ignore) %dmA"), trackno + 'A', POWER_SAMPLE_IGNORE_CURRENT, mA);
+	}
+	break;
+      }
+      unsigned int mA=raw2mA(lastCurrent);
+      unsigned int maxmA=raw2mA(tripValue);
+      DIAG(F("TRACK %c POWER OVERLOAD %4dmA (max %4dmA) detected after %4M. Pause %4M"),
+	   trackno + 'A', mA, maxmA, mslpc, power_sample_overload_wait);
+      throttleInrush(false);
+      setPower(POWERMODE::OVERLOAD);
+      break;
+    }
+    // all well
+    unsigned long goodtime = micros() - lastBadSample;
+    if (goodtime > POWER_SAMPLE_ALERT_GOOD) {
+      if (true || notFromOverload) { // we did a RESTORE message XXX
+	unsigned int mA=raw2mA(lastCurrent);
+	DIAG(F("TRACK %c NORMAL (after %M/%M) %dmA"), trackno + 'A', goodtime, mslpc, mA);
+      }
+      throttleInrush(false);
       setPower(POWERMODE::ON);
-      sampleDelay = POWER_SAMPLE_ON_WAIT;
-      // Debug code....
-      DIAG(F("TRACK %c POWER RESTORE (check %dms)"), trackno + 'A', sampleDelay);
-      break;
-    default:
-      sampleDelay = 999; // cant get here..meaningless statement to avoid compiler warning.
+    }
+    break;
+  }
+
+  case POWERMODE::OVERLOAD: {
+    lastPowerMode = POWERMODE::OVERLOAD;
+    unsigned long mslpc = (commonFaultPin ? (micros() - globalOverloadStart) : microsSinceLastPowerChange(POWERMODE::OVERLOAD));
+    if (mslpc > power_sample_overload_wait) {
+      // adjust next wait time
+      power_sample_overload_wait *= 2;
+      if (power_sample_overload_wait > POWER_SAMPLE_RETRY_MAX)
+	power_sample_overload_wait = POWER_SAMPLE_RETRY_MAX;
+      // power on test
+      DIAG(F("TRACK %c POWER RESTORE (after %4M)"), trackno + 'A', mslpc);
+      setPower(POWERMODE::ALERT);
+    }
+    break;
+  }
+
+  default:
+    break;
   }
 }

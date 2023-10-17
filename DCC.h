@@ -51,7 +51,10 @@ const byte MAX_LOCOS = 30;
 class DCC
 {
 public:
-  static void begin(const FSH * motorShieldName);
+  static inline void setShieldName(const FSH * motorShieldName) {
+    shieldName=(FSH *)motorShieldName;
+  };
+  static void begin();
   static void loop();
 
   // Public DCC API functions
@@ -108,7 +111,8 @@ private:
   static void updateLocoReminder(int loco, byte speedCode);
   static void setFunctionInternal(int cab, byte fByte, byte eByte);
   static bool issueReminder(int reg);
-  static int nextLoco;
+  static int lastLocoReminder;
+  static int highestUsedReg;
   static FSH *shieldName;
   static byte globalSpeedsteps;
 

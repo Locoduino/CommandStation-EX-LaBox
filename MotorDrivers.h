@@ -1,7 +1,7 @@
 /*
- *  © 2022 Paul M Antoine
+ *  © 2022-2023 Paul M. Antoine
  *  © 2021 Fred Decker
- *  © 2020-2022 Harald Barth
+ *  © 2020-2023 Harald Barth
  *  (c) 2020 Chris Harlow. All rights reserved.
  *  (c) 2021 Fred Decker.  All rights reserved.
  *  (c) 2020 Harald Barth. All rights reserved.
@@ -36,7 +36,7 @@
 // custom defines in config.h.
 
 #ifndef UNUSED_PIN     // sync define with the one in MotorDriver.h
-#define UNUSED_PIN 127 // inside int8_t
+#define UNUSED_PIN 255 // inside uint8_t
 #endif
 
 // The MotorDriver definition is:
@@ -59,25 +59,39 @@
 
 // Arduino STANDARD Motor Shield, used on different architectures:
 
-#if defined(ARDUINO_ARCH_SAMD)
-// Setup for SAMD21 Sparkfun DEV board using Arduino standard Motor Shield R3 (MUST be R3
+#if defined(ARDUINO_ARCH_SAMD) || defined(ARDUINO_ARCH_STM32)
+// Standard Motor Shield definition for 3v3 processors (other than the ESP32)
+// Setup for SAMD21 Sparkfun DEV board MUST use Arduino Motor Shield R3 (MUST be R3
 // for 3v3 compatibility!!) senseFactor for 3.3v systems is 1.95 as calculated when using
 // 10-bit A/D samples, and for 12-bit samples it's more like 0.488, but we probably need
 // to tweak both these
 #define STANDARD_MOTOR_SHIELD F("STANDARD_MOTOR_SHIELD"),                                                 \
-                              new MotorDriver(3, 12, UNUSED_PIN, 9, A0, 1.95, 1500, UNUSED_PIN), \
-                              new MotorDriver(11, 13, UNUSED_PIN, 8, A1, 1.95, 1500, UNUSED_PIN)
+                              new MotorDriver(3, 12, UNUSED_PIN, 9, A0, 0.488, 1500, UNUSED_PIN), \
+                              new MotorDriver(11, 13, UNUSED_PIN, 8, A1, 0.488, 1500, UNUSED_PIN)
 #define SAMD_STANDARD_MOTOR_SHIELD STANDARD_MOTOR_SHIELD
+#define STM32_STANDARD_MOTOR_SHIELD STANDARD_MOTOR_SHIELD
+
+// EX 8874 based shield connected to a 3V3 system with 12-bit (4096) ADC
+#define EX8874_SHIELD F("EX8874"), \
+ new MotorDriver( 3, 12, UNUSED_PIN, 9, A0, 1.27, 5000, A4), \
+ new MotorDriver(11, 13, UNUSED_PIN, 8, A1, 1.27, 5000, A5)
+
 
 #elif defined(ARDUINO_ARCH_ESP32)
 // STANDARD shield on an ESPDUINO-32 (ESP32 in Uno form factor). The shield must be eiter the
 // 3.3V compatible R3 version or it has to be modified to not supply more than 3.3V to the
-// analog inputs. Here we use analog inputs A4 and A5 as A0 and A1 are wired in a way so that
+// analog inputs. Here we use analog inputs A2 and A3 as A0 and A1 are wired in a way so that
 // they are not useable at the same time as WiFi (what a bummer). The numbers below are the
 // actual GPIO numbers. In comments the numbers the pins have on an Uno.
-#define STANDARD_MOTOR_SHIELD F("STANDARD_MOTOR_SHIELD"),                                                 \
-    new MotorDriver(25/* 3*/, 19/*12*/, UNUSED_PIN, 13/*9*/, 36/*A4*/, 0.70, 1500, UNUSED_PIN), \
-    new MotorDriver(23/*11*/, 18/*13*/, UNUSED_PIN, 12/*8*/, 39/*A5*/, 0.70, 1500, UNUSED_PIN)
+#define STANDARD_MOTOR_SHIELD F("STANDARD_MOTOR_SHIELD"), \
+ new MotorDriver(25/* 3*/, 19/*12*/, UNUSED_PIN, 13/*9*/, 35/*A2*/, 0.70, 1500, UNUSED_PIN), \
+ new MotorDriver(23/*11*/, 18/*13*/, UNUSED_PIN, 12/*8*/, 34/*A3*/, 0.70, 1500, UNUSED_PIN)
+
+// EX 8874 based shield connected to a 3.3V system (like ESP32) and 12bit (4096) ADC
+// numbers are GPIO numbers. comments are UNO form factor shield pin numbers
+#define EX8874_SHIELD F("EX8874"),\
+ new MotorDriver(25/* 3*/, 19/*12*/, UNUSED_PIN, 13/*9*/, 35/*A2*/, 1.27, 5000, 36 /*A4*/), \
+ new MotorDriver(23/*11*/, 18/*13*/, UNUSED_PIN, 12/*8*/, 34/*A3*/, 1.27, 5000, 39 /*A5*/)
 
 #else
 // STANDARD shield on any Arduino Uno or Mega compatible with the original specification.
@@ -87,6 +101,12 @@
 #define BRAKE_PWM_SWAPPED_MOTOR_SHIELD F("BPS_MOTOR_SHIELD"),                                       \
                               new MotorDriver(-9 , 12, UNUSED_PIN, -3, A0, 2.99, 1500, UNUSED_PIN), \
                               new MotorDriver(-8 , 13, UNUSED_PIN,-11, A1, 2.99, 1500, UNUSED_PIN)
+
+// EX 8874 based shield connected to a 5V system (like Arduino) and 10bit (1024) ADC
+#define EX8874_SHIELD F("EX8874"), \
+ new MotorDriver( 3, 12, UNUSED_PIN, 9, A0, 5.08, 5000, A4), \
+ new MotorDriver(11, 13, UNUSED_PIN, 8, A1, 5.08, 5000, A5)
+
 #endif
 
 // Pololu Motor Shield
@@ -157,4 +177,31 @@
  new MotorDriver(5,  6, UNUSED_PIN, UNUSED_PIN, A0, 2.99, 1500, UNUSED_PIN),\
  new MotorDriver(9, 10, UNUSED_PIN, UNUSED_PIN, A1, 2.99, 1500, UNUSED_PIN)
 
+// This is an example how to stack two standard motor shields. The upper shield
+// needs pins 3 8 9 11 12 13 A0 A1 disconnected from the lower shield and
+// jumpered instead like this:  2-3 6-8 7-9 4-13 5-11 10-12 A0-A4 A1-A5
+// Pin assigment table:
+// 2 Enable C  jumpered
+// 3 Enable A  direct
+// 4 Dir D     jumpered
+// 5 Enable D  jumpered
+// 6 Brake D   jumpered
+// 7 Brake C   jumpered
+// 8 Brake B   direct
+// 9 Brake A   direct
+// 10 Dir C    jumpered
+// 11 Enable B direct
+// 12 Dir A    direct
+// 13 Dir B    direct
+// A0 Sense A  direct
+// A1 Sense B  direct
+// A4 Sense C  jumpered
+// A5 Sense D  jumpered
+//
+#define STACKED_MOTOR_SHIELD F("STACKED_MOTOR_SHIELD"),\
+  new MotorDriver( 3, 12, UNUSED_PIN, 9, A0, 2.99, 1500, UNUSED_PIN), \
+  new MotorDriver(11, 13, UNUSED_PIN, 8, A1, 2.99, 1500, UNUSED_PIN), \
+  new MotorDriver( 2, 10, UNUSED_PIN, 7, A4, 2.99, 1500, UNUSED_PIN), \
+  new MotorDriver( 5,  4, UNUSED_PIN, 6, A5, 2.99, 1500, UNUSED_PIN)
+//
 #endif

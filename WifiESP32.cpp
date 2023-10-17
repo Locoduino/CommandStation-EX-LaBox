@@ -1,5 +1,7 @@
 /*
-    © 2021, Harald Barth.
+    © 2023 Paul M. Antoine
+    © 2021 Harald Barth
+    © 2023 Nathan Kellenicki
 
     This file is part of CommandStation-EX
 
@@ -20,6 +22,7 @@
 #if defined(ARDUINO_ARCH_ESP32)
 #include <vector>
 #include "defines.h"
+#include "ESPmDNS.h"
 #include <WiFi.h>
 #include "esp_wifi.h"
 #include "WifiESP32.h"
@@ -27,8 +30,6 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
-#include "Z21Throttle.h"
-#include "hmi.h"
 /*
 #include "soc/rtc_wdt.h"
 #include "esp_task_wdt.h"
@@ -36,7 +37,6 @@
 
 #include "soc/timer_group_struct.h"
 #include "soc/timer_group_reg.h"
-
 void feedTheDog0(){
   // feed dog 0
   TIMERG0.wdt_wprotect=TIMG_WDT_WKEY_VALUE; // write enable
@@ -108,15 +108,21 @@ void wifiLoop(void *){
 }
 #endif
 
+char asciitolower(char in) {
+  if (in <= 'Z' && in >= 'A')
+    return in - ('Z' - 'z');
+  return in;
+}
+
 bool WifiESP::setup(const char *SSid,
                     const char *password,
                     const char *hostname,
                     int port,
-                    const byte channel) {
+                    const byte channel,
+                    const bool forceAP) {
   bool havePassword = true;
   bool haveSSID = true;
   bool wifiUp = false;
-  IPAddress boxIp;
   uint8_t tries = 40;
 
   //#ifdef SERIAL_BT_COMMANDS
@@ -141,7 +147,8 @@ bool WifiESP::setup(const char *SSid,
   if (strncmp(yourNetwork, password, 13) == 0 || strncmp("", password, 13) == 0)
     havePassword = false;
 
-  if (haveSSID && havePassword) {
+  if (haveSSID && havePassword && !forceAP) {
+    WiFi.setHostname(hostname); // Strangely does not work unless we do it HERE!
     WiFi.mode(WIFI_STA);
 #ifdef SERIAL_BT_COMMANDS
     WiFi.setSleep(true);
@@ -149,15 +156,6 @@ bool WifiESP::setup(const char *SSid,
     WiFi.setSleep(false);
 #endif
     WiFi.setAutoReconnect(true);
-
-#ifdef USE_HMI
-	  if (!hmi::progMode && !hmi::silentBootMode && hmi::CurrentInterface != NULL)
-	  {
-		  hmi::CurrentInterface->WifiStartConnection(SSid);
-		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-	  }
-#endif
-
     WiFi.begin(SSid, password);
     while (WiFi.status() != WL_CONNECTED && tries) {
       Serial.print('.');
@@ -167,14 +165,6 @@ bool WifiESP::setup(const char *SSid,
     if (WiFi.status() == WL_CONNECTED) {
       DIAG(F("Wifi STA IP %s"),WiFi.localIP().toString().c_str());
       wifiUp = true;
-      boxIp = WiFi.localIP();
-#ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
-		  {
-	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
-	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-	  	}
-#endif
     } else {
       DIAG(F("Could not connect to Wifi SSID %s"),SSid);
       DIAG(F("Forcing one more Wifi restart"));
@@ -182,45 +172,33 @@ bool WifiESP::setup(const char *SSid,
       esp_wifi_connect();
       tries=40;
       while (WiFi.status() != WL_CONNECTED && tries) {
-	      Serial.print('.');
-	      tries--;
-	      delay(500);
+	Serial.print('.');
+	tries--;
+	delay(500);
       }
       if (WiFi.status() == WL_CONNECTED) {
-      	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
-	      wifiUp = true;
-        boxIp = WiFi.localIP();
-#ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
-	    {
-	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
-	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-	  	}
-#endif
+	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
+	wifiUp = true;
       } else {
-	      DIAG(F("Wifi STA mode FAIL. Will revert to AP mode"));
-	      haveSSID=false;
-#ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
-    		{
-	    		hmi::CurrentInterface->WifiEndConnection(SSid);
-    			hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-    		}
-#endif
+	DIAG(F("Wifi STA mode FAIL. Will revert to AP mode"));
+	haveSSID=false;
       }
     }
   }
-
-  if (!haveSSID) {
+  if (!haveSSID || forceAP) {
     // prepare all strings
-    String strSSID("Labox_");
-    String strPass("Pass_");
-    String strMac = WiFi.macAddress();
-    strMac.remove(0,9);
-    strMac.replace(":","");
-    strMac.replace(":","");
-    strSSID.concat(strMac);
-    strPass.concat(strMac);
+    String strSSID(forceAP ? SSid : "DCCEX_");
+    String strPass(forceAP ? password : "PASS_");
+    if (!forceAP) {
+      String strMac = WiFi.macAddress();
+      strMac.remove(0,9);
+      strMac.replace(":","");
+      strMac.replace(":","");
+      // convert mac addr hex chars to lower case to be compatible with AT software
+      std::transform(strMac.begin(), strMac.end(), strMac.begin(), asciitolower);
+      strSSID.concat(strMac);
+      strPass.concat(strMac);
+    }
 
     WiFi.mode(WIFI_AP);
 #ifdef SERIAL_BT_COMMANDS
@@ -229,34 +207,35 @@ bool WifiESP::setup(const char *SSid,
     WiFi.setSleep(false);
 #endif
     if (WiFi.softAP(strSSID.c_str(),
-		      havePassword ? password : strPass.c_str(),
-		      channel, false, 8)) {
+		    havePassword ? password : strPass.c_str(),
+		    channel, false, 8)) {
       DIAG(F("Wifi AP SSID %s PASS %s"),strSSID.c_str(),havePassword ? password : strPass.c_str());
       DIAG(F("Wifi AP IP %s"),WiFi.softAPIP().toString().c_str());
       wifiUp = true;
       APmode = true;
-      boxIp = WiFi.softAPIP();
-#ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
-		  {
-			  hmi::CurrentInterface->WifiConnected(WiFi.softAPIP());
-			  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-		  }
-#endif
     } else {
       DIAG(F("Could not set up AP with Wifi SSID %s"),strSSID.c_str());
     }
   }
+
 
   if (!wifiUp) {
     DIAG(F("Wifi setup all fail (STA and AP mode)"));
     // no idea to go on
     return false;
   }
+
+  // Now Wifi is up, register the mDNS service
+  if(!MDNS.begin(hostname)) {
+    DIAG(F("Wifi setup failed to start mDNS"));
+  }
+  if(!MDNS.addService("withrottle", "tcp", 2560)) {
+    DIAG(F("Wifi setup failed to add withrottle service to mDNS"));
+  }
+
   server = new WiFiServer(port); // start listening on tcp port
   server->begin();
   // server started here
-  Z21Throttle::setup(boxIp, Z21_UDPPORT);
 
 #ifdef WIFI_TASK_ON_CORE0
   //start loop task
@@ -291,128 +270,104 @@ const char *wlerror[] = {
 			 "WL_DISCONNECTED"
 };
 
-void WifiESP::loop()
-{
+void WifiESP::loop() {
   int clientId; //tmp loop var
 
   // really no good way to check for LISTEN especially in AP mode?
   wl_status_t wlStatus;
   if (APmode || (wlStatus = WiFi.status()) == WL_CONNECTED) {
     // loop over all clients and remove inactive
-    for (clientId=0; clientId<clients.size(); clientId++) {
+    for (clientId=0; clientId<clients.size(); clientId++){
       // check if client is there and alive
       if(clients[clientId].inUse && !clients[clientId].wifi.connected()) {
-	      DIAG(F("Remove client %d"), clientId);
-      	CommandDistributor::forget(clientId);
-      	clients[clientId].wifi.stop();
-      	clients[clientId].inUse = false;
-      	//Do NOT clients.erase(clients.begin()+clientId) as
-      	//that would mix up clientIds for later.
+	DIAG(F("Remove client %d"), clientId);
+	CommandDistributor::forget(clientId);
+	clients[clientId].wifi.stop();
+	clients[clientId].inUse = false;
+	//Do NOT clients.erase(clients.begin()+clientId) as
+	//that would mix up clientIds for later.
       }
     }
     if (server->hasClient()) {
       WiFiClient client;
-
       while (client = server->available()) {
-	      for (clientId=0; clientId<clients.size(); clientId++) {
-	        if (clients[clientId].recycle(client)) {
-	          DIAG(F("Recycle client %d %s"), clientId, client.remoteIP().toString().c_str());
-	          break;
-	        }
-	      }
-	      if (clientId>=clients.size()) {
-	        NetworkClient nc(client);
-	        clients.push_back(nc);
-	        DIAG(F("New client %d, %s"), clientId, client.remoteIP().toString().c_str());
-	#ifdef USE_HMI
-	    	  if (hmi::CurrentInterface != NULL)
-			      hmi::CurrentInterface->NewClient(clientId, client.remoteIP(), 0);
-  #endif
-        }
+	for (clientId=0; clientId<clients.size(); clientId++){
+	  if (clients[clientId].recycle(client)) {
+	    DIAG(F("Recycle client %d %s"), clientId, client.remoteIP().toString().c_str());
+	    break;
+	  }
+	}
+	if (clientId>=clients.size()) {
+	  NetworkClient nc(client);
+	  clients.push_back(nc);
+	  DIAG(F("New client %d, %s"), clientId, client.remoteIP().toString().c_str());
+	}
       }
     }
     // loop over all connected clients
-    for (clientId=0; clientId<clients.size(); clientId++) {
+    for (clientId=0; clientId<clients.size(); clientId++){
       if(clients[clientId].ok()) {
-	      int len;
-	      if ((len = clients[clientId].wifi.available()) > 0) {
-	       // read data from client
-	       byte cmd[len+1];
-	       for(int i=0; i<len; i++) {
-	         cmd[i]=clients[clientId].wifi.read();
-	        }
-	      cmd[len]=0;
-	      CommandDistributor::parse(clientId,cmd,outboundRing);
-	      }
+	int len;
+	if ((len = clients[clientId].wifi.available()) > 0) {
+	  // read data from client
+	  byte cmd[len+1];
+	  for(int i=0; i<len; i++) {
+	    cmd[i]=clients[clientId].wifi.read();
+	  }
+	  cmd[len]=0;
+	  CommandDistributor::parse(clientId,cmd,outboundRing);
+	}
       }
     } // all clients
-    
-    // UDP clients
-    
+
     WiThrottle::loop(outboundRing);
-    Z21Throttle::loop();
 
     // something to write out?
-    clientId = outboundRing->read();
-    if (clientId >= 0)
-    {
+    clientId=outboundRing->read();
+    if (clientId >= 0) {
       // We have data to send in outboundRing
       // and we have a valid clientId.
       // First read it out to buffer
       // and then look if it can be sent because
       // we can not leave it in the ring for ever
-      int count = outboundRing->count();
+      int count=outboundRing->count();
       {
-        char buffer[count + 1]; // one extra for '\0'
-        for (int i = 0; i < count; i++)
-        {
-          int c = outboundRing->read();
-          if (c >= 0) // Panic check, should never be false
-            buffer[i] = (char)c;
-          else
-          {
-            DIAG(F("Ringread fail at %d"), i);
-            break;
-          }
-        }
-        // buffer filled, end with '\0' so we can use it as C string
-        buffer[count] = '\0';
-        if ((unsigned int)clientId <= clients.size() && clients[clientId].ok())
-        {
-          if (Diag::CMD || Diag::WITHROTTLE)
-            DIAG(F("SEND %d:%s"), clientId, buffer);
-          clients[clientId].wifi.write(buffer, count);
-        }
-        else
-        {
-          DIAG(F("Unsent(%d): %s"), clientId, buffer);
-        }
+	char buffer[count+1]; // one extra for '\0'
+	for(int i=0;i<count;i++) {
+	  int c = outboundRing->read();
+	  if (c >= 0) // Panic check, should never be false
+	    buffer[i] = (char)c;
+	  else {
+	    DIAG(F("Ringread fail at %d"),i);
+	    break;
+	  }
+	}
+	// buffer filled, end with '\0' so we can use it as C string
+	buffer[count]='\0';
+	if((unsigned int)clientId <= clients.size() && clients[clientId].ok()) {
+	  if (Diag::CMD || Diag::WITHROTTLE)
+	    DIAG(F("SEND %d:%s"), clientId, buffer);
+	  clients[clientId].wifi.write(buffer,count);
+	} else {
+	  DIAG(F("Unsent(%d): %s"), clientId, buffer);
+	}
       }
     }
-  }
-  else 
-  {
-    if (!APmode)
-    { // in STA mode but not connected any more
-      // kick it again
-      if (wlStatus <= 6)
-      {
-        DIAG(F("Wifi aborted with error %s. Kicking Wifi!"), wlerror[wlStatus]);
-        esp_wifi_start();
-        esp_wifi_connect();
-        uint8_t tries = 40;
-        while (WiFi.status() != WL_CONNECTED && tries)
-        {
-          Serial.print('.');
-          tries--;
-          delay(500);
-        }
+  } else if (!APmode) { // in STA mode but not connected any more
+    // kick it again
+    if (wlStatus <= 6) {
+      DIAG(F("Wifi aborted with error %s. Kicking Wifi!"), wlerror[wlStatus]);
+      esp_wifi_start();
+      esp_wifi_connect();
+      uint8_t tries=40;
+      while (WiFi.status() != WL_CONNECTED && tries) {
+	Serial.print('.');
+	tries--;
+	delay(500);
       }
-      else
-      {
-        // all well, probably
-        // DIAG(F("Running BT"));
-      }
+    } else {
+      // all well, probably
+      //DIAG(F("Running BT"));
     }
   }
 
