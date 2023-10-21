@@ -8,7 +8,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include <arduino.h>
+#include <Arduino.h>
 
 //************************ Global variables ****************************
 //***********************************************************************
