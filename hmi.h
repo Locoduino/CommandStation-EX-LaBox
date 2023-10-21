@@ -15,7 +15,7 @@
 #include "OneButton.h"
 #include "Wire.h"
 #include "hmiConfig.h"
-#include "hmiInterface.hpp"
+#include "HmiInterface.hpp"
 
 #include "hmiTrain.h"
 #include "globals.h"
