@@ -45,7 +45,7 @@ The configuration file for DCC-EX Command Station
 //        the correct resistor could damage the sense pin on your Arduino or destroy
 //        the device.
 //
-// DEFINE MOTOR_SHIELD_TYPE BELOW ACCORDING TO THE FOLLOWING TABLE:
+// DEFINE MOTOR_SHIELD_TYPE BELOW. THESE ARE EXAMPLES. FULL LIST IN MotorDrivers.h
 //
 //  STANDARD_MOTOR_SHIELD : Arduino Motor shield Rev3 based on the L298 with 18V 2A per channel
 //  POLOLU_MOTOR_SHIELD   : Pololu MC33926 Motor Driver (not recommended for prog track)
@@ -118,10 +118,10 @@ The configuration file for DCC-EX Command Station
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD ""
+#define WIFI_PASSWORD "Your network passwd"
 //
 // WIFI_HOSTNAME: You probably don't need to change this
-#define WIFI_HOSTNAME ""
+#define WIFI_HOSTNAME "labox"
 //
 // WIFI_CHANNEL: If the line "#define ENABLE_WIFI true" is uncommented, 
 // WiFi will be enabled (Mega only). The default channel is set to "1" whether
@@ -169,7 +169,7 @@ The configuration file for DCC-EX Command Station
 //  *  #define SCROLLMODE 0 is scroll continuous (fill screen if poss),
 //  *  #define SCROLLMODE 1 is by page (alternate between pages),
 //  *  #define SCROLLMODE 2 is by row (move up 1 row at a time).
-//#define SCROLLMODE 1
+#define SCROLLMODE 1
 
 // LaBox specific defines
 

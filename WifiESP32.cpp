@@ -368,6 +368,8 @@ void WifiESP::loop() {
       }
     } // all clients
 
+    // UDP clients
+    
     WiThrottle::loop(outboundRing);
     Z21Throttle::loop();
 

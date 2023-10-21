@@ -592,8 +592,7 @@ void DCC::setLocoId(int id,ACK_CALLBACK callback) {
 void DCC::forgetLoco(int cab) {  // removes any speed reminders for this loco
   setThrottle2(cab,1); // ESTOP this loco if still on track
   int reg=lookupSpeedTable(cab, false);
-  if (reg>=0) 
-  {
+  if (reg>=0) {
 #ifdef USE_HMI
 	  if (hmi::CurrentInterface != NULL)
 	  {
