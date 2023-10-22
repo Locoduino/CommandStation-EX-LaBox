@@ -188,12 +188,6 @@ void MenuManagement::BtnSelectPressed()
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
       activeMenu->start();
 
-//      if(activeMenu->userDefinedValue == MENUTYPECOMEBCK)
-//      {
-//        Serial.print("userDefinedValue == MENUTYPECOMEBCK");
-//        activeMenu->resetMenu();
-//        activeMenu = activeMenu->parent;
-//      }
     break;
     case MENUCHOSEN :
       _HMIDEBUG_LEVEL1_PRINT("Menu choice ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);_HMIDEBUG_LEVEL1_PRINT(" has been made : ");
