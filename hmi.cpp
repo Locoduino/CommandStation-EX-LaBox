@@ -85,7 +85,7 @@ void hmi::begin()
   if (!hmi::progMode && !hmi::silentBootMode) {
     drawBitmap(0, 0, locoduino_Splash128x44, 128, 44, WHITE);
     setCursor(0, 48);
-    println("La Box |Locoduino.org");
+    println("LaBox | Locoduino.org");
     display();
     delay(2000);
   }
