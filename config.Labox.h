@@ -57,11 +57,14 @@ The configuration file for DCC-EX Command Station
 //   |
 //   +-----------------------v
 //
-#define LABOX_MOTOR_SHIELD	new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 2.00, 2000, UNUSED_PIN)
 
-#define LABOX_MAIN_MOTOR_SHIELD F("LABOX"), LABOX_MOTOR_SHIELD
- 
-#define MOTOR_SHIELD_TYPE LABOX_MAIN_MOTOR_SHIELD
+#define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
+ new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 2.00, 2000, UNUSED_PIN)
+
+#define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
+ NULL, \
+ new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 2.00, 2000, UNUSED_PIN)
+
 //
 /////////////////////////////////////////////////////////////////////////////////////
 //

@@ -18,8 +18,8 @@
 
 #if __has_include ( "config.h")
   #include "config.h"
-  #ifndef MOTOR_SHIELD_TYPE
-  #error Your config.h must include a MOTOR_SHIELD_TYPE definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.example.h to config.h
+  #ifndef LABOX_MAIN_MOTOR_SHIELD
+  #error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.example.h to config.h
   #endif
 #else
   #warning config.h not found. Using defaults from config.example.h
@@ -89,9 +89,7 @@ void setup()
   // As the setup of a motor shield may require a read of the current sense input from the ADC,
   // let's make sure to initialise the ADCee class!
   ADCee::begin();
-  // Set up MotorDrivers early to initialize all pins
-  TrackManager::Setup(MOTOR_SHIELD_TYPE);
-
+  
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
   DIAG(F("Labox : 2.3.0"));
   
@@ -147,13 +145,14 @@ void setup()
   //  detailed pin mappings and may also require modified subclasses of the MotorDriver to implement specialist logic.
   // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.hrr
 
+// Set up MotorDrivers early to initialize all pins
   if (hmi::progMode) {
     DIAG(F("Labox Prog mode."));
-    TrackManager::Setup(F("ESP32"), NULL, LABOX_MOTOR_SHIELD);
+    TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
   }
   else {
     DIAG(F("Labox Main mode."));
-    TrackManager::Setup(F("ESP32"), LABOX_MOTOR_SHIELD);
+    TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
 
   //  TrackManager::Setup(MOTOR_SHIELD_TYPE);
