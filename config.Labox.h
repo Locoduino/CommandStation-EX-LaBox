@@ -59,11 +59,11 @@ The configuration file for DCC-EX Command Station
 //
 
 #define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
- new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 2.00, 2000, UNUSED_PIN)
+ new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 #define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
  NULL, \
- new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 2.00, 2000, UNUSED_PIN)
+ new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 //
 /////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ The configuration file for DCC-EX Command Station
 // PS has a higher rating than your motor shield you do not need this.
 // You can use this as well if you are cautious and your trains do not
 // need full current.
-// #define MAX_CURRENT 2250
+#define MAX_CURRENT 2250
 //
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -115,7 +115,7 @@ The configuration file for DCC-EX Command Station
 // The AP mode password must be at least 8 characters long.
 //
 // Your SSID may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_SSID "Your network name"
+#define WIFI_SSID "LaBox230"
 //
 // WIFI_PASSWORD is the network password for your home network or if
 // you want to change the password from default AP mode password
@@ -124,7 +124,7 @@ The configuration file for DCC-EX Command Station
 #define WIFI_PASSWORD "Your network passwd"
 //
 // WIFI_HOSTNAME: You probably don't need to change this
-#define WIFI_HOSTNAME "labox"
+#define WIFI_HOSTNAME "LaBox"
 //
 // WIFI_CHANNEL: If the line "#define ENABLE_WIFI true" is uncommented, 
 // WiFi will be enabled (Mega only). The default channel is set to "1" whether
@@ -135,7 +135,7 @@ The configuration file for DCC-EX Command Station
 // WIFI_FORCE_AP: If you'd like to specify your own WIFI_SSID in AP mode, set this
 // true. Otherwise it is assumed that you'd like to connect to an existing network
 // with that SSID.
-#define WIFI_FORCE_AP false
+#define WIFI_FORCE_AP true
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
