@@ -353,7 +353,11 @@ void hmi::dashboard()
   drawFastHLine(0,10,128, WHITE);
 
   setCursor(0, 48);
+#if defined(HMI_SHOW_CURRENT)
   sprintf(message, "U=%1.0fV  |  I=%1.0fmA", voltage, current);
+#else
+  sprintf(message, "U=%1.0fV", voltage);
+#endif
   println(message);
 
   //--- Message stack, only 4 last events

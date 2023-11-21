@@ -243,9 +243,11 @@ void hmiTrain::dashboard1T()
   display->setCursor(0, 0);
   sprintf(message, "%1.2f V", display->voltage);
   display->println(message);
+	#if defined(HMI_SHOW_CURRENT)
   display->setCursor(0, 9);
   sprintf(message, "%1.2f mA",  display->current);
   display->println(message);
+	#endif
   //------------------- Light symbol (F0)-------------------------
   if(function[0] )   // Function 0      //DEBUG DEBUG DEBUG
   {
