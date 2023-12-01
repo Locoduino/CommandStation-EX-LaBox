@@ -354,9 +354,9 @@ void hmi::dashboard()
 
   setCursor(0, 48);
 #if defined(HMI_SHOW_CURRENT)
-  sprintf(message, "U=%1.0fV  |  I=%1.0fmA", voltage, current);
+  sprintf(message, "U=%.0fV  |  I=%.0fmA", voltage, current);
 #else
-  sprintf(message, "U=%1.0fV", voltage);
+  sprintf(message, "U=%.0fV", voltage);
 #endif
   println(message);
 
@@ -832,7 +832,7 @@ void hmi::readCurrent()
     mainDriver=md;
   }
 
-  if (mainDriver == NULL)
+  if (mainDriver == NULL || !mainDriver->canMeasureCurrent())
   {
     current = 0;
     return;
@@ -843,7 +843,7 @@ void hmi::readCurrent()
   float base = 0;
 	for (int j = 0; j < 50; j++)
 	{
-		float val = (float)mainDriver->getCurrentRaw();
+		float val = (float)analogRead(mainDriver->getCurrentPin());
 		base += val;
 	}
 	current = (float) (((base / 50) * HMI_CurrentK) - HMI_deltaCurrent);

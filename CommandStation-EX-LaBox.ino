@@ -91,7 +91,7 @@ void setup()
   ADCee::begin();
   
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("Labox : 2.3.0"));
+  DIAG(F("LaBox : 2.4.0"));
   
   DISPLAY_START (
     // This block is still executed for DIAGS if display not in use
@@ -147,11 +147,11 @@ void setup()
 
 // Set up MotorDrivers early to initialize all pins
   if (hmi::progMode) {
-    DIAG(F("Labox Prog mode."));
+    DIAG(F("LaBox Prog mode."));
     TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
   }
   else {
-    DIAG(F("Labox Main mode."));
+    DIAG(F("LaBox Main mode."));
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
 

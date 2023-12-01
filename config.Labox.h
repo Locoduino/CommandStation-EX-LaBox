@@ -177,7 +177,7 @@ The configuration file for DCC-EX Command Station
 // LaBox specific defines
 
 #define USE_HMI
-//#define HMI_SHOW_CURRENT
+#define HMI_SHOW_CURRENT
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM

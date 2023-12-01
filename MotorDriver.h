@@ -187,6 +187,9 @@ class MotorDriver {
     inline byte getFaultPin() {
 	return faultPin;
     }
+    inline byte getCurrentPin() {		// LaBox
+	return currentPin;
+    }
     inline void makeProgTrack(bool on) {  // let this output know it's a prog track.
       isProgTrack = on;
     }
