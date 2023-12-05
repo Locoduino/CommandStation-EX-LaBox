@@ -22,10 +22,11 @@
 #define PIN_BTN_BTNDWN          19
 #define PIN_CURRENT_MES         36
 #define PIN_VOLTAGE_MES         34
+
 // U/I correctors
 #define HMI_VoltageK            0.0068      // Voltage scaling coefficient
 #define HMI_CurrentK            0.9        	// Current scaling coefficient
-#define HMI_deltaCurrent		100			// Current value shift with I=0
+#define HMI_deltaCurrent				0			// Current value shift with I=0
 // Stack / string allocation sizes
 #define HMI_StackNbCarElt       20          // 10 elements into the stack
 #define HMI_EventMaxToDisplay   5           // We can display in full screnn 7 lines of event
