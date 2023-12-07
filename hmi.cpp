@@ -6,6 +6,8 @@
  * @Organization : Locoduino.org
  */
 #include "DCCEX.h"
+#ifdef USE_HMI
+
 #include "Wire.h"
 
 #include "hmi.h"
@@ -972,4 +974,5 @@ void hmi::showWifiWaiting()
   
 }
 
+#endif
 #endif
