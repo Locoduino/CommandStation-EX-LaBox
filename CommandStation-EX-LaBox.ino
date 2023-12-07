@@ -76,6 +76,11 @@ hmi boxHMI(&Wire);
 #endif
 //----------------------------------------------------------------------------
 
+//--------------------------- CAN messaging -------------------------------------
+#ifdef CAN
+#include "CanMsg.h"
+#endif
+//----------------------------------------------------------------------------
 
 void setup()
 {
@@ -95,7 +100,7 @@ void setup()
   ADCee::begin();
 
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("LaBox : 2.4.0"));
+  DIAG(F("LaBox : 2.4.1"));
 
   DISPLAY_START(
       // This block is still executed for DIAGS if display not in use
