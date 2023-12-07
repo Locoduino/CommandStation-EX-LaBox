@@ -16,14 +16,14 @@
 // If config.h is not found, config.example.h will be used with all defaults.
 ////////////////////////////////////////////////////////////////////////////////////
 
-#if __has_include ( "config.h")
-  #include "config.h"
-  #ifndef LABOX_MAIN_MOTOR_SHIELD
-  #error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.example.h to config.h
-  #endif
+#if __has_include("config.h")
+#include "config.h"
+#ifndef LABOX_MAIN_MOTOR_SHIELD
+#error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.example.h to config.h
+#endif
 #else
-  #warning config.h not found. Using defaults from config.example.h
-  #include "config.example.h"
+#warning config.h not found. Using defaults from config.example.h
+#include "config.example.h"
 #endif
 
 /*
@@ -51,6 +51,9 @@
 
 #include "DCCEX.h"
 #include "EEPROM.h"
+#ifdef CAN
+#include "CanMsg.h"
+#endif
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -73,6 +76,7 @@ hmi boxHMI(&Wire);
 #endif
 //----------------------------------------------------------------------------
 
+
 void setup()
 {
   // The main sketch has responsibilities during setup()
@@ -83,21 +87,20 @@ void setup()
 
   DIAG(F("License GPLv3 fsf.org (c) dcc-ex.com"));
 
-// Initialise HAL layer before reading EEprom or setting up MotorDrivers 
+  // Initialise HAL layer before reading EEprom or setting up MotorDrivers
   IODevice::begin();
 
   // As the setup of a motor shield may require a read of the current sense input from the ADC,
   // let's make sure to initialise the ADCee class!
   ADCee::begin();
-  
+
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
   DIAG(F("LaBox : 2.4.0"));
-  
-  DISPLAY_START (
-    // This block is still executed for DIAGS if display not in use
-    LCD(0,F("CommandStation-EX v%S"),F(VERSION));
-    LCD(1,F("Lic GPLv3"));
-  );
+
+  DISPLAY_START(
+      // This block is still executed for DIAGS if display not in use
+      LCD(0, F("CommandStation-EX v%S"), F(VERSION));
+      LCD(1, F("Lic GPLv3")););
 
 #ifdef USE_HMI
   EEPROM.begin(512);
@@ -105,39 +108,42 @@ void setup()
 
   hmi::progMode = false;
   hmi::silentBootMode = false;
-  if (mode == 'P') hmi::progMode = true;
-  if (mode == 'B') hmi::silentBootMode = true;
+  if (mode == 'P')
+    hmi::progMode = true;
+  if (mode == 'B')
+    hmi::silentBootMode = true;
 
-  DIAG(F("Mode %s"), hmi::progMode?"Prog":"Main");
+  DIAG(F("Mode %s"), hmi::progMode ? "Prog" : "Main");
 
-	if (hmi::progMode) {
-		// Reset to Main mode for next reboot.
-		EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
-		EEPROM.commit();
-	}
+  if (hmi::progMode)
+  {
+    // Reset to Main mode for next reboot.
+    EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
+    EEPROM.commit();
+  }
 
   // must be done before Wifi setup
   boxHMI.begin();
 #endif
 
-	// Responsibility 2: Start all the communications before the DCC engine
-	// Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
-	// Start Ethernet if it exists
-	#ifndef ARDUINO_ARCH_ESP32
-	#if WIFI_ON
-	WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
-	#endif // WIFI_ON
-	#else
-	// ESP32 needs wifi on always
-	WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
-	#endif // ARDUINO_ARCH_ESP32
+// Responsibility 2: Start all the communications before the DCC engine
+// Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
+// Start Ethernet if it exists
+#ifndef ARDUINO_ARCH_ESP32
+#if WIFI_ON
+  WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
+#endif // WIFI_ON
+#else
+  // ESP32 needs wifi on always
+  WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
+#endif // ARDUINO_ARCH_ESP32
 
-	#if ETHERNET_ON
-	EthernetInterface::setup();
-	#endif // ETHERNET_ON
+#if ETHERNET_ON
+  EthernetInterface::setup();
+#endif // ETHERNET_ON
 
-	// Initialise HAL layer before reading EEprom or setting up MotorDrivers 
-	IODevice::begin();
+  // Initialise HAL layer before reading EEprom or setting up MotorDrivers
+  IODevice::begin();
 
   // Responsibility 3: Start the DCC engine.
   // Note: this provides DCC with two motor drivers, main and prog, which handle the motor shield(s)
@@ -145,51 +151,61 @@ void setup()
   //  detailed pin mappings and may also require modified subclasses of the MotorDriver to implement specialist logic.
   // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.hrr
 
-// Set up MotorDrivers early to initialize all pins
-  if (hmi::progMode) {
+#ifdef USE_HMI
+  // Set up MotorDrivers early to initialize all pins
+  if (hmi::progMode)
+  {
     DIAG(F("LaBox Prog mode."));
     TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
   }
-  else {
+  else
+  {
     DIAG(F("LaBox Main mode."));
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
+#endif
 
   //  TrackManager::Setup(MOTOR_SHIELD_TYPE);
-  
+
   // Responsibility 3: Start the DCC engine.
   DCC::begin();
 
   // Start RMFT aka EX-RAIL (ignored if no automnation)
   RMFT::begin();
 
+  //--- Configure ESP32 CAN
 
-  // Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
-  //  This can be used to create turnouts, outputs, sensors etc. through the normal text commands.
-  #if __has_include ( "mySetup.h")
-    #define SETUP(cmd) DCCEXParser::parse(F(cmd))
-    #include "mySetup.h"
-    #undef SETUP
-  #endif
+#ifdef CAN
+  CanMsg::begin();
+#endif
 
-  #if defined(LCN_SERIAL)
+// Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
+//  This can be used to create turnouts, outputs, sensors etc. through the normal text commands.
+#if __has_include("mySetup.h")
+#define SETUP(cmd) DCCEXParser::parse(F(cmd))
+#include "mySetup.h"
+#undef SETUP
+#endif
+
+#if defined(LCN_SERIAL)
   LCN_SERIAL.begin(115200);
   LCN::init(LCN_SERIAL);
-  #endif
+#endif
   LCD(3, F("Ready"));
   CommandDistributor::broadcastPower();
 
 #ifdef USE_HMI
-  if (hmi::progMode) {
+  if (hmi::progMode)
+  {
     // must be done after all other setups.
     boxHMI.setProgMode();
   }
-	if (hmi::silentBootMode) {
-		// Reset to Main mode for next reboot.
-		EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
-		EEPROM.commit();
-	}
-
+  if (hmi::silentBootMode)
+  {
+    // Reset to Main mode for next reboot.
+    EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
+    EEPROM.commit();
+  }
 #endif
 }
 
@@ -204,25 +220,29 @@ void loop()
   // Responsibility 2: handle any incoming commands on USB connection
   SerialManager::loop();
 
-	// Responsibility 3: Optionally handle any incoming WiFi traffic
-	#ifndef ARDUINO_ARCH_ESP32
-	#if WIFI_ON
-	WifiInterface::loop();
-	#endif //WIFI_ON
-	#else  //ARDUINO_ARCH_ESP32
-	#ifndef WIFI_TASK_ON_CORE0
-	WifiESP::loop();
-	#endif
-	#endif //ARDUINO_ARCH_ESP32
-	#if ETHERNET_ON
-	EthernetInterface::loop();
-	#endif
-  
-  RMFT::loop();  // ignored if no automation
+#ifdef CAN
+  CanMsg::loop();
+#endif
 
-  #if defined(LCN_SERIAL)
+// Responsibility 3: Optionally handle any incoming WiFi traffic
+#ifndef ARDUINO_ARCH_ESP32
+#if WIFI_ON
+  WifiInterface::loop();
+#endif // WIFI_ON
+#else  // ARDUINO_ARCH_ESP32
+#ifndef WIFI_TASK_ON_CORE0
+  WifiESP::loop();
+#endif
+#endif // ARDUINO_ARCH_ESP32
+#if ETHERNET_ON
+  EthernetInterface::loop();
+#endif
+
+  RMFT::loop(); // ignored if no automation
+
+#if defined(LCN_SERIAL)
   LCN::loop();
-  #endif
+#endif
 
   // Display refresh
   DisplayInterface::loop();
@@ -236,9 +256,10 @@ void loop()
   static int ramLowWatermark = __INT_MAX__; // replaced on first loop
 
   int freeNow = DCCTimer::getMinimumFreeMemory();
-  if (freeNow < ramLowWatermark) {
+  if (freeNow < ramLowWatermark)
+  {
     ramLowWatermark = freeNow;
-    LCD(3,F("Free RAM=%5db"), ramLowWatermark);
+    LCD(3, F("Free RAM=%5db"), ramLowWatermark);
   }
 #ifdef USE_HMI
   boxHMI.update();
