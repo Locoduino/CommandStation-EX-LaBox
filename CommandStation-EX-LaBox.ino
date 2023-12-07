@@ -145,6 +145,7 @@ void setup()
   //  detailed pin mappings and may also require modified subclasses of the MotorDriver to implement specialist logic.
   // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.hrr
 
+#ifdef USE_HMI
 // Set up MotorDrivers early to initialize all pins
   if (hmi::progMode) {
     DIAG(F("LaBox Prog mode."));
@@ -154,6 +155,7 @@ void setup()
     DIAG(F("LaBox Main mode."));
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
+#endif
 
   //  TrackManager::Setup(MOTOR_SHIELD_TYPE);
   
