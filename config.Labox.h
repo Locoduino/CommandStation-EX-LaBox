@@ -178,6 +178,7 @@ The configuration file for DCC-EX Command Station
 
 #define USE_HMI
 #define HMI_SHOW_CURRENT
+#define CAN
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
