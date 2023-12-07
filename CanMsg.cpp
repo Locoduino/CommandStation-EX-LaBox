@@ -7,28 +7,32 @@
 
 #include "CanMsg.h"
 
-
 void CanMsg::begin()
 {
-    //debug.printf("[CanConfig %d] : Configure ESP32 CAN\n", __LINE__);
-    ACAN_ESP32_Settings settings(CAN_BITRATE);
-//  settings.mRxPin = GPIO_NUM_4 ; // Optional, default Tx pin is GPIO_NUM_4
-//  settings.mTxPin = GPIO_NUM_5 ; // Optional, default Rx pin is GPIO_NUM_5
-    uint32_t errorCode;
+  // debug.printf("[CanConfig %d] : Configure ESP32 CAN\n", __LINE__);
+  ACAN_ESP32_Settings settings(CAN_BITRATE);
+  //  settings.mRxPin = GPIO_NUM_4 ; // Optional, default Tx pin is GPIO_NUM_4
+  //  settings.mTxPin = GPIO_NUM_5 ; // Optional, default Rx pin is GPIO_NUM_5
 
-    errorCode = ACAN_ESP32::can.begin(settings);
-    //debug.printf("[CanConfig %d] : config without filter\n", __LINE__);
+  uint32_t errorCode;
 
-    if (errorCode == 0)
-        Serial.printf("[CanConfig %d] : configuration OK !\n", __LINE__);
-    else
-    {
-        Serial.printf("[CanConfig %d] : configuration error 0x%x\n", __LINE__, errorCode);
-        return;
-    }
+  // with filter
+  const ACAN_ESP32_Filter filter = ACAN_ESP32_Filter::singleExtendedFilter(
+      ACAN_ESP32_Filter::data, 0xF << 7, 0x1FFFF87F);
+  errorCode = ACAN_ESP32::can.begin(settings, filter);
+
+  // without filter
+  // errorCode = ACAN_ESP32::can.begin(settings);
+  // debug.printf("[CanConfig %d] : config without filter\n", __LINE__);
+
+  if (errorCode == 0)
+    Serial.printf("[CanConfig %d] : configuration OK !\n", __LINE__);
+  else
+  {
+    Serial.printf("[CanConfig %d] : configuration error 0x%x\n", __LINE__, errorCode);
+    return;
+  }
 }
-
-
 
 /*--------------------------------------
   Reception CAN
@@ -36,38 +40,38 @@ void CanMsg::begin()
 
 void CanMsg::loop()
 {
-    CANMessage frame;
-    if (ACAN_ESP32::can.receive(frame))
+  CANMessage frame;
+  if (ACAN_ESP32::can.receive(frame))
+  {
+
+    Serial.println("Can loop()");
+    const byte idSatExpediteur = (frame.id & 0x7F80000) >> 19; // ID expediteur
+    const byte fonction = (frame.id & 0x7F8) >> 3;
+
+    Serial.printf("\n[CanMsg %d]------ Expediteur %d : Fonction 0x%0X\n", __LINE__, idSatExpediteur, fonction);
+
+    if (frame.rtr) // Remote frame
+      ACAN_ESP32::can.tryToSend(frame);
+    else
     {
-
-  Serial.println("Can loop()");
-      const byte idSatExpediteur = (frame.id & 0x7F80000) >> 19; // ID expediteur
-      const byte fonction = (frame.id & 0x7F8) >> 3;
-
-      Serial.printf("\n[CanMsg %d]------ Expediteur %d : Fonction 0x%0X\n", __LINE__, idSatExpediteur, fonction);
-
-      if (frame.rtr) // Remote frame
-          ACAN_ESP32::can.tryToSend(frame);
-      else
+      switch (fonction) // Fonction appelée
       {
-        switch (fonction) // Fonction appelée
-        {
-        case 0xF0:
-          DCC::setThrottle((frame.data[0] << 8) + frame.data[1], frame.data[2], frame.data[3]);
-          break;
-        case 0xF1:
-          DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 128, 0x00);
-        case 0xF2:
-          DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 176, 0x00);
-        case 0xF3:
-          DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 160, 0x00);
-          break;
-        case 0xFF:
-          DCC::emergency(); // emergency stop
-          break;
-        }
+      case 0xF0:
+        DCC::setThrottle((frame.data[0] << 8) + frame.data[1], frame.data[2], frame.data[3]);
+        break;
+      case 0xF1:
+        DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 128, 0x00);
+      case 0xF2:
+        DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 176, 0x00);
+      case 0xF3:
+        DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 160, 0x00);
+        break;
+      case 0xFF:
+        DCC::emergency(); // emergency stop
+        break;
       }
     }
+  }
 }
 
 /*--------------------------------------
