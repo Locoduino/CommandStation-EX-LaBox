@@ -137,16 +137,6 @@ void DCC::setThrottle2(uint16_t cab, byte speedCode)
   DCCWaveform::mainTrack.schedulePacket(b, nB, 0);
 }
 
-void DCC::emergency()
-{
-  setThrottle2(0x00, 1);
-}
-
-void DCC::setFunction(int cab, byte fByte, byte eByte)
-{
-  setFunctionInternal(cab, fByte, eByte);
-}
-
 void DCC::setFunctionInternal(int cab, byte byte1, byte byte2)
 {
   // DIAG(F("setFunctionInternal %d %x %x"),cab,byte1,byte2);
