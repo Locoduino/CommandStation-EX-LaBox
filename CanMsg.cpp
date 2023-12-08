@@ -2,7 +2,7 @@
 
   CanMsg.cpp
 
-  v 0.3 - 08/12/23
+  v 0.4 - 08/12/23
 */
 
 #include "CanMsg.h"
@@ -70,9 +70,9 @@ void CanMsg::loop()
         break;
       case 0xFE: // power LaBox on main track
         if (frame.data[0])
-          TrackManager::setMainPower(POWERMODE::OFF);
-        else
           TrackManager::setMainPower(POWERMODE::ON);
+        else
+          TrackManager::setMainPower(POWERMODE::OFF);
         break;
       case 0xFF:
         DCC::setThrottle(0, 1, 1); // emergency stop
