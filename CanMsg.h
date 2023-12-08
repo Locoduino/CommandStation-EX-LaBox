@@ -11,14 +11,15 @@
 
 #include <ACAN_ESP32.h>
 #include "DCC.h"
-
-/* ----- CAN ----------------------*/
-// #define CAN_RX GPIO_NUM_4
-// #define CAN_TX GPIO_NUM_5
-#define CAN_BITRATE 1000UL * 1000UL // 1 Mb/s
+#include "TrackManager.h"
 
 class CanMsg
 {
+private:
+  static gpio_num_t RxPin;              
+  static gpio_num_t TxPin;             
+  static uint32_t DESIRED_BIT_RATE;     
+
 public:
   CanMsg() = delete;
   static void begin();
