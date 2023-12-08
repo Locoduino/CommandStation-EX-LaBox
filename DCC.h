@@ -62,7 +62,6 @@ public:
   static int8_t getThrottleSpeed(int cab);
   static uint8_t getThrottleSpeedByte(int cab);
   static bool getThrottleDirection(int cab);
-  static void emergency();
   static void writeCVByteMain(int cab, int cv, byte bValue);
   static void writeCVBitMain(int cab, int cv, byte bNum, bool bValue);
   static void setFunction(int cab, byte fByte, byte eByte);
