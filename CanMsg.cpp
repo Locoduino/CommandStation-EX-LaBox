@@ -2,17 +2,21 @@
 
   CanMsg.cpp
 
-
+  v 0.3 - 08/12/23
 */
 
 #include "CanMsg.h"
 
+gpio_num_t CanMsg::RxPin = GPIO_NUM_4;               // Optional, default Rx pin is GPIO_NUM_4
+gpio_num_t CanMsg::TxPin = GPIO_NUM_5;               // Optional, default Tx pin is GPIO_NUM_5
+uint32_t CanMsg::DESIRED_BIT_RATE = 1000UL * 1000UL; // 1 Mb/s;
+
 void CanMsg::begin()
 {
   // debug.printf("[CanConfig %d] : Configure ESP32 CAN\n", __LINE__);
-  ACAN_ESP32_Settings settings(CAN_BITRATE);
-  //  settings.mRxPin = GPIO_NUM_4 ; // Optional, default Tx pin is GPIO_NUM_4
-  //  settings.mTxPin = GPIO_NUM_5 ; // Optional, default Rx pin is GPIO_NUM_5
+  ACAN_ESP32_Settings settings(DESIRED_BIT_RATE);
+  settings.mRxPin = RxPin;
+  settings.mTxPin = TxPin;
 
   uint32_t errorCode;
 
@@ -43,8 +47,6 @@ void CanMsg::loop()
   CANMessage frame;
   if (ACAN_ESP32::can.receive(frame))
   {
-
-    Serial.println("Can loop()");
     const byte idSatExpediteur = (frame.id & 0x7F80000) >> 19; // ID expediteur
     const byte fonction = (frame.id & 0x7F8) >> 3;
 
@@ -54,20 +56,26 @@ void CanMsg::loop()
       ACAN_ESP32::can.tryToSend(frame);
     else
     {
+      uint16_t loco = 0;
+      if (fonction < 0xFE)
+        loco = (frame.data[0] << 8) + frame.data[1];
+
       switch (fonction) // Fonction appelée
       {
       case 0xF0:
-        DCC::setThrottle((frame.data[0] << 8) + frame.data[1], frame.data[2], frame.data[3]);
+        DCC::setThrottle(loco, frame.data[2], frame.data[3]);
         break;
       case 0xF1:
-        DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 128, 0x00);
-      case 0xF2:
-        DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 176, 0x00);
-      case 0xF3:
-        DCC::setFunction((frame.data[0] << 8) + frame.data[1], frame.data[2] + 160, 0x00);
+        DCC::setFn(loco, frame.data[2], frame.data[3]); // frame.data[2] = fonction, frame.data[3] : 'on' ou 'off'
+        break;
+      case 0xFE: // power LaBox on main track
+        if (frame.data[0])
+          TrackManager::setMainPower(POWERMODE::OFF);
+        else
+          TrackManager::setMainPower(POWERMODE::ON);
         break;
       case 0xFF:
-        DCC::emergency(); // emergency stop
+        DCC::setThrottle(0, 1, 1); // emergency stop
         break;
       }
     }
