@@ -2,6 +2,8 @@
 
   CanMsg.h
 
+  Christophe Bobille - Locoduino
+
   The ESP32 requires to be connected to a CAN transceiver
 
 */
@@ -12,6 +14,7 @@
 #include <ACAN_ESP32.h>
 #include "DCC.h"
 #include "TrackManager.h"
+#include "MotorDriver.h"
 
 class CanMsg
 {
