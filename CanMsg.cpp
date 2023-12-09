@@ -3,6 +3,8 @@
   CanMsg.cpp
 
   v 0.4 - 08/12/23
+  v 0.5 - 09/12/23 : Ajout du retour d'information au programme de test. C'est la mesure de courant qui a ete choisie
+                    pour cela lignes 83 a 97 du programme.
 */
 
 #include "CanMsg.h"
@@ -44,41 +46,55 @@ void CanMsg::begin()
 
 void CanMsg::loop()
 {
-  CANMessage frame;
-  if (ACAN_ESP32::can.receive(frame))
+  CANMessage frameIn;
+  if (ACAN_ESP32::can.receive(frameIn))
   {
-    const byte idSatExpediteur = (frame.id & 0x7F80000) >> 19; // ID expediteur
-    const byte fonction = (frame.id & 0x7F8) >> 3;
+    const byte idSatExpediteur = (frameIn.id & 0x7F80000) >> 19; // ID expediteur
+    const byte fonction = (frameIn.id & 0x7F8) >> 3;
 
     Serial.printf("\n[CanMsg %d]------ Expediteur %d : Fonction 0x%0X\n", __LINE__, idSatExpediteur, fonction);
 
-    if (frame.rtr) // Remote frame
-      ACAN_ESP32::can.tryToSend(frame);
+    if (frameIn.rtr) // Remote frame
+      ACAN_ESP32::can.tryToSend(frameIn);
     else
     {
       uint16_t loco = 0;
       if (fonction < 0xFE)
-        loco = (frame.data[0] << 8) + frame.data[1];
+        loco = (frameIn.data[0] << 8) + frameIn.data[1];
 
       switch (fonction) // Fonction appelée
       {
       case 0xF0:
-        DCC::setThrottle(loco, frame.data[2], frame.data[3]);
+        DCC::setThrottle(loco, frameIn.data[2], frameIn.data[3]);
         break;
       case 0xF1:
-        DCC::setFn(loco, frame.data[2], frame.data[3]); // frame.data[2] = fonction, frame.data[3] : 'on' ou 'off'
+        DCC::setFn(loco, frameIn.data[2], frameIn.data[3]); // frame.data[2] = fonction, frame.data[3] : 'on' ou 'off'
         break;
-      case 0xFE: // power LaBox on main track
-        if (frame.data[0])
-          TrackManager::setMainPower(POWERMODE::ON);
-        else
-          TrackManager::setMainPower(POWERMODE::OFF);
-        break;
+      case 0xFE:
+        TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
       case 0xFF:
         DCC::setThrottle(0, 1, 1); // emergency stop
         break;
       }
     }
+  }
+
+  // Envoi de la lecture de courant
+  static uint64_t millisRefreshData = 0;
+  if (millis() - millisRefreshData > 1000)
+  {
+    Serial.println(" Envoi de la lecture de courant");
+    CANMessage frameOut;
+    MotorDriver *mainDriver = NULL;
+    for (const auto &md : TrackManager::getMainDrivers())
+      mainDriver = md;
+    if (mainDriver == NULL || !mainDriver->canMeasureCurrent())
+      return;
+
+    uint16_t current = mainDriver->getCurrentRaw();
+    Serial.printf("Courant : %d\n", current);
+    sendMsg(0, 0xAA, 0xAB, 0xFC, 0, current & 0x00FF);
+    millisRefreshData = millis();
   }
 }
 
@@ -91,7 +107,7 @@ void CanMsg::sendMsg(CANMessage &frame)
   if (0 == ACAN_ESP32::can.tryToSend(frame))
     Serial.printf("Echec envoi message CAN\n");
   else
-    Serial.printf("Envoi fonction 0x%0X\n", frame.data[0]);
+    Serial.printf("Envoi fonction 0x%0X\n", (frame.id & 0x7F8) >> 3);
 }
 
 auto parseMsg = [](CANMessage &frame, byte priorite, byte idExp, byte idDes, byte fonct) -> CANMessage
