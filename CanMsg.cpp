@@ -5,6 +5,9 @@
   v 0.4 - 08/12/23
   v 0.5 - 09/12/23 : Ajout du retour d'information au programme de test. C'est la mesure de courant qui a ete choisie
                     pour cela lignes 83 a 97 du programme.
+  v 0.5.1 - 09/12/23 : Fix oubli break  case 0xFE:
+                                          TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
+                                        break;               
 */
 
 #include "CanMsg.h"
@@ -72,6 +75,7 @@ void CanMsg::loop()
         break;
       case 0xFE:
         TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
+        break;
       case 0xFF:
         DCC::setThrottle(0, 1, 1); // emergency stop
         break;
