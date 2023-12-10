@@ -8,7 +8,8 @@
   v 0.5.1 - 09/12/23 : Fix oubli break  case 0xFE:
                                           TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
                                         break;
-  v 0.5.2 - 09/12/23                                     
+  v 0.5.2 - 09/12/23
+  v 0.5.3 - 10/12/23  
 */
 
 #include "CanMsg.h"
@@ -84,7 +85,10 @@ void CanMsg::loop()
     }
   }
 
-  // Envoi de la lecture de courant
+  /*--------------------------------------
+    Envois CAN
+    --------------------------------------*/
+
   static uint64_t millisRefreshData = 0;
   if (millis() - millisRefreshData > 1000)
   {
@@ -94,17 +98,12 @@ void CanMsg::loop()
       mainDriver = md;
     if (mainDriver == NULL || !mainDriver->canMeasureCurrent())
       return;
-
     uint16_t current = mainDriver->getCurrentRaw();
-    sendMsg(0, 0xAA, 0xAB, 0xFC, (current & 0xFF00) >> 8, current & 0x00FF);
-    Serial.printf("Courant : %d\n", current);
-
     POWERMODE mode = TrackManager::getMainPower();
     if (mode == POWERMODE::ON)
-      sendMsg(0, 0xAA, 0xAB, 0xFB, 1);
+      sendMsg(0, 0xAA, 0xAB, 0xFD, 1, (current & 0xFF00) >> 8, current & 0x00FF);
     else
-      sendMsg(0, 0xAA, 0xAB, 0xFB, 0);
-    Serial.printf("Power : %d\n", mode);
+      sendMsg(0, 0xAA, 0xAB, 0xFD, 0, 0, 0);
     millisRefreshData = millis();
   }
 }
