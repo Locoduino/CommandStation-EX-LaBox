@@ -10,6 +10,7 @@
                                         break;
   v 0.5.2 - 09/12/23
   v 0.5.3 - 10/12/23
+  v 0.5.4 - 10/12/23 : Add POWERMODE::OVERLOAD
 */
 
 #include "CanMsg.h"
