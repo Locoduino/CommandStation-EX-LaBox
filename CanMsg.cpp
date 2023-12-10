@@ -7,7 +7,8 @@
                     pour cela lignes 83 a 97 du programme.
   v 0.5.1 - 09/12/23 : Fix oubli break  case 0xFE:
                                           TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
-                                        break;               
+                                        break;
+  v 0.5.2 - 09/12/23                                     
 */
 
 #include "CanMsg.h"
@@ -87,7 +88,6 @@ void CanMsg::loop()
   static uint64_t millisRefreshData = 0;
   if (millis() - millisRefreshData > 1000)
   {
-    Serial.println(" Envoi de la lecture de courant");
     CANMessage frameOut;
     MotorDriver *mainDriver = NULL;
     for (const auto &md : TrackManager::getMainDrivers())
@@ -96,8 +96,15 @@ void CanMsg::loop()
       return;
 
     uint16_t current = mainDriver->getCurrentRaw();
+    sendMsg(0, 0xAA, 0xAB, 0xFC, (current & 0xFF00) >> 8, current & 0x00FF);
     Serial.printf("Courant : %d\n", current);
-    sendMsg(0, 0xAA, 0xAB, 0xFC, 0, current & 0x00FF);
+
+    POWERMODE mode = TrackManager::getMainPower();
+    if (mode == POWERMODE::ON)
+      sendMsg(0, 0xAA, 0xAB, 0xFB, 1);
+    else
+      sendMsg(0, 0xAA, 0xAB, 0xFB, 0);
+    Serial.printf("Power : %d\n", mode);
     millisRefreshData = millis();
   }
 }
