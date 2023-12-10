@@ -9,7 +9,7 @@
                                           TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
                                         break;
   v 0.5.2 - 09/12/23
-  v 0.5.3 - 10/12/23  
+  v 0.5.3 - 10/12/23
 */
 
 #include "CanMsg.h"
@@ -98,10 +98,15 @@ void CanMsg::loop()
       mainDriver = md;
     if (mainDriver == NULL || !mainDriver->canMeasureCurrent())
       return;
-    uint16_t current = mainDriver->getCurrentRaw();
+      
     POWERMODE mode = TrackManager::getMainPower();
     if (mode == POWERMODE::ON)
+    {
+      uint16_t current = mainDriver->getCurrentRaw();
       sendMsg(0, 0xAA, 0xAB, 0xFD, 1, (current & 0xFF00) >> 8, current & 0x00FF);
+    }
+    else if(mode == POWERMODE::OVERLOAD)
+      sendMsg(0, 0xAA, 0xAB, 0xFD, 2, 0, 0);
     else
       sendMsg(0, 0xAA, 0xAB, 0xFD, 0, 0, 0);
     millisRefreshData = millis();
