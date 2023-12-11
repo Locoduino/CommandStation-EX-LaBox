@@ -77,7 +77,7 @@ void CanMsg::loop()
         DCC::setFn(loco, frameIn.data[2], frameIn.data[3]); // frame.data[2] = fonction, frame.data[3] : 'on' ou 'off'
         break;
       case 0xFE:
-        TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
+        TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::OFF : POWERMODE::ON);
         break;
       case 0xFF:
         DCC::setThrottle(0, 1, 1); // emergency stop
