@@ -11,6 +11,10 @@
   v 0.5.2 - 09/12/23
   v 0.5.3 - 10/12/23
   v 0.5.4 - 10/12/23 : Add POWERMODE::OVERLOAD
+  v 0.5.5 - 10/12/23 : Correction inversion :
+                       case 0xFE:
+                       TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::OFF : POWERMODE::ON);
+        
 */
 
 #include "CanMsg.h"
