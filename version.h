@@ -3,7 +3,13 @@
 
 #include "StringFormatter.h"
 
-#define VERSION "5.0.4"
+#define VERSION "5.0.9"
+// 5.0.9  - EX-IOExpander bug fix for memory allocation
+//        - EX-IOExpander bug fix to allow for devices with no analogue or no digital pins
+// 5.0.8  - Bugfix: Do not crash on turnouts without description
+// 5.0.7  - Only flag 2.2.0.0-dev as broken, not 2.2.0.0
+// 5.0.6  - Bugfix lost TURNOUTL description
+// 5.0.5  - Bugfix version detection logic and better message
 // 5.0.4  - Bugfix: <JR> misses default roster. 
 // 5.0.3  - Check bad AT firmware version
 // 5.0.2  - Bugfix: ESP32 30ms off time

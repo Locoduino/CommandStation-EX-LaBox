@@ -536,7 +536,7 @@ protected:
 
 };
 
-//#include "IO_MCP23008.h"
+//#include "IO_MCP23008.h" Labox
 //#include "IO_MCP23017.h"
 //#include "IO_PCF8574.h"
 //#include "IO_PCF8575.h"
