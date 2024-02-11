@@ -51,6 +51,7 @@
 
 #include "DCCEX.h"
 #include "EEPROM.h"
+#include "version_labox.h"
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -91,7 +92,7 @@ void setup()
   ADCee::begin();
   
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("LaBox : 2.4.2"));
+  DIAG(F("LaBox : %s"), VERSION_LABOX);
   
   DISPLAY_START (
     // This block is still executed for DIAGS if display not in use

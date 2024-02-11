@@ -445,7 +445,12 @@ void Z21Throttle::notifyLocoInfo(byte inMSB, byte inLSB) {
 void Z21Throttle::notifyTurnoutInfo(byte inMSB, byte inLSB) {
 	Z21Throttle::replyBuffer[0] = inMSB;	// turnout address msb
 	Z21Throttle::replyBuffer[1] = inLSB; // turnout address lsb
-	Z21Throttle::replyBuffer[2] = B00000000; // 000000ZZ	 ZZ : 00 not switched   01 pos1  10 pos2  11 invalid
+	int id = (inMSB << 8) + inLSB;
+
+	if (Turnout::isClosed(id))
+		Z21Throttle::replyBuffer[2] = B00000000; // 000000ZZ	 ZZ : 00 not switched   01 pos1  10 pos2  11 invalid
+	else
+		Z21Throttle::replyBuffer[2] = B00000001; // 000000ZZ	 ZZ : 00 not switched   01 pos1  10 pos2  11 invalid
 	notify(HEADER_LAN_XPRESS_NET, LAN_X_HEADER_TURNOUT_INFO, Z21Throttle::replyBuffer, 3, false);
 }
 
@@ -731,14 +736,17 @@ bool Z21Throttle::parse() {
 					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d LOCO INFO: "), this->clientid);
 					notifyLocoInfo(DB[2], DB[3]);
 					done = true;
-
 					break;
+
 				case LAN_X_HEADER_GET_TURNOUT_INFO:
-					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d TURNOUT INFO  "), this->clientid);
+				{
+					int id = (DB[1] << 8) + DB[2];
+					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d TURNOUT %d INFO"), this->clientid, id);
 					notifyTurnoutInfo(DB[1], DB[2]);
 					done = true;
-
+				}
 					break;
+
 				case LAN_X_HEADER_GET_FIRMWARE_VERSION:
 					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d FIRMWARE VERSION  "), this->clientid);
 					notifyFirmwareVersion();
@@ -770,11 +778,53 @@ bool Z21Throttle::parse() {
 					break;
 				case LAN_X_HEADER_CV_WRITE:
 					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d CV WRITE "), this->clientid);
-					notifyFirmwareVersion();
+					cvWriteProg(DB[2], DB[3], DB[4]);
 					done = true;
 					break;
 				case LAN_X_HEADER_SET_TURNOUT:
-					if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d TURNOUT "), this->clientid);
+					{
+					int id = (DB[1] << 8) + DB[2];
+					bool activate = DB[3] & 0b00001000;
+					bool IsOutput1 = DB[3] & 0b00000001;
+					if (activate) {
+						if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d TURNOUT %d %s output%s"), this->clientid, id + 1, activate?"active":"inactive", IsOutput1?"1":"2");
+					}
+					else {
+						if (Diag::Z21THROTTLEVERBOSE) DIAG(F("%d TURNOUT %d %s"), this->clientid, id + 1, activate?"active":"inactive");
+					}
+					if (!Turnout::exists(id)) {
+						// If turnout does not exist, create it
+						int addr = (id / 4) + 1;
+						int subaddr = id % 4;
+						DCCTurnout::create(id,addr,subaddr);
+						if (Diag::Z21THROTTLEVERBOSE) DIAG(F("TURNOUT %d created"), id);
+						//StringFormatter::send(stream, F("HmTurnout %d created\n"),id);
+					}
+
+					if (activate) {
+				  	Turnout::setClosed(id, !IsOutput1);
+					}
+					else {
+						this->notifyTurnoutInfo(DB[1], DB[2]);
+					}
+
+					/*
+					switch (DB[2] & 0b0001000) {
+						// T and C according to RCN-213 where 0 is Stop, Red, Thrown, Diverging.
+					case 'T': 
+						Turnout::setClosed(id,false);
+						break;
+					case 'C': 
+						Turnout::setClosed(id,true);
+						break;
+					case '2': 
+						Turnout::setClosed(id,!Turnout::isClosed(id));
+						break;
+					default :
+						Turnout::setClosed(id,true);
+						break;
+					}*/
+					}
 					//done = true;
 					break;
 				case 0x22:
