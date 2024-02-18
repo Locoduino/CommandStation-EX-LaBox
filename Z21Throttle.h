@@ -74,8 +74,7 @@ class Z21Throttle {
 		~Z21Throttle();
 
 		static const int MAX_MY_LOCO=10;      // maximum number of locos assigned to a single client
-		static const int HEARTBEAT_SECONDS=10; // heartbeat at 4secs to provide messaging transport
-		static const int ESTOP_SECONDS=20;     // eStop if no incoming messages for more than 8secs
+		static const int POWEROFF_ONDELAY=20;  // After a powerOff, delay to set power on when a speed/function change on a cab.
 		static Z21Throttle* firstThrottle;
 		static byte commBuffer[100];
 		static byte replyBuffer[20];
@@ -85,6 +84,7 @@ class Z21Throttle {
 		bool areYouUsingThrottle(int cab);
 		Z21Throttle* nextThrottle;
 
+    unsigned long lastPowerOffDate;
 		int clientid;
 		char uniq[17] = "";
 

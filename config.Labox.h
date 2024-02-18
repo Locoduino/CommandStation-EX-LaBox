@@ -178,6 +178,7 @@ The configuration file for DCC-EX Command Station
 
 #define USE_HMI
 #define HMI_SHOW_CURRENT
+#define AUTOMATIC_POWER_RESTORE
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
