@@ -21,8 +21,8 @@
 #include "CircularBuffer.hpp"
 #include "WiFiClient.h"
 
-#define UDPBYTE_SIZE	64
-#define UDP_BUFFERSIZE	256
+#define UDPBYTE_SIZE	1024
+#define UDP_BUFFERSIZE	2048
 
 struct MYLOCOZ21 {
     char throttle; //indicates which throttle letter on client, '0' + clientid
@@ -75,6 +75,7 @@ class Z21Throttle {
 
 		static const int MAX_MY_LOCO=10;      // maximum number of locos assigned to a single client
 		static const int POWEROFF_ONDELAY=20;  // After a powerOff, delay to set power on when a speed/function change on a cab.
+		static const int HEARTBEAT_DELAY=20;	// Without any message during this number of seconds, the throttle will be declared disconnected !
 		static Z21Throttle* firstThrottle;
 		static byte commBuffer[100];
 		static byte replyBuffer[20];
@@ -85,6 +86,7 @@ class Z21Throttle {
 		Z21Throttle* nextThrottle;
 
     unsigned long lastPowerOffDate;
+		unsigned long lastHeartBeatDate;
 		int clientid;
 		char uniq[17] = "";
 
@@ -127,6 +129,7 @@ class Z21Throttle {
 		void notifyTurnoutInfo(byte inMSB, byte inLSB);
 		void notifyLocoMode(byte inMSB, byte inLSB);
 		void notifyFirmwareVersion();
+		void notifySerialNumber();
 		void notifyHWInfo();
 		void write(byte* inpData, int inLengthData);
 

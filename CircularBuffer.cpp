@@ -254,13 +254,13 @@ int CircularBuffer::GetCount()
 }
 
 #ifdef DCCPP_DEBUG_MODE
-#ifdef VISUALSTUDIO
 const char textNum[] = "123456789";
 const char textChars[] = "ABCDEF";
 const char textSymb[] = "/*-+&$!:;,";
+const char textBigData[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890&é#'(-è_çà)=^$*ù!:;,";
 void CircularBuffer::Test()
 {
-	CircularBuffer test(20);
+	CircularBuffer test(2000);
 
 	test.begin(false);
 
@@ -364,8 +364,16 @@ void CircularBuffer::Test()
 	Serial.println((int)test.GetCount());
 	Serial.print("Max used : ");
 	Serial.println((int)test.GetPeakCount());
+
+	test.PushBytes((byte*)textBigData, sizeof(textBigData));
+	Serial.println("After big data pushed");
+	test.printCircularBuffer();
+
+	Serial.print("Final size : ");
+	Serial.println((int)test.GetCount());
+	Serial.print("Max used : ");
+	Serial.println((int)test.GetPeakCount());
 }
-#endif
 
 void CircularBuffer::printCircularBuffer()
 {
@@ -373,7 +381,7 @@ void CircularBuffer::printCircularBuffer()
 
 	if (this->full)
 		Serial.println("FULL !");
-	for (int i = 0; i < this->size; i++)
+	for (int i = 0; i <= this->head; i++)
 	{
 		if (i == this->tail)
 			Serial.print("Tail ");
@@ -385,3 +393,22 @@ void CircularBuffer::printCircularBuffer()
 	}
 }
 #endif
+
+void CircularBuffer::printStatus()
+{
+	Serial.print("Circular buffer :");
+	if (!this->CheckIfBeginDone()) {
+		Serial.println("Not initialized  !");
+		return;
+	}
+
+	if (this->full)
+		Serial.print(" FULL ! ");
+
+	Serial.print("Tail ");
+	Serial.print(this->tail);
+	Serial.print(" / Head ");
+	Serial.print(this->head);
+	Serial.print(" / Size ");
+	Serial.println(this->GetCount());
+}

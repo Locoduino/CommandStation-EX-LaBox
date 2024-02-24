@@ -1,7 +1,9 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.4.4"
+#define VERSION_LABOX "2.4.5"
+// 2.4.5  - New delay HEARTBEAT_DELAY to disconnect z21 throttle without any communication... .
+//        - Black Z21 app works now, after removing a surprising 1000 bytes UDP message !
 // 2.4.4  - Add AUTOMATIC_POWER_RESTORE to allow power restart on the first speed/direction/function change after POWEROFF_ONDELAY .
 // 2.4.3  - Fix CV write on Z21 app.
 //        - First try to implement turnout setting by Z21 app. Not yet fonctionnal !

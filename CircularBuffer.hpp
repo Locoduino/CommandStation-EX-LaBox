@@ -24,6 +24,8 @@
 #include <Arduino.h>
 #include "DIAG.h"
 
+//#define DCCPP_DEBUG_MODE
+
 /** This is a thread-safe buffer of bytes, binary or not. Bytes are pushed on the top (its head), and got from the bottom of the 
 * buffer (its tail...).
 */
@@ -148,17 +150,16 @@ public:
 	bool CheckIfBeginDone();
 
 #ifdef DCCPP_DEBUG_MODE
-#ifdef VISUALSTUDIO
 	/** Unit test function
 	*/
 	static void Test();
-#endif
 
 	/** Print the list of messages in the stack.
 	@remark Only available if DCCPP_DEBUG_MODE is defined.
 	*/
 	void printCircularBuffer();
 #endif
+	void printStatus();
 };
 
 #ifdef ARDUINO_ARCH_ESP32
@@ -168,10 +169,12 @@ public:
 		if (this->xSemaphore != NULL) \
 			if (xSemaphoreTake(this->xSemaphore, (TickType_t)100) == pdTRUE) \
 				semaphoreTaken = 1; \
-		if (semaphoreTaken == 1)
+		if (semaphoreTaken == 1) {
 
 #define END_SEMAPHORE()	\
-		xSemaphoreGive(this->xSemaphore); \
+		} \
+		if (this->xSemaphore != NULL) \
+			xSemaphoreGive(this->xSemaphore); \
 	}
 
 #define ABORT_SEMAPHORE()	\
