@@ -75,7 +75,6 @@ class Z21Throttle {
 
 		static const int MAX_MY_LOCO=10;      // maximum number of locos assigned to a single client
 		static const int POWEROFF_ONDELAY=20;  // After a powerOff, delay to set power on when a speed/function change on a cab.
-		static const int HEARTBEAT_DELAY=20;	// Without any message during this number of seconds, the throttle will be declared disconnected !
 		static Z21Throttle* firstThrottle;
 		static byte commBuffer[100];
 		static byte replyBuffer[20];
@@ -148,7 +147,8 @@ class Z21Throttle {
 };
 
 #define Z21_UDPPORT		21105
-#define Z21_TIMEOUT		60000		// if no activity during 1 minute, disconnect the throttle...
+#define Z21_TIMEOUT		20000		// if no activity during this delay, disconnect the throttle...
+#define Z21_MAXIMAL_UDP_MSG_SIZE	100		// All messages longer than this size will be ignored.
 
 #define HEADER_LAN_GET_SERIAL_NUMBER 0x10
 #define HEADER_LAN_LOGOFF 0x30

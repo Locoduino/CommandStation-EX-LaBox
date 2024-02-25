@@ -43,6 +43,9 @@ static std::vector<NetworkClientUDP> clientsUDP; // a list to hold all UDP clien
 #define DIAG_Z21DATA		 	if (Diag::Z21THROTTLEDATA) DIAG
 #define DIAG_Z21VERBOSE	 	if (Diag::Z21THROTTLEVERBOSE) DIAG
 
+#define LOOPLOCOS(THROTTLECHAR, CAB)  for (int loco=0;loco<MAX_MY_LOCO;loco++) \
+      if ((myLocos[loco].throttle==THROTTLECHAR || '*'==THROTTLECHAR) && (CAB<0 || myLocos[loco].cab==CAB))
+
 Z21Throttle *Z21Throttle::firstThrottle=NULL;
 byte Z21Throttle::commBuffer[100];
 byte Z21Throttle::replyBuffer[20];
@@ -54,9 +57,6 @@ int Z21Throttle::cvValue = -1;
 void printClientsUDP();
 
 WiFiUDP NetworkClientUDP::client;
-
-#define LOOPLOCOS(THROTTLECHAR, CAB)  for (int loco=0;loco<MAX_MY_LOCO;loco++) \
-      if ((myLocos[loco].throttle==THROTTLECHAR || '*'==THROTTLECHAR) && (CAB<0 || myLocos[loco].cab==CAB))
 
 void Z21Throttle::setup(IPAddress ip, int port) {
 #ifdef DCCPP_DEBUG_MODE
@@ -79,31 +79,34 @@ int readUdpPacket() {
 				if (clientsUDP[clientId].remoteIP == NetworkClientUDP::client.remoteIP() && clientsUDP[clientId].remotePort == NetworkClientUDP::client.remotePort()) {
 					DIAG_Z21DATA(F("%d <- udp_len:%d"), clientId, len);
 
-					if (Diag::Z21THROTTLEDATA) {
-						for(int i = 0; i < 10; i++) {
-							if (len > i*10) {
-								DIAG_Z21DATA(F("UDP %d-%d : 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x"),
-														i*10, (i*10)+9,
-														(len > i*10)      ?udp[i*10]:0,
-														(len > (i*10) + 1)?udp[(i*10)+1]:0,
-														(len > (i*10) + 2)?udp[(i*10)+2]:0,
-														(len > (i*10) + 3)?udp[(i*10)+3]:0,
-														(len > (i*10) + 4)?udp[(i*10)+4]:0,
-														(len > (i*10) + 5)?udp[(i*10)+5]:0,
-														(len > (i*10) + 6)?udp[(i*10)+6]:0,
-														(len > (i*10) + 7)?udp[(i*10)+7]:0,
-														(len > (i*10) + 8)?udp[(i*10)+8]:0,
-														(len > (i*10) + 9)?udp[(i*10)+9]:0);
-							}
-						}
-					}
-
 					// Black Z21 Android app send a bunch of 1000 bytes of value 0 ! 
 					// Dont know why, but do not add this to the circular buffer !
-					if (len < 100) {
+					if (len < Z21_MAXIMAL_UDP_MSG_SIZE) {
 						clientsUDP[clientId].pudpBuffer->PushBytes(udp, len);
 
-						if (Diag::Z21THROTTLEDATA) clientsUDP[clientId].pudpBuffer->printStatus();
+						//if (Diag::Z21THROTTLEDATA) clientsUDP[clientId].pudpBuffer->printStatus();
+					}
+					else {
+						DIAG_Z21(F("%d <- long message ignored : udp_len:%d   first byte : %d"), clientId, len, udp[0]);
+
+						if (Diag::Z21THROTTLEDATA) {
+							for(int i = 0; i < 10; i++) {
+								if (len > i*10) {
+									DIAG_Z21DATA(F("UDP %d-%d : 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x"),
+															i*10, (i*10)+9,
+															(len > i*10)      ?udp[i*10]:0,
+															(len > (i*10) + 1)?udp[(i*10)+1]:0,
+															(len > (i*10) + 2)?udp[(i*10)+2]:0,
+															(len > (i*10) + 3)?udp[(i*10)+3]:0,
+															(len > (i*10) + 4)?udp[(i*10)+4]:0,
+															(len > (i*10) + 5)?udp[(i*10)+5]:0,
+															(len > (i*10) + 6)?udp[(i*10)+6]:0,
+															(len > (i*10) + 7)?udp[(i*10)+7]:0,
+															(len > (i*10) + 8)?udp[(i*10)+8]:0,
+															(len > (i*10) + 9)?udp[(i*10)+9]:0);
+								}
+							}
+						}
 					}
 
 					return clientId;
@@ -126,7 +129,7 @@ void Z21Throttle::loop() {
 
 		Z21Throttle* pThrottle = getOrAddThrottle(clientId); 
 
-		if (pThrottle->lastHeartBeatDate != 0 && millis() - pThrottle->lastHeartBeatDate > HEARTBEAT_DELAY * 1000) {
+		if (pThrottle->lastHeartBeatDate != 0 && millis() - pThrottle->lastHeartBeatDate > Z21_TIMEOUT) {
 			clientsUDP[clientId].connected = false;
 		}
 
@@ -140,6 +143,7 @@ void Z21Throttle::loop() {
 
 	int len = NetworkClientUDP::client.parsePacket();
 	if (len > 0) {
+		// Check if this IP is already in the client list.
 		int clientId = 0;
 		for (; clientId < clientsUDP.size(); clientId++) {
 			if (clientsUDP[clientId].inUse) {
@@ -149,19 +153,31 @@ void Z21Throttle::loop() {
 				}
 			}
 		}
+		
+		// If this IP is not already present, try tyo find the first slot available
 
 		if (clientId >= clientsUDP.size()) {
-			NetworkClientUDP nc;
-			nc.remoteIP = NetworkClientUDP::client.remoteIP();
-			nc.remotePort = NetworkClientUDP::client.remotePort();
-			nc.connected = true;
-			nc.inUse = true;
+			for (clientId = 0; clientId < clientsUDP.size(); clientId++) {
+				if (!clientsUDP[clientId].inUse) {
+					break;
+				}
+			}
 
-			clientsUDP.push_back(nc);
-			DIAG_Z21(F("New UDP client %d, %s"), clientId, nc.remoteIP.toString().c_str());
+			// If no empty slot found, add a new one.
+			if (clientId >= clientsUDP.size()) {
+				NetworkClientUDP nc;
+				clientsUDP.push_back(nc);
+			}
+
+			clientsUDP[clientId].remoteIP = NetworkClientUDP::client.remoteIP();
+			clientsUDP[clientId].remotePort = NetworkClientUDP::client.remotePort();
+			clientsUDP[clientId].connected = true;
+			clientsUDP[clientId].inUse = true;
+
+			DIAG_Z21(F("New UDP client %d, %s"), clientId, clientsUDP[clientId].remoteIP.toString().c_str());
 			printClientsUDP();
 			#ifdef USE_HMI
-			if (hmi::CurrentInterface != NULL) hmi::CurrentInterface->NewClient(clientId, nc.remoteIP, 0);
+			if (hmi::CurrentInterface != NULL) hmi::CurrentInterface->NewClient(clientId, clientsUDP[clientId].remoteIP, 0);
 			#endif
 			// Fleischmann/Roco Android app starts with Power on !
 			TrackManager::setMainPower(POWERMODE::ON);
@@ -174,8 +190,10 @@ void Z21Throttle::loop() {
 				Z21Throttle* pThrottle = getOrAddThrottle(clientId); 
 			  pThrottle->lastHeartBeatDate = millis();
 
-				if (pThrottle != NULL)
-					pThrottle->parse();
+				if (pThrottle != NULL) {
+					while(clientsUDP[clientId].pudpBuffer->GetCount() > 2)
+						pThrottle->parse();
+				}
 			}
 		}
 	}
@@ -395,7 +413,7 @@ bool Z21Throttle::notify(unsigned int inHeader, unsigned int inXHeader, byte inD
 }
 
 void Z21Throttle::notifyStatus() {
-	Z21Throttle::replyBuffer[0] = 0;	// main current 1
+	Z21Throttle::replyBuffer[0] = 0; // main current 1
 	Z21Throttle::replyBuffer[1] = 0; // main current 2
 	Z21Throttle::replyBuffer[2] = 0; // prog current 1
 	Z21Throttle::replyBuffer[3] = 0; // prog current 2
@@ -498,10 +516,10 @@ void Z21Throttle::notifyTurnoutInfo(byte inMSB, byte inLSB) {
 	int id = (inMSB << 8) + inLSB;
 
 	if (Turnout::isClosed(id))
-		Z21Throttle::replyBuffer[2] = B00000000; // 000000ZZ	 ZZ : 00 not switched   01 pos1  10 pos2  11 invalid
-	else
 		Z21Throttle::replyBuffer[2] = B00000001; // 000000ZZ	 ZZ : 00 not switched   01 pos1  10 pos2  11 invalid
-	notify(HEADER_LAN_XPRESS_NET, LAN_X_HEADER_TURNOUT_INFO, Z21Throttle::replyBuffer, 3, false);
+	else
+		Z21Throttle::replyBuffer[2] = B00000010; // 000000ZZ	 ZZ : 00 not switched   01 pos1  10 pos2  11 invalid
+	notify(HEADER_LAN_XPRESS_NET, LAN_X_HEADER_TURNOUT_INFO, Z21Throttle::replyBuffer, 3, true);
 }
 
 void Z21Throttle::notifyLocoMode(byte inMSB, byte inLSB) {
@@ -819,6 +837,15 @@ bool Z21Throttle::parse() {
 				{
 					int id = (DB[1] << 8) + DB[2];
 					DIAG_Z21VERBOSE(F("%d TURNOUT %d INFO"), this->clientid, id);
+					if (!Turnout::exists(id)) {
+						// If turnout does not exist, create it
+						int addr = (id / 4) + 1;
+						int subaddr = id % 4;
+						DCCTurnout::create(id,addr,subaddr);
+						DIAG_Z21VERBOSE(F("TURNOUT %d created"), id);
+						Turnout::printAll(&USB_SERIAL);
+					}
+
 					notifyTurnoutInfo(DB[1], DB[2]);
 					done = true;
 				}
@@ -864,26 +891,26 @@ bool Z21Throttle::parse() {
 					bool activate = DB[3] & 0b00001000;
 					bool IsOutput1 = DB[3] & 0b00000001;
 					if (activate) {
-						DIAG_Z21VERBOSE(F("%d TURNOUT %d %s output%s"), this->clientid, id + 1, activate?"active":"inactive", IsOutput1?"1":"2");
+						DIAG_Z21VERBOSE(F("%d TURNOUT %d %s output %s"), this->clientid, id + 1, activate?"active":"inactive", IsOutput1?"1":"2");
 					}
 					else {
 						DIAG_Z21VERBOSE(F("%d TURNOUT %d %s"), this->clientid, id + 1, activate?"active":"inactive");
 					}
+
 					if (!Turnout::exists(id)) {
 						// If turnout does not exist, create it
 						int addr = (id / 4) + 1;
 						int subaddr = id % 4;
 						DCCTurnout::create(id,addr,subaddr);
 						DIAG_Z21VERBOSE(F("TURNOUT %d created"), id);
-						//StringFormatter::send(stream, F("HmTurnout %d created\n"),id);
+						Turnout::printAll(&USB_SERIAL);
 					}
 
 					if (activate) {
 				  	Turnout::setClosed(id, !IsOutput1);
 					}
-					else {
-						this->notifyTurnoutInfo(DB[1], DB[2]);
-					}
+
+					this->notifyTurnoutInfo(DB[1], DB[2]);
 
 					/*
 					switch (DB[2] & 0b0001000) {
@@ -902,7 +929,7 @@ bool Z21Throttle::parse() {
 						break;
 					}*/
 					}
-					//done = true;
+					done = true;
 					break;
 				case 0x22:
 					break;
