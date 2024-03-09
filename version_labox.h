@@ -1,7 +1,9 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.4.5"
+#define VERSION_LABOX "2.4.6"
+// 2.4.6  - Stop button for Z21 apps are now correctly handled. (Thanks Gilles/gbo95)
+//        - The power state is transmitted to all connected Z21 apps. (Thanks Gilles/gbo95)
 // 2.4.5  - New delay Z21_TIMEOUT to disconnect z21 throttle without any communication... .
 //        - Black Z21 app works now, after removing a surprising 1000 bytes UDP message !
 //        - Big UDP packet with multiple Z21 messages are now correctly handled.

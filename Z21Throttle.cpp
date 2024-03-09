@@ -181,6 +181,11 @@ void Z21Throttle::loop() {
 			#endif
 			// Fleischmann/Roco Android app starts with Power on !
 			TrackManager::setMainPower(POWERMODE::ON);
+			Z21Throttle* pThrottle = getOrAddThrottle(clientId); 
+			if (pThrottle != NULL) {
+		  	pThrottle->lastHeartBeatDate = millis();
+      	pThrottle->notifyTrPw(1);
+			}
 		}
 
 		clientId = readUdpPacket();
@@ -289,7 +294,6 @@ Z21Throttle::Z21Throttle(int inClientId) {
 	this->turnoutListHash = -1;  // make sure turnout list is sent once
 	this->exRailSent = false;
 	this->mostRecentCab = 0;     
-	this->lastPowerOffDate = 0;
 	this->lastHeartBeatDate = 0;
 	for (int loco=0;loco<MAX_MY_LOCO; loco++)
 		myLocos[loco].throttle='\0';
@@ -508,6 +512,11 @@ void Z21Throttle::notifyLocoInfo(byte inMSB, byte inLSB) {
 	if (DCC::getFn(locoAddress, 28)) bitSet(Z21Throttle::replyBuffer[7], 7);
   
 	notify(HEADER_LAN_XPRESS_NET, LAN_X_HEADER_LOCO_INFO, Z21Throttle::replyBuffer, 8, false);
+  
+  if (TrackManager::getMainPower()==POWERMODE::OFF) 
+    this->notifyTrPw(0);
+  else 
+    this->notifyTrPw(1);
 }
 
 void Z21Throttle::notifyTurnoutInfo(byte inMSB, byte inLSB) {
@@ -527,6 +536,12 @@ void Z21Throttle::notifyLocoMode(byte inMSB, byte inLSB) {
 	Z21Throttle::replyBuffer[1] = inLSB; // loco address lsb
 	Z21Throttle::replyBuffer[2] = B00000000; // 00000000	DCC   00000001 MM
 	notify(HEADER_LAN_GET_LOCOMODE, Z21Throttle::replyBuffer, 3, true);
+}
+
+void Z21Throttle::notifyTrPw(byte TrPw) {
+  Z21Throttle::replyBuffer[0] = 0x22; 
+  Z21Throttle::replyBuffer[1] = 0x2-(TrPw*2) ; // power off or on
+  notify(HEADER_LAN_XPRESS_NET, LAN_X_STATUS_CHANGED, Z21Throttle::replyBuffer, 2, true);
 }
 
 void Z21Throttle::notifyFirmwareVersion() {
@@ -571,13 +586,6 @@ void Z21Throttle::setSpeed(byte inNbSteps, byte inDB1, byte inDB2, byte inDB3) {
 	byte speed = inDB3;
 	bitClear(speed, 7);
 
-#ifdef AUTOMATIC_POWER_RESTORE
-	if (this->lastPowerOffDate!= 0 && millis() - this->lastPowerOffDate > POWEROFF_ONDELAY * 1000) {
-		TrackManager::setMainPower(POWERMODE::ON);
-		this->lastPowerOffDate = 0;
-	}
-#endif
-
 	DIAG_Z21(F("Z21 Throttle %d : speed %d"), clientid, speed * (isForward ? 1:-1));
 
 	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
@@ -603,13 +611,6 @@ void Z21Throttle::setFunction(byte inDB1, byte inDB2, byte inDB3) {
 	bitClear(function, 6);
 	bitClear(function, 7);
 	bool activeFlag = action == 0b01;
-
-#ifdef AUTOMATIC_POWER_RESTORE
-	if (this->lastPowerOffDate!= 0 && millis() - this->lastPowerOffDate > POWEROFF_ONDELAY * 1000) {
-		TrackManager::setMainPower(POWERMODE::ON);
-		this->lastPowerOffDate = 0;
-	}
-#endif
 
 	DIAG_Z21(F("Z21 Throttle %d : function %d %s"), clientid, function, activeFlag?"ON":"OFF");
 
@@ -764,29 +765,21 @@ bool Z21Throttle::parse() {
 						done = true;
 						break;
 					case LAN_X_DB0_SET_TRACK_POWER_OFF:
-					  this->lastPowerOffDate = millis();
 						DIAG_Z21(F("%d POWER_OFF"), this->clientid);
-						//
-						// TODO Pass through a text message to avoid multi thread locks...
-						//
 						TrackManager::setMainPower(POWERMODE::OFF);
+          	this->notifyTrPw(0);
 						done = true;
 						break;
 					case LAN_X_DB0_SET_TRACK_POWER_ON:
 						DIAG_Z21(F("%d POWER_ON"), this->clientid);
-						//
-						// TODO Pass through a text message to avoid multi thread locks...
-						//
 						TrackManager::setMainPower(POWERMODE::ON);
+            this->notifyTrPw(1);
 						done = true;
 						break;
 					}
 					break;
 				case LAN_X_HEADER_SET_STOP:
 					DIAG_Z21(F("%d EMERGENCY_STOP"), this->clientid);
-					//
-					// TODO Pass through a text message to avoid multi thread locks...
-					//
 					//Emergency Stop  (speed code 1)
 					// setThrottle will cause a broadcast so notification will be sent
 					LOOPLOCOS('*', 0) { DCC::setThrottle(myLocos[loco].cab, 1, DCC::getThrottleDirection(myLocos[loco].cab)); }
