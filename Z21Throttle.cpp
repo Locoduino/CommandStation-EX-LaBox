@@ -541,7 +541,7 @@ void Z21Throttle::notifyLocoMode(byte inMSB, byte inLSB) {
 void Z21Throttle::notifyTrPw(byte TrPw) {
   Z21Throttle::replyBuffer[0] = 0x22; 
   Z21Throttle::replyBuffer[1] = 0x2-(TrPw*2) ; // power off or on
-  notify(HEADER_LAN_XPRESS_NET, LAN_X_STATUS_CHANGED, Z21Throttle::replyBuffer, 2, true);
+  notify(HEADER_LAN_XPRESS_NET, LAN_X_STATUS_CHANGED, Z21Throttle::replyBuffer, 2, false);
 }
 
 void Z21Throttle::notifyFirmwareVersion() {

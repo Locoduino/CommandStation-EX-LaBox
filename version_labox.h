@@ -2,6 +2,7 @@
 #define version_labox_h
 
 #define VERSION_LABOX "2.4.6"
+// 2.4.7  - NotifyTrPw() XOR error fixed.
 // 2.4.6  - Stop button for Z21 apps are now correctly handled. (Thanks Gilles/gbo95)
 //        - The power state is transmitted to all connected Z21 apps. (Thanks Gilles/gbo95)
 // 2.4.5  - New delay Z21_TIMEOUT to disconnect z21 throttle without any communication... .
