@@ -24,7 +24,7 @@
 #include "IODevice.h"
 #include "DIAG.h" 
 #include "FSH.h"
-//#include "IO_MCP23017.h"
+//#include "IO_MCP23017.h" Labox
 #include "DCCTimer.h"
 
 #if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_MEGAAVR)
@@ -63,7 +63,7 @@ void IODevice::begin() {
   if (exrailHalSetup)
     exrailHalSetup();
 
-/*
+/* Labox
   // Predefine two PCA9685 modules 0x40-0x41 if no conflicts
   // Allocates 32 pins 100-131
   if (checkNoOverlap(100, 16, 0x40)) {

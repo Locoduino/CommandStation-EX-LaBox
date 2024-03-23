@@ -77,6 +77,7 @@
 
 
     // Message by language : French
+// maximum line size : 					 ++++++++++++++++++++
 #define TXT_Forward             "AV"
 #define TXT_Back                "AR"
 #define TXT_Forwardl            "Avance"
@@ -117,6 +118,7 @@
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
 #define TXT_V3Trains            "3 trains"
+// maximum line size : 					 ++++++++++++++++++++
 #define TXT_LstEvent            "Liste evenements"
 #define TXT_WifiWaiting         "Connexion WiFi..."
 #define TXT_noWifi              " !! Pas de WiFi !!"
@@ -125,6 +127,7 @@
 //#define TXT_LanguageRequest    "Choix de la Langue"
 
     // Message by language : English
+// maximum line size : 					 ++++++++++++++++++++
 /*#define TXT_Forward             "FW"
 #define TXT_Back                "BK"
 #define TXT_Forwardl            "Forward"

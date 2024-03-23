@@ -17,6 +17,7 @@
 #include <EEPROM.h>
 
 int locoID = 0;
+bool longAddress = false;
 bool updatedDisplay;
 char message[21];
 
@@ -34,12 +35,18 @@ StateReading	state;
 
 void locoIdCallback(int16_t inId)
 {
+	if (inId >= LONG_ADDR_MARKER)
+	{
+		longAddress = true;
+		inId -= LONG_ADDR_MARKER;
+	}
+
   locoID = inId;
 	if (locoID > 0)
 	{
 		state = StateReading::MenuQuit;
 	}
-	if (locoID < 0)
+	if (locoID <= 0)
 	{
 		state = StateReading::MenuRetry;
 	}
@@ -62,6 +69,7 @@ void menuTrainAddrRead::start()
 
   state = StateReading::Reading;
   locoID = 0;
+	longAddress = false;
   void (*ptr)(int16_t) = &locoIdCallback;
   DCC::getLocoId(ptr);
   updatedDisplay = false;
@@ -218,7 +226,10 @@ void menuTrainAddrRead::update()
 
   if(locoID > 0)
   {
+		if (longAddress)
     sprintf(message,"%04d",locoID);
+		else
+    	sprintf(message,"%03d", locoID);
   }
   else
   if(locoID < 0)

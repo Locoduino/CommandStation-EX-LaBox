@@ -106,6 +106,12 @@ void CommandDistributor::forget(byte clientId) {
   if (clients[clientId]==WITHROTTLE_TYPE) WiThrottle::forget(clientId);
   clients[clientId]=NONE_TYPE;
 }
+#else
+void  CommandDistributor::parse(byte clientId,byte * buffer, RingStream * stream) {
+}
+
+void CommandDistributor::forget(byte clientId) {
+}
 #endif 
 
 // This will not be called on a uno 
