@@ -49,7 +49,7 @@ void ackTask(void *pvParameters)
 
 void CanMsg::begin()
 {
-  Serial.printf("[CanMsg %d] : Configure ESP32 CAN\n", __LINE__);
+  DIAG(F("[CanMsg %d] : Configure ESP32 CAN"), __LINE__);
   ACAN_ESP32_Settings settings(DESIRED_BIT_RATE);
   settings.mRxPin = RxPin;
   settings.mTxPin = TxPin;
@@ -66,10 +66,10 @@ void CanMsg::begin()
   // Serial.printf("[CanMsg %d] : config without filter\n", __LINE__);
 
   if (errorCode == 0)
-    Serial.printf("[CanMsg %d] : configuration OK !\n", __LINE__);
+    DIAG(F("[CanMsg %d] : configuration OK !"), __LINE__);
   else
   {
-    Serial.printf("[CanMsg %d] : configuration error 0x%x\n", __LINE__, errorCode);
+    DIAG(F("[CanMsg %d] : configuration error 0x%x"), __LINE__, errorCode);
     return;
   }
   xQueue = xQueueCreate(10, sizeof(CANMessage));
@@ -89,34 +89,44 @@ void CanMsg::loop()
     const uint8_t exped = (frameIn.id & 0x7F800) >> 11;  // Expéditeur
     const uint8_t resp = (frameIn.id & 0x04) >> 2;       // Commande = 0 / Reponse = 1
 
-    Serial.printf("\n[CanMsg %d]------ Expediteur %d : Commande 0x%0X\n\n", __LINE__, exped, cmde);
+    char cmdName[20];
+    switch(cmde)
+    {
+      case CAN_LOCO_THROTTLE:        strcpy(cmdName, "Loco Throttle");        break;
+      case CAN_LOCO_FUNCTION:        strcpy(cmdName, "Loco Function");        break;
+      case CAN_LOCO_WRITECV_MAIN:    strcpy(cmdName, "Loco WriteCv main");    break;
+      case CAN_POWERON:              strcpy(cmdName, "Power");                break;
+      case CAN_EMERGENCY_STOP:       strcpy(cmdName, "Emergency Stop");       break;
+    }
+
+    DIAG(F("[CanMsg %d]------ Expediteur %d : Commande 0x%0X %s"), __LINE__, exped, cmde, cmdName);
 
     if (frameIn.rtr) // Remote frame
       ACAN_ESP32::can.tryToSend(frameIn);
     else
     {
       uint16_t loco = 0;
-      if (cmde < 0xFA)
+      if (cmde < CAN_FIRST_NOTLOCO_COMMAND)
         loco = (frameIn.data[0] << 8) + frameIn.data[1];
 
       switch (cmde) // Fonction appelée
       {
-      case 0xF0:
+      case CAN_LOCO_THROTTLE:
         DCC::setThrottle(loco, frameIn.data[2], frameIn.data[3]);
         xQueueSendToBack(xQueue, &frameIn, 0);
         break;
-      case 0xF1:
+      case CAN_LOCO_FUNCTION:
         DCC::setFn(loco, frameIn.data[2], frameIn.data[3]); // frame.data[2] = fonction, frame.data[3] : 'on' ou 'off'
         break;
-      case 0xF7:
+      case CAN_LOCO_WRITECV_MAIN:
         // WRITE CV on MAIN <w CAB CV VALUE>
         DCC::writeCVByteMain(loco, frameIn.data[2], frameIn.data[3]);
         break;
-      case 0xFE:
+      case CAN_POWERON:
         TrackManager::setMainPower(frameIn.data[0] ? POWERMODE::ON : POWERMODE::OFF);
         xQueueSendToBack(xQueue, &frameIn, 0);
         break;
-      case 0xFF:
+      case CAN_EMERGENCY_STOP:
         DCC::setThrottle(0, 1, 1); // emergency stop
         xQueueSendToBack(xQueue, &frameIn, 0);
         break;
@@ -161,7 +171,7 @@ void CanMsg::loop()
 void CanMsg::sendMsg(CANMessage &frame)
 {
   if (0 == ACAN_ESP32::can.tryToSend(frame))
-    Serial.printf("Echec envoi message CAN\n");
+    DIAG(F("Echec envoi message CAN"));
 }
 
 auto formatMsg = [](CANMessage &frame, byte prio, byte cmde, byte thisNodeId, byte destNodeId, byte resp) -> CANMessage

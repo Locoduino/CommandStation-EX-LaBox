@@ -19,6 +19,15 @@
 #include "TrackManager.h"
 #include "MotorDriver.h"
 
+#define CAN_LOCO_THROTTLE           0xF0
+#define CAN_LOCO_FUNCTION           0xF1
+#define CAN_LOCO_WRITECV_MAIN       0xF7
+
+#define CAN_FIRST_NOTLOCO_COMMAND   0xFA
+
+#define CAN_POWERON                 0xFE
+#define CAN_EMERGENCY_STOP          0xFF
+
 class CanMsg
 {
 private:

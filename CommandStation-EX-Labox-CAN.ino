@@ -51,9 +51,7 @@
 
 #include "DCCEX.h"
 #include "EEPROM.h"
-#ifdef CAN
-#include "CanMsg.h"
-#endif
+#include "version_labox.h"
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -79,11 +77,11 @@ hmi boxHMI(&Wire);
 //--------------------------- CAN messaging -------------------------------------
 #ifdef CAN
 #include "CanMsg.h"
+#include "version_labox_CAN.h"
 #endif
 //----------------------------------------------------------------------------
 
-void setup()
-{
+void setup() {
   // The main sketch has responsibilities during setup()
 
   // Responsibility 1: Start the usb connection for diagnostics
@@ -91,7 +89,7 @@ void setup()
   SerialManager::init();
 
   DIAG(F("License GPLv3 fsf.org (c) dcc-ex.com"));
-
+	
   // Initialise HAL layer before reading EEprom or setting up MotorDrivers
   IODevice::begin();
 
@@ -100,7 +98,7 @@ void setup()
   ADCee::begin();
 
   DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
-  DIAG(F("LaBox : 2.4.1"));
+  DIAG(F("LaBox : %s/%s"), VERSION_LABOX, VERSION_LABOX_CAN);
 
   DISPLAY_START(
       // This block is still executed for DIAGS if display not in use
@@ -120,8 +118,7 @@ void setup()
 
   DIAG(F("Mode %s"), hmi::progMode ? "Prog" : "Main");
 
-  if (hmi::progMode)
-  {
+  if (hmi::progMode) {
     // Reset to Main mode for next reboot.
     EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
     EEPROM.commit();
@@ -158,13 +155,11 @@ void setup()
 
 #ifdef USE_HMI
   // Set up MotorDrivers early to initialize all pins
-  if (hmi::progMode)
-  {
+  if (hmi::progMode) {
     DIAG(F("LaBox Prog mode."));
     TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
   }
-  else
-  {
+  else {
     DIAG(F("LaBox Main mode."));
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
@@ -200,13 +195,11 @@ void setup()
   CommandDistributor::broadcastPower();
 
 #ifdef USE_HMI
-  if (hmi::progMode)
-  {
+  if (hmi::progMode) {
     // must be done after all other setups.
     boxHMI.setProgMode();
   }
-  if (hmi::silentBootMode)
-  {
+  if (hmi::silentBootMode) {
     // Reset to Main mode for next reboot.
     EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
     EEPROM.commit();
@@ -214,8 +207,7 @@ void setup()
 #endif
 }
 
-void loop()
-{
+void loop() {
   // The main sketch has responsibilities during loop()
 
   // Responsibility 1: Handle DCC background processes
@@ -261,8 +253,7 @@ void loop()
   static int ramLowWatermark = __INT_MAX__; // replaced on first loop
 
   int freeNow = DCCTimer::getMinimumFreeMemory();
-  if (freeNow < ramLowWatermark)
-  {
+  if (freeNow < ramLowWatermark) {
     ramLowWatermark = freeNow;
     LCD(3, F("Free RAM=%5db"), ramLowWatermark);
   }

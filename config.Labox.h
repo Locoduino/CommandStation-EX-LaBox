@@ -1,10 +1,10 @@
 /*
- *  © 2022 Paul M. Antoine
- *  © 2021 Neil McKechnie
- *  © 2020-2023 Harald Barth
- *  © 2020-2021 Fred Decker
- *  © 2020-2021 Chris Harlow
- *  © 2023 Nathan Kellenicki
+ *  ï¿½ 2022 Paul M. Antoine
+ *  ï¿½ 2021 Neil McKechnie
+ *  ï¿½ 2020-2023 Harald Barth
+ *  ï¿½ 2020-2021 Fred Decker
+ *  ï¿½ 2020-2021 Chris Harlow
+ *  ï¿½ 2023 Nathan Kellenicki
  *  
  *  This file is part of CommandStation-EX
  *

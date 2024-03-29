@@ -1,9 +1,9 @@
 /*
- *  © 2021 Mike S
- *  © 2021 Fred Decker
- *  © 2021 Herb Morton
- *  © 2020-2021 Harald Barth
- *  © 2020-2021 Chris Harlow
+ *  ï¿½ 2021 Mike S
+ *  ï¿½ 2021 Fred Decker
+ *  ï¿½ 2021 Herb Morton
+ *  ï¿½ 2020-2021 Harald Barth
+ *  ï¿½ 2020-2021 Chris Harlow
  *  All rights reserved.
  *  
  *  This file is part of Asbelos DCC API
