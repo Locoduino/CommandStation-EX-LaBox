@@ -1,12 +1,10 @@
 
-<<<<<<< Updated upstream
-=======
+/*
   CanMsg.h
 
   Christophe Bobille - Locoduino
 
   The ESP32 requires to be connected to a CAN transceiver
-
 */
 
 #ifndef __CAN_MSG__
@@ -15,6 +13,9 @@
 #include <Arduino.h>
 #include <ACAN_ESP32.h>
 #include "DCC.h"
+
+#ifdef CAN
+
 #include "TrackManager.h"
 #include "MotorDriver.h"
 
@@ -44,4 +45,4 @@ public:
 };
 
 #endif
->>>>>>> Stashed changes
+#endif
