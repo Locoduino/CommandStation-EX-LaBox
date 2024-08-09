@@ -121,7 +121,7 @@ The configuration file for DCC-EX Command Station
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD "Your network passwd"
+#define WIFI_PASSWORD "YourPassword"
 //
 // WIFI_HOSTNAME: You probably don't need to change this
 #define WIFI_HOSTNAME "LaBox"
@@ -176,8 +176,22 @@ The configuration file for DCC-EX Command Station
 
 // LaBox specific defines
 
+// If a Oled screen is present on the hardware; use it !
 #define USE_HMI
+
+// On HMI screen, show current consomption
 #define HMI_SHOW_CURRENT
+
+// Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
+#define ENABLE_RAILCOM
+
+#if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
+#undef ENABLE_RAILCOM
+#endif
+
+// Pins used for railcom.
+#define RAILCOM_PININV	GPIO_NUM_27
+#define RAILCOM_PIN GPIO_NUM_33
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
