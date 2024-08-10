@@ -68,7 +68,7 @@ void setEOT(rmt_item32_t* item) {
 // is only ONE common ISR routine for all channels.
 RMTChannel *channelHandle[8] = { 0 };
 
-volatile int rmt_channel;                                                       // * Variable n° de canal
+int rmt_channel;                                                       // * Variable n° de canal
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 #ifdef ENABLE_RAILCOM
   gpio_matrix_out(RAILCOM_PIN, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
