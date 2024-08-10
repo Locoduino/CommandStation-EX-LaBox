@@ -1,7 +1,8 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.4.6"
+#define VERSION_LABOX "2.4.8"
+// 2.4.8	- Add check of ESP Framework (got from CommandStation-EX master branch...)
 // 2.4.7  - NotifyTrPw() XOR error fixed.
 // 2.4.6  - Stop button for Z21 apps are now correctly handled. (Thanks Gilles/gbo95)
 //        - The power state is transmitted to all connected Z21 apps. (Thanks Gilles/gbo95)
