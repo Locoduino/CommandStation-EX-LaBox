@@ -1,7 +1,8 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.5.0"
+#define VERSION_LABOX "2.5.1"
+// 2.5.1	- Railcom fixes on MotorDriver and DCC preamble.
 // 2.5.0 	-	Railcom integration
 // 2.4.8	- Add check of ESP Framework (got from CommandStation-EX master branch...)
 // 2.4.7  - NotifyTrPw() XOR error fixed.

@@ -23,6 +23,7 @@ void IRAM_ATTR timer_isr_CutOut() {
       gpio_matrix_out(RAILCOM_PIN, RMT_SIG_OUT0_IDX + rmt_channel, true, false);    // * Reconnecte la pin 33 au module RMT en inverse
       break;
     default:
+		  gpio_set_level(RAILCOM_PIN, 1); 
       gpio_matrix_out(RAILCOM_PIN, RMT_SIG_OUT0_IDX + rmt_channel, false, false);   // * Reconnecte la pin 33 au module RMT
       timerAlarmWrite(TimerCutOut, 160, false);                               // * Arrêt Timer
       break;

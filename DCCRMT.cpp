@@ -85,6 +85,7 @@ void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   byte ch;
   byte plen;
+	byte dp_rc;
   if (isMain) {
     ch = 0;
     plen = PREAMBLE_BITS_MAIN;                                    // 16
@@ -96,10 +97,12 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   // preamble
   preambleLen = plen + 2; // plen 1 bits, one 0 bit and one EOF marker
   preamble = (rmt_item32_t*)malloc(preambleLen * sizeof(rmt_item32_t));
+	dp_rc = 0;
 #ifdef ENABLE_RAILCOM
+	dp_rc = 1;
   setDCCBitCutOut(preamble);                                    // * Symbole CutOut
 #endif
-  for (byte n = 1; n < plen; n++)                             
+  for (byte n = dp_rc; n < plen; n++)                             
     setDCCBit1(preamble + n);      // preamble bits
 #ifdef SCOPE
   setDCCBit0Long(preamble + plen); // start of packet 0 bit long version
