@@ -28,6 +28,31 @@ The configuration file for DCC-EX Command Station
 
 **********************************************************************/
 
+// LaBox specific defines
+
+// If a Oled screen is present on the hardware; use it !
+#define USE_HMI
+
+// On HMI screen, show current consomption
+#define HMI_SHOW_CURRENT
+
+// Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
+#define ENABLE_RAILCOM
+
+#if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
+#undef ENABLE_RAILCOM
+#endif
+
+// Pins used for railcom.
+#define RAILCOM_PININV	GPIO_NUM_27
+#define RAILCOM_PIN GPIO_NUM_33
+
+#if defined(ENABLE_RAILCOM)
+	#define SIGNAL_PIN2		UNUSED_PIN
+#else
+	#define SIGNAL_PIN2		27
+#endif
+
 /////////////////////////////////////////////////////////////////////////////////////
 // If you want to add your own motor driver definition(s), add them here
 //   For example MY_SHIELD with display name "MINE":
@@ -59,11 +84,11 @@ The configuration file for DCC-EX Command Station
 //
 
 #define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
- new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
+ new MotorDriver(32, 33, SIGNAL_PIN2, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 #define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
  NULL, \
- new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
+ new MotorDriver(32, 33, SIGNAL_PIN2, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 //
 /////////////////////////////////////////////////////////////////////////////////////
@@ -173,25 +198,6 @@ The configuration file for DCC-EX Command Station
 //  *  #define SCROLLMODE 1 is by page (alternate between pages),
 //  *  #define SCROLLMODE 2 is by row (move up 1 row at a time).
 #define SCROLLMODE 1
-
-// LaBox specific defines
-
-// If a Oled screen is present on the hardware; use it !
-#define USE_HMI
-
-// On HMI screen, show current consomption
-#define HMI_SHOW_CURRENT
-
-// Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
-#define ENABLE_RAILCOM
-
-#if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
-#undef ENABLE_RAILCOM
-#endif
-
-// Pins used for railcom.
-#define RAILCOM_PININV	GPIO_NUM_27
-#define RAILCOM_PIN GPIO_NUM_33
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
