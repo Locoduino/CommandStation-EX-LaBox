@@ -19,18 +19,18 @@
 #if __has_include ( "config.h")
   #include "config.h"
   #ifndef LABOX_MAIN_MOTOR_SHIELD
-  #error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.example.h to config.h
+  #error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.Labox.h to config.h
   #endif
 #else
-  #warning config.h not found. Using defaults from config.example.h
-  #include "config.example.h"
+  #warning config.h not found. Using defaults from config.Labox.h
+  #include "config.Labox.h"
 #endif
 
 /*
  *  © 2021 Neil McKechnie
  *  © 2020-2021 Chris Harlow, Harald Barth, David Cutting,
  *  			Fred Decker, Gregor Baues, Anthony W - Dayton
- *  © 2023 Thierry Paris for Locoduino.
+ *  © 2023-2024 Thierry Paris for Locoduino.
  *  All rights reserved.
  *
  *  This file is part of CommandStation-EX-Labox
@@ -109,7 +109,7 @@ void setup()
   if (mode == 'P') hmi::progMode = true;
   if (mode == 'B') hmi::silentBootMode = true;
 
-  DIAG(F("Mode %s"), hmi::progMode?"Prog":"Main");
+  DIAG(F("Mode %s"), hmi::progMode ? "Prog" : "Main");
 
 	if (hmi::progMode) {
 		// Reset to Main mode for next reboot.

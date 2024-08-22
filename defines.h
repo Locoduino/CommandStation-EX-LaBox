@@ -31,7 +31,7 @@
   #if __has_include ( "config.h")
     #include "config.h"
   #else
-    #include "config.example.h"
+    #include "config.Labox.h"
   #endif
 #endif
 

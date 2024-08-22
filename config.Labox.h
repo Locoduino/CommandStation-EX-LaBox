@@ -28,6 +28,14 @@ The configuration file for DCC-EX Command Station
 
 **********************************************************************/
 
+// LaBox specific defines
+
+// If a Oled screen is present on the hardware; use it !
+#define USE_HMI
+
+// On HMI screen, show current consomption
+#define HMI_SHOW_CURRENT
+
 /////////////////////////////////////////////////////////////////////////////////////
 // If you want to add your own motor driver definition(s), add them here
 //   For example MY_SHIELD with display name "MINE":
@@ -121,7 +129,7 @@ The configuration file for DCC-EX Command Station
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD "Your network passwd"
+#define WIFI_PASSWORD "YourPassword"
 //
 // WIFI_HOSTNAME: You probably don't need to change this
 #define WIFI_HOSTNAME "LaBox"
@@ -173,11 +181,6 @@ The configuration file for DCC-EX Command Station
 //  *  #define SCROLLMODE 1 is by page (alternate between pages),
 //  *  #define SCROLLMODE 2 is by row (move up 1 row at a time).
 #define SCROLLMODE 1
-
-// LaBox specific defines
-
-#define USE_HMI
-#define HMI_SHOW_CURRENT
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
