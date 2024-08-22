@@ -24,6 +24,7 @@
 #include "DCCTimer.h"
 #include "DCCWaveform.h" // for MAX_PACKET_SIZE
 #ifdef ENABLE_RAILCOM
+#include "hmi.h"
 #include "Railcom.h"
 #endif
 #include "soc/gpio_sig_map.h"
@@ -68,13 +69,20 @@ void setEOT(rmt_item32_t* item) {
 // is only ONE common ISR routine for all channels.
 RMTChannel *channelHandle[8] = { 0 };
 
+#ifdef ENABLE_RAILCOM
+extern gpio_num_t railcom_pin;
+extern gpio_num_t railcom_invpin;
+#endif
+
 int rmt_channel;                                                       // * Variable n° de canal
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 #ifdef ENABLE_RAILCOM
-  gpio_matrix_out(RAILCOM_PIN, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
-  gpio_set_level(RAILCOM_PIN, 1);                               // * Pin 33 à l'état haut
-  rmt_channel = channel;                                              // * Mémorise n° de canal
-  StarTimerCutOut();                                            // * Start Timer CutOut
+  if (!hmi::progMode) {     
+	  gpio_matrix_out(railcom_pin, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
+ 		gpio_set_level(railcom_pin, 1);                               // * Pin 33 à l'état haut
+ 		rmt_channel = channel;                                              // * Mémorise n° de canal
+ 		StarTimerCutOut();        
+	}                                    // * Start Timer CutOut
 #endif
   RMTChannel *tt = channelHandle[channel];
   if (tt) tt->RMTinterrupt();
@@ -99,8 +107,10 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   preamble = (rmt_item32_t*)malloc(preambleLen * sizeof(rmt_item32_t));
 	dp_rc = 0;
 #ifdef ENABLE_RAILCOM
-	dp_rc = 1;
-  setDCCBitCutOut(preamble);                                    // * Symbole CutOut
+  if (!hmi::progMode) {     
+		dp_rc = 1;
+  	setDCCBitCutOut(preamble);                                    // * Symbole CutOut
+	}
 #endif
   for (byte n = dp_rc; n < plen; n++)                             
     setDCCBit1(preamble + n);      // preamble bits
@@ -145,7 +155,11 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   // 2 mem block of 64 RMT items should be enough
 
   ESP_ERROR_CHECK(rmt_config(&config));
+	#ifdef ENABLE_RAILCOM
   addPin(pins.invpin, true);
+	#else
+  addPin(UNUSED_PIN, true);
+	#endif
   /*
     // test: config another gpio pin
     gpio_num_t gpioNum = (gpio_num_t)(pin-1);

@@ -2,8 +2,22 @@
 
 Labox is a projet to build a small DCC Command Station with a dedicated hardware based on ESP32.
 The goal is to be able to drive DCC machines, but also use Railcom standard and CAN bus connectivity.
-You can find more information on Locoduino site.
+You can find more information on [Locoduino website](https://locoduino.org/).
 The software is based on DCC-EX CommandStation software (see below...).
+
+# How to start implementing Labox ?
+
+* Open the file ``CommandStation-EX-LaBox.ino`` in the Arduino IDE or Visual Studio Code (VSC) with PlatformIO extension. Please do not rename the folder containing the sketch code, nor add any files in that folder. The Arduino IDE relies on the structure and name of the folder to properly display and compile the code. 
+* Rename or copy ``config.Labox.h`` to ``config.h``. 
+* You must edit ``config.h`` according to the help texts in ``config.h``.
+
+# Hardware
+
+Labox is based on a specific PCB designed by Locoduino. The design and gerber files can be found in the 'PCB' folder.
+
+# More information
+You can learn more at the [Locoduino website](https://locoduino.org/)
+
 
 # What is DCC-EX?
 DCC-EX is a team of dedicated enthusiasts producing open source DCC & DC solutions for you to run your complete model railroad layout. Our easy to use, do-it-yourself, and free open source products run on off-the-shelf Arduino technology and are supported by numerous third party hardware and apps like JMRI, Engine Driver, wiThrottle, Rocrail and more. 

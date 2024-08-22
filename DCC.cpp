@@ -218,6 +218,12 @@ bool DCC::setFn( int cab, int16_t functionNumber, bool on) {
     updateGroupflags(speedTable[reg].groupFlags, functionNumber);
     CommandDistributor::broadcastLoco(reg);
   }
+#ifdef USE_HMI
+  if (hmi::CurrentInterface != NULL) {
+		hmi::CurrentInterface->ChangeFunction(cab, functionNumber, on);
+		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	}
+#endif
   return true;
 }
 

@@ -43,14 +43,10 @@ The configuration file for DCC-EX Command Station
 #undef ENABLE_RAILCOM
 #endif
 
-// Pins used for railcom.
-#define RAILCOM_PININV	GPIO_NUM_27
-#define RAILCOM_PIN GPIO_NUM_33
-
 #if defined(ENABLE_RAILCOM)
-	#define SIGNAL_PIN2		UNUSED_PIN
-#else
 	#define SIGNAL_PIN2		27
+#else
+	#define SIGNAL_PIN2		UNUSED_PIN
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////

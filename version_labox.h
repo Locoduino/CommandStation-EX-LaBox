@@ -1,9 +1,13 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.5.1"
+#define VERSION_LABOX "2.5.2"
+// 2.5.2	- Railcom simplification to get pins from MotorDriver
+//				-	Fix Railcom in prog mode
+//				- Fix Function number < 28 on Oled screen.
 // 2.5.1	- Railcom fixes on MotorDriver and DCC preamble.
 // 2.5.0 	-	Railcom integration
+// 2.4.9	- Fix Function number < 28 on Oled screen.
 // 2.4.8	- Add check of ESP Framework (got from CommandStation-EX master branch...)
 // 2.4.7  - NotifyTrPw() XOR error fixed.
 // 2.4.6  - Stop button for Z21 apps are now correctly handled. (Thanks Gilles/gbo95)
