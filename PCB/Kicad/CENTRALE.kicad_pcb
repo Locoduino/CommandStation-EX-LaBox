@@ -9453,7 +9453,7 @@
 		(uuid "a8470270-920a-4fed-9691-22526135f92c")
 		(at 192.195893 125.452275)
 		(descr "<b>PIN HEADER</b>")
-		(property "Reference" "RX/TX"
+		(property "Reference" "TX/RX"
 			(at -0.377313 -2.554711 0)
 			(layer "F.SilkS")
 			(uuid "c7524402-4dbd-4d05-888d-edab7e79a150")

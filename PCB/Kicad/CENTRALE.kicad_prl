@@ -7,7 +7,6 @@
     "hidden_nets": [
       "N$1",
       "N$5",
-      "N$7",
       "N$9",
       "N$11",
       "GND",
@@ -93,7 +92,7 @@
     "ssh_key": ""
   },
   "meta": {
-    "filename": "CENTRALE02c5.kicad_prl",
+    "filename": "CENTRALE.kicad_prl",
     "version": 3
   },
   "project": {
