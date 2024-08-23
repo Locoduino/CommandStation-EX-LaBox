@@ -43,12 +43,6 @@ The configuration file for DCC-EX Command Station
 #undef ENABLE_RAILCOM
 #endif
 
-#if defined(ENABLE_RAILCOM)
-	#define SIGNAL_PIN2		27
-#else
-	#define SIGNAL_PIN2		UNUSED_PIN
-#endif
-
 /////////////////////////////////////////////////////////////////////////////////////
 // If you want to add your own motor driver definition(s), add them here
 //   For example MY_SHIELD with display name "MINE":
@@ -80,11 +74,11 @@ The configuration file for DCC-EX Command Station
 //
 
 #define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
- new MotorDriver(32, 33, SIGNAL_PIN2, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
+ new MotorDriver(32, 33, 27, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 #define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
  NULL, \
- new MotorDriver(32, 33, SIGNAL_PIN2, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
+ new MotorDriver(32, 33, 27, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 //
 /////////////////////////////////////////////////////////////////////////////////////
