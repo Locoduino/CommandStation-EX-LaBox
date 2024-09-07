@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 0)
+  (lib (name "CENTRALE02c3-eagle-import")(type "KiCad")(uri "${KIPRJMOD}/CENTRALE02c3-eagle-import.kicad_sym")(options "")(descr ""))
+)

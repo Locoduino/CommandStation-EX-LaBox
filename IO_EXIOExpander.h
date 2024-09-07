@@ -100,12 +100,12 @@ private:
 
           // See if we already have suitable buffers assigned
           if (_numDigitalPins>0) {
-          size_t digitalBytesNeeded = (_numDigitalPins + 7) / 8;
-          if (_digitalPinBytes < digitalBytesNeeded) {
-            // Not enough space, free any existing buffer and allocate a new one
-            if (_digitalPinBytes > 0) free(_digitalInputStates);
+            size_t digitalBytesNeeded = (_numDigitalPins + 7) / 8;
+            if (_digitalPinBytes < digitalBytesNeeded) {
+              // Not enough space, free any existing buffer and allocate a new one
+              if (_digitalPinBytes > 0) free(_digitalInputStates);
               if ((_digitalInputStates = (byte*) calloc(digitalBytesNeeded, 1)) != NULL) {
-            _digitalPinBytes = digitalBytesNeeded;
+		_digitalPinBytes = digitalBytesNeeded;
 	      } else {
 		DIAG(F("EX-IOExpander I2C:%s ERROR alloc %d bytes"), _I2CAddress.toString(), digitalBytesNeeded);
 		_deviceState = DEVSTATE_FAILED;
@@ -115,21 +115,21 @@ private:
             }
           }
           if (_numAnaloguePins>0) {
-          size_t analogueBytesNeeded = _numAnaloguePins * 2;
-          if (_analoguePinBytes < analogueBytesNeeded) {
-            // Free any existing buffers and allocate new ones.
-            if (_analoguePinBytes > 0) {
-              free(_analogueInputBuffer);
-              free(_analogueInputStates);
-              free(_analoguePinMap);
-            }
-            _analogueInputStates = (uint8_t*) calloc(analogueBytesNeeded, 1);
-            _analogueInputBuffer = (uint8_t*) calloc(analogueBytesNeeded, 1);
-            _analoguePinMap = (uint8_t*) calloc(_numAnaloguePins, 1);
+            size_t analogueBytesNeeded = _numAnaloguePins * 2;
+            if (_analoguePinBytes < analogueBytesNeeded) {
+              // Free any existing buffers and allocate new ones.
+              if (_analoguePinBytes > 0) {
+                free(_analogueInputBuffer);
+                free(_analogueInputStates);
+                free(_analoguePinMap);
+              }
+              _analogueInputStates = (uint8_t*) calloc(analogueBytesNeeded, 1);
+              _analogueInputBuffer = (uint8_t*) calloc(analogueBytesNeeded, 1);
+              _analoguePinMap = (uint8_t*) calloc(_numAnaloguePins, 1);
 	      if (_analogueInputStates  != NULL &&
 		  _analogueInputBuffer != NULL &&
 		  _analoguePinMap != NULL) {
-            _analoguePinBytes = analogueBytesNeeded;
+		_analoguePinBytes = analogueBytesNeeded;
 	      } else {
 		DIAG(F("EX-IOExpander I2C:%s ERROR alloc analog pin bytes"), _I2CAddress.toString());
 		_deviceState = DEVSTATE_FAILED;
@@ -137,13 +137,13 @@ private:
 		return;
 	      }
 	    }
-          }
-        } else {
-          DIAG(F("EX-IOExpander I2C:%s ERROR configuring device"), _I2CAddress.toString());
-          _deviceState = DEVSTATE_FAILED;
-          return;
-        }
-      } 
+	  }
+	} else {
+	  DIAG(F("EX-IOExpander I2C:%s ERROR configuring device"), _I2CAddress.toString());
+	  _deviceState = DEVSTATE_FAILED;
+	  return;
+	}
+      }
       // We now need to retrieve the analogue pin map if there are analogue pins
       if (status == I2C_STATUS_OK && _numAnaloguePins>0) {
         commandBuffer[0] = EXIOINITA;
@@ -387,7 +387,7 @@ private:
   uint8_t* _analogueInputBuffer = NULL;  // buffer for I2C input transfers
   uint8_t _readCommandBuffer[1];
 
-  uint8_t _digitalPinBytes = 0;  // Size of allocated memory buffer (may be longer than needed)
+  uint8_t _digitalPinBytes = 0;   // Size of allocated memory buffer (may be longer than needed)
   uint8_t _analoguePinBytes = 0;  // Size of allocated memory buffer (may be longer than needed)
   uint8_t* _analoguePinMap = NULL;
   I2CRB _i2crb;

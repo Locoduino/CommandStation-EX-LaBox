@@ -207,13 +207,13 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
       version[i]=wifiStream->read();
       StringFormatter::printEscape(version[i]);
     }
-      if ((version[0] == '0') ||
-	  (version[0] == '2' && version[2] == '0') ||
+    if ((version[0] == '0') ||
+	(version[0] == '2' && version[2] == '0') ||
 	(version[0] == '2' && version[2] == '2' && version[4] == '0' && version[6] == '0'
 	 && version[7] == '-' && version[8] == 'd' && version[9] == 'e' && version[10] == 'v')) {
       DIAG(F("You need to up/downgrade the ESP firmware"));
       SSid = F("UPDATE_ESP_FIRMWARE");
-	forceAP = true;
+      forceAP = true;
     }
   }
   checkForOK(2000, true, false);

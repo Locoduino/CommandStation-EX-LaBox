@@ -30,6 +30,8 @@
 #define DCC_1_HALFPERIOD 58  //4640 // 1 / 80000000 * 4640 = 58us
 #define DCC_0_HALFPERIOD 100 //8000
 
+void StarTimerCutOut();
+
 class RMTChannel {
  public:
   RMTChannel(pinpair pins, bool isMain);

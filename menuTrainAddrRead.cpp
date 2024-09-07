@@ -227,17 +227,17 @@ void menuTrainAddrRead::update()
   if(locoID > 0)
   {
 		if (longAddress)
-    	sprintf(message,"%04d", locoID);
+    sprintf(message,"%04d",locoID);
 		else
     	sprintf(message,"%03d", locoID);
   }
   else
-	  if(locoID < 0)
-  	{
-    	sprintf(message," ERR");
-	  }
-  	else
-    	sprintf(message,"----");
+  if(locoID < 0)
+  {
+    sprintf(message," ERR");
+  }
+  else
+    sprintf(message,"----");
 
   display->setTextColor(WHITE);
   display->setTextSize(3);

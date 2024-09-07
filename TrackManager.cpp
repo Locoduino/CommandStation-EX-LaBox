@@ -211,11 +211,13 @@ bool TrackManager::setTrackMode(byte trackToSet, TRACK_MODE mode, int16_t dcAddr
     //DIAG(F("Track=%c remove  pin %d"),trackToSet+'A', p.pin);
     gpio_reset_pin((gpio_num_t)p.pin);
     pinMode(p.pin, OUTPUT); // gpio_reset_pin may reset to input
+#ifndef ENABLE_RAILCOM
     if (p.invpin != UNUSED_PIN) {
       //DIAG(F("Track=%c remove ^pin %d"),trackToSet+'A', p.invpin);
       gpio_reset_pin((gpio_num_t)p.invpin);
       pinMode(p.invpin, OUTPUT); // gpio_reset_pin may reset to input
     }
+#endif
 #endif
 #ifndef DISABLE_PROG
     if (mode==TRACK_MODE_PROG) {

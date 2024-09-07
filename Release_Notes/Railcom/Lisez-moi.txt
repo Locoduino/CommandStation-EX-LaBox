@@ -1,0 +1,27 @@
+                  Upgrade de La Box pour compatibilité RailCom.
+                 ----------------------------------------------
+Bonjour.
+
+Upgrade hardware.
+----------------
+    Voir schéma joint.
+
+
+Upgrade software.
+----------------
+   Il faut modifier ou remplacer 4 fichiers.
+
+   1) Modification de votre fichier: DCCRMT.h    
+               Ajouter la déclaration de la fonction: StarTimerCutOut();
+               (Voir fichier joint)
+
+   2) Modification de votre fichier: config.h    
+               Dans le #define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), écrire 27 à la place de UNUSED_PIN
+               Dans le #define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), écrire 27 à la place de UNUSED_PIN
+               (Voir fichier joint)
+
+   3) Remplacer le fichier: DCCRMT.cpp   par le fichier joint.
+
+   4) Remplacer le fichier: CommandeStation-EX-LaBox.ino   par le fichier joint.
+
+Toutes les lignes de code ajoutées ou modifiées sont commentées et commencent par un * (astérisque)

@@ -18,11 +18,18 @@
 #ifndef Z21Throttle_h
 #define Z21Throttle_h
 
+#include <WiFiClient.h>
+#include <WiFi.h>
+
+#include "defines.h"
 #include "CircularBuffer.hpp"
-#include "WiFiClient.h"
+#include "EXComm.h"
+
+#ifdef ENABLE_Z21
 
 #define UDPBYTE_SIZE	1024
 #define UDP_BUFFERSIZE	2048
+#define Z21_UDPPORT		21105
 
 struct MYLOCOZ21 {
     char throttle; //indicates which throttle letter on client, '0' + clientid
@@ -58,7 +65,6 @@ class Z21Throttle {
 		static void markForBroadcast(int cab);
 		static void forget(byte clientId);
 		static void findUniqThrottle(int id, char *u);
-		static void setup(IPAddress ip, int port);
 
 		void notifyCvNACK(int inCvAddress);
 		void notifyCvRead(int inCvAddress, int inValue);
@@ -145,7 +151,19 @@ class Z21Throttle {
 		static void         getLocoCallback(int16_t locoid);
 };
 
-#define Z21_UDPPORT		21105
+class Z21EXCommItem : public EXCommItem {
+	public:  
+		Z21EXCommItem(int inPort = Z21_UDPPORT) : EXCommItem("Z21") { 
+			UDPport = inPort; 
+			this->AlwaysLoop = true;
+		}
+
+		static int UDPport;
+
+		bool beginItem();
+		bool loopItem() { Z21Throttle::loop(); return true; }
+};
+
 #define Z21_TIMEOUT		20000		// if no activity during this delay, disconnect the throttle...
 #define Z21_MAXIMAL_UDP_MSG_SIZE	100		// All messages longer than this size will be ignored.
 
@@ -224,4 +242,5 @@ class Z21Throttle {
 #define BROADCAST_RAILCOM_AUTO		0x00040000
 #define BROADCAST_CAN				0x00080000
 
+#endif
 #endif

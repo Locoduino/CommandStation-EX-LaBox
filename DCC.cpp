@@ -38,6 +38,7 @@
 #include "TrackManager.h"
 #include "DCCTimer.h"
 #include "hmi.h"
+#include "EXComm.h"
 
 // This module is responsible for converting API calls into
 // messages to be sent to the waveform generator.
@@ -87,6 +88,9 @@ void DCC::setThrottle( uint16_t cab, uint8_t tSpeed, bool tDirection)  {
 		  hmi::CurrentInterface->ChangeSpeed(cab, tSpeed);
 		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
 	  }
+#endif
+#ifdef ENABLE_EXCOMM
+	EXCommItem::sendThrottleItems(cab, tSpeed, tDirection);
 #endif
 }
 
@@ -199,7 +203,10 @@ bool DCC::setFn( int cab, int16_t functionNumber, bool on) {
 		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
 	  }
 #endif
-    return true;
+#ifdef ENABLE_EXCOMM
+		EXCommItem::sendFunctionItems(cab, functionNumber, on);
+#endif
+		return true;
   }
 
   int reg = lookupSpeedTable(cab);

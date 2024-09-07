@@ -30,7 +30,6 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
-#include "Z21Throttle.h"
 #include "hmi.h"
 /*
 #include "soc/rtc_wdt.h"
@@ -125,7 +124,6 @@ bool WifiESP::setup(const char *SSid,
   bool havePassword = true;
   bool haveSSID = true;
   bool wifiUp = false;
-	IPAddress boxIp;
   uint8_t tries = 40;
 
   //#ifdef SERIAL_BT_COMMANDS
@@ -177,7 +175,6 @@ bool WifiESP::setup(const char *SSid,
     if (WiFi.status() == WL_CONNECTED) {
       DIAG(F("Wifi STA IP %s"),WiFi.localIP().toString().c_str());
       wifiUp = true;
-      boxIp = WiFi.localIP();
 #ifdef USE_HMI
 	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 		  {
@@ -199,7 +196,6 @@ bool WifiESP::setup(const char *SSid,
       if (WiFi.status() == WL_CONNECTED) {
 	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
 	wifiUp = true;
-        boxIp = WiFi.localIP();
 #ifdef USE_HMI
 	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 	    {
@@ -248,7 +244,6 @@ bool WifiESP::setup(const char *SSid,
       DIAG(F("Wifi AP IP %s"),WiFi.softAPIP().toString().c_str());
       wifiUp = true;
       APmode = true;
-      boxIp = WiFi.softAPIP();
 #ifdef USE_HMI
 	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
 		  {
@@ -278,8 +273,6 @@ bool WifiESP::setup(const char *SSid,
 
   server = new WiFiServer(port); // start listening on tcp port
   server->begin();
-  // server started here
-  Z21Throttle::setup(boxIp, Z21_UDPPORT);
 
 #ifdef WIFI_TASK_ON_CORE0
   //start loop task
@@ -325,7 +318,9 @@ void WifiESP::loop() {
       // check if client is there and alive
       if(clients[clientId].inUse && !clients[clientId].wifi.connected()) {
 	DIAG(F("Remove client %d"), clientId);
+#ifdef CD_HANDLE_RING
 	CommandDistributor::forget(clientId);
+#endif
 	clients[clientId].wifi.stop();
 	clients[clientId].inUse = false;
 	//Do NOT clients.erase(clients.begin()+clientId) as
@@ -363,7 +358,9 @@ void WifiESP::loop() {
 	    cmd[i]=clients[clientId].wifi.read();
 	  }
 	  cmd[len]=0;
+#ifdef CD_HANDLE_RING
 	  CommandDistributor::parse(clientId,cmd,outboundRing);
+#endif
 	}
       }
     } // all clients
@@ -371,7 +368,6 @@ void WifiESP::loop() {
     // UDP clients
     
     WiThrottle::loop(outboundRing);
-    Z21Throttle::loop();
 
     // something to write out?
     clientId=outboundRing->read();

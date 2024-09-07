@@ -28,14 +28,6 @@ The configuration file for DCC-EX Command Station
 
 **********************************************************************/
 
-// LaBox specific defines
-
-// If a Oled screen is present on the hardware; use it !
-#define USE_HMI
-
-// On HMI screen, show current consomption
-#define HMI_SHOW_CURRENT
-
 /////////////////////////////////////////////////////////////////////////////////////
 // If you want to add your own motor driver definition(s), add them here
 //   For example MY_SHIELD with display name "MINE":
@@ -67,11 +59,11 @@ The configuration file for DCC-EX Command Station
 //
 
 #define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
- new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
+ new MotorDriver(32, 33, 27, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 #define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
  NULL, \
- new MotorDriver(32, 33, UNUSED_PIN, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
+ new MotorDriver(32, 33, 27, UNUSED_PIN, 36, 0.80, 2500, UNUSED_PIN)
 
 //
 /////////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +121,7 @@ The configuration file for DCC-EX Command Station
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD "YourPassword"
+#define WIFI_PASSWORD "Your network passwd"
 //
 // WIFI_HOSTNAME: You probably don't need to change this
 #define WIFI_HOSTNAME "LaBox"
@@ -143,7 +135,7 @@ The configuration file for DCC-EX Command Station
 // WIFI_FORCE_AP: If you'd like to specify your own WIFI_SSID in AP mode, set this
 // true. Otherwise it is assumed that you'd like to connect to an existing network
 // with that SSID.
-#define WIFI_FORCE_AP true
+#define WIFI_FORCE_AP false
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -181,6 +173,61 @@ The configuration file for DCC-EX Command Station
 //  *  #define SCROLLMODE 1 is by page (alternate between pages),
 //  *  #define SCROLLMODE 2 is by row (move up 1 row at a time).
 #define SCROLLMODE 1
+
+// LaBox specific defines
+
+// If a Oled screen is present on the hardware; use it !
+#define USE_HMI
+
+// On HMI screen, show current consomption
+#define HMI_SHOW_CURRENT
+
+// Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
+#define ENABLE_RAILCOM
+
+#if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
+#undef ENABLE_RAILCOM
+#endif
+
+// Use EXComm items to get orders
+#define ENABLE_EXCOMM
+
+#ifdef ENABLE_EXCOMM
+
+	// Use EXComm CAN bus using Marklin protocol
+	#define ENABLE_CANMARKLIN
+
+	#ifdef ENABLE_CANMARKLIN
+	#define CANMARKLINCOMM		new CanMarklin(253, GPIO_NUM_4, GPIO_NUM_5, 250UL * 1000UL, false)
+	#else
+	#define CANMARKLINCOMM		NULL
+	#endif
+
+	// Use EXComm Z21 Throttle via Wifi UDP.
+	#define ENABLE_Z21
+
+	#ifdef ENABLE_Z21
+	#define Z21COMM		new Z21EXCommItem(Z21_UDPPORT)
+	#else
+	#define Z21COMM		NULL
+	#endif
+
+	// Use EXComm SProg protocol via Serial2 in prog mode only
+	//#define ENABLE_SPROG
+
+	#ifdef ENABLE_SPROG
+	// Z21 define is the last one in LABOX_EXCOMMS and dont have a comma at its end !
+	#define SPROGCOMM		new SProg(16, 17)
+	#else
+	#define SPROGCOMM		NULL
+	#endif
+
+	#define LABOX_EXCOMMS \
+		Z21COMM, \
+		CANMARKLINCOMM, \
+		SPROGCOMM
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
