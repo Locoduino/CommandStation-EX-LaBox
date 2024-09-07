@@ -82,12 +82,12 @@ void DCC::setThrottle( uint16_t cab, uint8_t tSpeed, bool tDirection)  {
   // retain speed for loco reminders
   updateLocoReminder(cab, speedCode );
 #ifdef USE_HMI
-	  if (hmi::CurrentInterface != NULL)
-	  {
-		  hmi::CurrentInterface->ChangeDirection(cab, tDirection);
-		  hmi::CurrentInterface->ChangeSpeed(cab, tSpeed);
-		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-	  }
+	if (hmi::CurrentInterface != NULL)
+	{
+		hmi::CurrentInterface->ChangeDirection(cab, tDirection);
+		hmi::CurrentInterface->ChangeSpeed(cab, tSpeed);
+		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+	}
 #endif
 #ifdef ENABLE_EXCOMM
 	EXCommItem::sendThrottleItems(cab, tSpeed, tDirection);
