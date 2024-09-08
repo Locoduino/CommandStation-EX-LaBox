@@ -59,17 +59,15 @@ this data is saved in EEPROM for ulterior usage.
 #define SPROG_COMMAND_BUFFER_SIZE	50
 #define SPROG_MAX_COMMAND_PARAMS	6
 
-const bool DIAG_SPROG = false;
-static int SProg_rxPin = 0;
-static int SProg_txPin = 0;
+const bool DIAG_SPROG = true;
 
 class SProg : public EXCommItem {
 public:
 	// EXCommItem part
-	SProg(int rxPin, int txPin) : EXCommItem("SPROG") {
-		Serial2.begin(9600, SERIAL_8N1, rxPin, txPin);
-		SProg_rxPin = rxPin;
-		SProg_txPin = txPin;
+	SProg(int inRxPin, int inTxPin) : EXCommItem("SPROG") {
+		rxPin = inRxPin;
+		txPin = inTxPin;
+		Serial1.begin(9600, SERIAL_8N1, rxPin, txPin);
 
 		this->MainTrackEnabled = false;
 		this->ProgTrackEnabled = true;
@@ -102,6 +100,9 @@ public:
 		Written_OK, // CV written without problem
 		Written_FAIL // CV written WITH problem
 	};
+
+	static int rxPin;
+	static int txPin;
 
 	static StateCV	stateCV;
 

@@ -77,13 +77,16 @@ byte SProg::bufferLength = 0;
 byte SProg::buffer[SPROG_COMMAND_BUFFER_SIZE]; 
 SProg::StateCV	SProg::stateCV;
 
+int SProg::rxPin = 128;
+int SProg::txPin = 128;
+
 int SProg::test_cab;
 int SProg::test_speed;
 bool SProg::test_dir;
 bool SProg::test_func[];
 
-int16_t SPROGCvValue = -1;
-int16_t SPROGCvAddress = 0;
+int SPROGCvValue = -1;
+int SPROGCvAddress = 0;
 
 void SProg::ReadWord() {
 	String id = EEPROM.readString(WORD_EEPROM_POS);
@@ -151,7 +154,7 @@ void SProg::printAll(Print *stream) {
 }
 
 void SProg::setup() {
- 	DIAG(F("[SPROG] Serial2 Txd:%d   Rxd:%d"), SProg_txPin, SProg_rxPin);
+ 	DIAG(F("[SPROG] Serial1 Txd:%d   Rxd:%d"), txPin, rxPin);
 	test_cab = 3;
 	test_speed = 0;
 	test_dir = true;
@@ -161,16 +164,7 @@ void SProg::setup() {
 
 #include "StringFormatter.h"
 
-void broadcast(const FSH * format...)
-{
-  va_list args;
-  va_start(args, format);
-
-	Print *stream = &Serial2;
-	StringFormatter::send(stream, format, args);
-	
-	//if (Diag::SPROG) { DIAG(F("[SPROG] >> ")); DIAG(format, args); }
-}
+#define BROADCAST(args...)		StringFormatter::send(&Serial1, args)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Object method to directly change the input state, for sensors such as LCN which are updated
@@ -184,27 +178,27 @@ void SProg::loop() {
 		return;
 
 	if (stateCV == StateCV::Reading_OK) {
-		broadcast(F("= %x"), SPROGCvValue); 
+		BROADCAST(F("= %x"), SPROGCvValue);
 		stateCV = StateCV::Ready;
 	}
 
 	if (stateCV == StateCV::Reading_FAIL) {
-		broadcast(F("= !E")); 
+		BROADCAST(F("= !E")); 
 		stateCV = StateCV::Ready;
 	}
 
 	if (stateCV == StateCV::Written_OK) {
-		broadcast(F("= %d %x"), SPROGCvAddress, SPROGCvValue); 
+		BROADCAST(F("= %d %x"), SPROGCvAddress, SPROGCvValue); 
 		stateCV = StateCV::Ready;
 	}
 
 	if (stateCV == StateCV::Written_FAIL) {
-		broadcast(F("= !E")); 
+		BROADCAST(F("= !E")); 
 		stateCV = StateCV::Ready;
 	}
 
-	while (Serial2.available()) {
-			char ch = Serial2.read();
+	while (Serial1.available()) {
+			char ch = Serial1.read();
 			//Serial.println((int)ch);
 			if (ch < 0x20) {
 					buffer[bufferLength] = '\0';
@@ -324,6 +318,9 @@ void SPROGcvValueCallback(int16_t inValue) {
 	else
 		SProg::stateCV = SProg::StateCV::Reading_FAIL;
 
+	if (DIAG_SPROG) 
+  	DIAG(F("[SPROG] read cv %d callback = %d !"), SPROGCvAddress, inValue);
+		
   SPROGCvValue = inValue;
 }
 
@@ -347,7 +344,7 @@ void SProg::parse(byte *com) {
     {
       case 'M': // Get/Set Word
 				if (paramCount == 0) {
-					broadcast(F("M= %d"), GetWord());
+					BROADCAST(F("M= %d"), GetWord());
 				}
 				else {
 					if (paramCount == 1)
@@ -358,7 +355,7 @@ void SProg::parse(byte *com) {
 				ReadWord();
         break;
       case 'S':	// Send status
-				broadcast(F("OK"));
+				BROADCAST(F("OK"));
         break;
       case 'W': // Write word to EEPROM
 				WriteWord();
@@ -366,16 +363,16 @@ void SProg::parse(byte *com) {
       case 'Z':	// Set special DCC timing
 				// Not implemented
 					if (paramCount == 1 && p[0] == 1)
-						DIAG(F("[SPROG] Invalid command, not implemented"));
+						DIAG(F("[SPROG] Invalid command Z, not implemented"));
         break;
       case '?': // Get SPROG version
-        broadcast(F("SPROG LPROG USB Ver 2.5.0"));
+        BROADCAST(F("SPROG LABOX USB Ver 2.5.0"));
         break;
       case 27: // Immediately cut power.
 				TrackManager::setProgPower(POWERMODE::OFF);
         break;
       case ' ': // Send ' '
-        broadcast(F(" "));
+        BROADCAST(F(" "));
         break;
       case 'C':	// Read / write CV !
         if (paramCount == 1) {

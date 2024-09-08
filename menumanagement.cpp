@@ -11,10 +11,13 @@
 
 #ifdef USE_HMI
 #include "hmi.h"
+#include "LaboxModes.h"
 #include "menumanagement.h"
 #include "menuobject.h"
 #include "menuinformation.h"
 #include "menuTrainAddrRead.h"
+#include "menuTrainCvRead.h"
+#include "menuTrainCvWrite.h"
 #include "globals.h"
 
 extern enumHMIState  _HMIState ;
@@ -36,6 +39,8 @@ MenuManagement::MenuManagement(hmi*  screen)
     onOffLineOn = new menuObject(display, onOffLine, TXT_MenuOnLine,   0);
     onOffLineOff= new menuObject(display, onOffLine, TXT_MenuOffLine,  1);
   trainAddrRead = new menuTrainAddrRead(display, baseMenu, TXT_MenuAddrRead,  MENUTRAINADDRREAD);
+  trainCVRead 	= new menuTrainCvRead(display, baseMenu, TXT_MenuCVRead,  MENUTRAINCVREAD);
+  trainCVWrite 	= new menuTrainCvWrite(display, baseMenu, TXT_MenuCVWrite,  MENUTRAINCVWRITE);
   TrainView     = new menuObject(display, baseMenu, TXT_TrainView, MENUTYPELIST);
     V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
     V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
@@ -74,7 +79,7 @@ MenuManagement::MenuManagement(hmi*  screen)
       FactoryNo = new menuObject(display, factoryResetConfirm, TXT_MenuNo,   2); */
 
 
-// Todo, ajouter liste événéemnts
+// Todo, ajouter liste �v�nements
 //Type de vue dashboard
 /* Type de vue des trains
 @IP de la box, masque de sous-réseau, passerelle
@@ -157,7 +162,7 @@ void MenuManagement::BtnSelectPressed()
 
   int status = activeMenu->eventSelect();
 	
-	if (hmi::progMode) 
+	if (LaboxModes::progMode) 
 	{
 		return;
 	}
@@ -185,6 +190,20 @@ void MenuManagement::BtnSelectPressed()
     case MENUTRAINADDRREAD :
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to SPECIAL menu ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+      activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
+      activeMenu->start();
+
+    break;
+    case MENUTRAINCVREAD :
+      _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+      _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+      activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
+      activeMenu->start();
+
+    break;
+    case MENUTRAINCVWRITE :
+      _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+      _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
       activeMenu->start();
 
@@ -222,7 +241,7 @@ void MenuManagement::BtnSelectPressed()
               _HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
 #ifdef ARDUINO_ARCH_ESP32
               // !! Only for ESP !!
-              ESP.restart();
+							LaboxModes::Restart(MAIN);
 #endif
             }else
             {
@@ -235,7 +254,7 @@ void MenuManagement::BtnSelectPressed()
 
 #ifdef ARDUINO_ARCH_ESP32
                 // !! Only for ESP !!
-                ESP.restart();
+								LaboxModes::Restart(MAIN);
 #endif
               }else
               {

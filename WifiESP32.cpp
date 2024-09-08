@@ -31,6 +31,7 @@
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
 #include "hmi.h"
+#include "LaboxModes.h"
 /*
 #include "soc/rtc_wdt.h"
 #include "esp_task_wdt.h"
@@ -159,7 +160,7 @@ bool WifiESP::setup(const char *SSid,
     WiFi.setAutoReconnect(true);
 
 #ifdef USE_HMI
-	  if (!hmi::progMode && !hmi::silentBootMode && hmi::CurrentInterface != NULL)
+	  if (!LaboxModes::progMode && !LaboxModes::silentBootMode && hmi::CurrentInterface != NULL)
 	  {
 		  hmi::CurrentInterface->WifiStartConnection(SSid);
 		  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -176,7 +177,7 @@ bool WifiESP::setup(const char *SSid,
       DIAG(F("Wifi STA IP %s"),WiFi.localIP().toString().c_str());
       wifiUp = true;
 #ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+	  if (!LaboxModes::progMode && hmi::CurrentInterface != NULL)
 		  {
 	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
 	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -197,7 +198,7 @@ bool WifiESP::setup(const char *SSid,
 	DIAG(F("Wifi STA IP 2nd try %s"),WiFi.localIP().toString().c_str());
 	wifiUp = true;
 #ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+	  if (!LaboxModes::progMode && hmi::CurrentInterface != NULL)
 	    {
 	  		hmi::CurrentInterface->WifiConnected(WiFi.localIP());
 	  		hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -207,7 +208,7 @@ bool WifiESP::setup(const char *SSid,
 	DIAG(F("Wifi STA mode FAIL. Will revert to AP mode"));
 	haveSSID=false;
 #ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+	  if (!LaboxModes::progMode && hmi::CurrentInterface != NULL)
     		{
 	    		hmi::CurrentInterface->WifiEndConnection(SSid);
     			hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
@@ -245,7 +246,7 @@ bool WifiESP::setup(const char *SSid,
       wifiUp = true;
       APmode = true;
 #ifdef USE_HMI
-	  if (!hmi::progMode && hmi::CurrentInterface != NULL)
+	  if (!LaboxModes::progMode && hmi::CurrentInterface != NULL)
 		  {
 			  hmi::CurrentInterface->WifiConnected(WiFi.softAPIP());
 			  hmi::CurrentInterface->HmiInterfaceUpdateDrawing();

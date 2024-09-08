@@ -45,7 +45,7 @@ void ackTask(void *pvParameters)
     if (status == pdPASS)
     {
       frame.id &= ~0xFFFF;
-      frame.id |= 1 << 17;             // Réponse
+      frame.id |= 1 << 17;             // Rï¿½ponse
       frame.id |= CanMarklin::getId(); // ID expediteur
       CanMarklin::sendMsg(frame);
     }
@@ -63,7 +63,7 @@ CanMarklinLoco *CanMarklinLoco::findLoco(uint32_t address, std::vector<CanMarkli
   }
   // Ajout d'une nouvelle locomotive si n'existe pas
   CanMarklinLoco *newLoco = new CanMarklinLoco(address);
-  locos.push_back(*newLoco); // Ajouter le nouvel objet à la liste
+  locos.push_back(*newLoco); // Ajouter le nouvel objet ï¿½ la liste
   return newLoco;
 }
 
@@ -72,7 +72,7 @@ void CanMarklin::begin()
   DIAG(F("[CANMARKLIN] Configure ESP32 CAN"));
 
   if (DESIRED_BIT_RATE < 1000000UL)
-    DIAG(F("[CANMARKLIN] CAN id = %d  Bitrate = %d Kb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 100UL, RxPin, TxPin);
+    DIAG(F("[CANMARKLIN] CAN id = %d  Bitrate = %d Kb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL, RxPin, TxPin);
   else
     DIAG(F("[CANMARKLIN] CAN id = %d  Bitrate = %d Mb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL, RxPin, TxPin);
 
@@ -114,10 +114,10 @@ void CanMarklin::loop()
   CANMessage frameIn;
   if (ACAN_ESP32::can.receive(frameIn))
   {
-    const uint8_t prio = (frameIn.id & 0x1E000000) >> 25; // Priorité
+    const uint8_t prio = (frameIn.id & 0x1E000000) >> 25; // Prioritï¿½
     const uint8_t cmde = (frameIn.id & 0x1FE0000) >> 17;  // Commande
     const uint8_t resp = (frameIn.id & 0x10000) >> 16;    // Reponse
-    const uint16_t exped = (frameIn.id & 0xFFFF);         // Expéditeur
+    const uint16_t exped = (frameIn.id & 0xFFFF);         // Expï¿½diteur
 
     char cmdName[20];
     switch (cmde)
@@ -172,7 +172,7 @@ void CanMarklin::loop()
         // Serial.println(loco->gDirection());
       }
 
-      switch (cmde) // Commande appelée
+      switch (cmde) // Commande appelï¿½e
       {
       case CAN_LOCO_SPEED:
         if (loco != nullptr)
@@ -189,10 +189,10 @@ void CanMarklin::loop()
         xQueueSendToBack(xQueue, &frameIn, 0);
         break;
       case CAN_LOCO_DIREC:
-        // Signification du paramètre Direction :
+        // Signification du paramï¿½tre Direction :
         // 0 = sens de marche sans changement
         // 1 = sens de marche avant
-        // 2 = sens de marche arrière
+        // 2 = sens de marche arriï¿½re
         // 3 = inverser le sens de marche
 
         if (loco != nullptr)

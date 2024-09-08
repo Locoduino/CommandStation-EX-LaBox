@@ -11,6 +11,7 @@
 #include "Wire.h"
 
 #include "hmi.h"
+#include "LaboxModes.h"
 #include "icons.h"
 #include "menumanagement.h"
 #include "globals.h"
@@ -26,10 +27,6 @@
 #endif
 
 int IRAM_ATTR local_adc1_get_raw(int channel);
-bool hmi::progMode = false;
-bool hmi::silentBootMode = false;
-int hmi::EEPROMModeProgAddress = 511;
-
 
 #ifdef USE_HMI
  // variables must be global due to static methods
@@ -84,7 +81,7 @@ void hmi::begin()
   setTextSize(1);
   setTextColor(WHITE);
 
-  if (!hmi::progMode && !hmi::silentBootMode) {
+  if (!LaboxModes::progMode && !LaboxModes::silentBootMode) {
     drawBitmap(0, 0, locoduino_Splash128x44, 128, 44, WHITE);
     setCursor(0, 48);
     println("LaBox | Locoduino.org");
@@ -115,10 +112,23 @@ void hmi::setProgMode()
 {
   _HMIDEBUG_FCT_PRINTLN("hmi::setProgMode().. Begin");
 
-  hmi::progMode = true;
+  LaboxModes::progMode = true;
   _HMIState = StateParametersMenu;
-  menu->setMenu(menu->trainAddrRead);
-  menu->trainAddrRead->start();
+	if (LaboxModes::progModeType == ProgType::CV1ADDR)
+	{
+  	menu->setMenu(menu->trainAddrRead);
+  	menu->trainAddrRead->start();
+	}
+	if (LaboxModes::progModeType == ProgType::CVREAD)
+	{
+  	menu->setMenu(menu->trainCVRead);
+  	menu->trainCVRead->start();
+	}
+	if (LaboxModes::progModeType == ProgType::CVWRITE)
+	{
+  	menu->setMenu(menu->trainCVWrite);
+  	menu->trainCVWrite->start();
+	}
 
   _HMIDEBUG_FCT_PRINTLN("hmi::setProgMode().. End");
 }
@@ -179,7 +189,7 @@ void hmi::stateMachine()
 
   _HMIDEBUG_FCT_PRINTLN("hmi::stateMachine().. Begin");
   // Time out in menu, back to dashboard
-  if (!hmi::progMode && _HMIState == StateParametersMenu && (millis() - millisParamsMenu > HMI_TimeOutMenu) )
+  if (!LaboxModes::progMode && _HMIState == StateParametersMenu && (millis() - millisParamsMenu > HMI_TimeOutMenu) )
   {
     _HMIDEBUG_SM_PRINTLN("Timeout Parameters Menu");
     _HMIState = StateExitMenu;

@@ -216,16 +216,25 @@ The configuration file for DCC-EX Command Station
 	//#define ENABLE_SPROG
 
 	#ifdef ENABLE_SPROG
-	// Z21 define is the last one in LABOX_EXCOMMS and dont have a comma at its end !
 	#define SPROGCOMM		new SProg(16, 17)
 	#else
 	#define SPROGCOMM		NULL
 	#endif
 
+	// Use EXComm XPressNet protocol via Serial2
+	//#define ENABLE_XPRESSNET
+
+	#ifdef ENABLE_XPRESSNET
+	#define XPRESSNETCOMM		new XPressNet(12, 13, 15)
+	#else
+	#define XPRESSNETCOMM		NULL
+	#endif
+
 	#define LABOX_EXCOMMS \
 		Z21COMM, \
 		CANMARKLINCOMM, \
-		SPROGCOMM
+		SPROGCOMM, \
+		XPRESSNETCOMM
 
 #endif
 

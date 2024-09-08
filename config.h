@@ -183,7 +183,7 @@ The configuration file for DCC-EX Command Station
 #define HMI_SHOW_CURRENT
 
 // Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
-#define ENABLE_RAILCOM
+//#define ENABLE_RAILCOM
 
 #if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
 #undef ENABLE_RAILCOM
@@ -195,7 +195,7 @@ The configuration file for DCC-EX Command Station
 #ifdef ENABLE_EXCOMM
 
 	// Use EXComm CAN bus using Marklin protocol
-	#define ENABLE_CANMARKLIN
+	//#define ENABLE_CANMARKLIN
 
 	#ifdef ENABLE_CANMARKLIN
 	#define CANMARKLINCOMM		new CanMarklin(253, GPIO_NUM_4, GPIO_NUM_5, 250UL * 1000UL, false)
@@ -216,16 +216,25 @@ The configuration file for DCC-EX Command Station
 	#define ENABLE_SPROG
 
 	#ifdef ENABLE_SPROG
-	// Z21 define is the last one in LABOX_EXCOMMS and dont have a comma at its end !
 	#define SPROGCOMM		new SProg(16, 17)
 	#else
 	#define SPROGCOMM		NULL
 	#endif
 
+	// Use EXComm XPressNet protocol via Serial2
+	//#define ENABLE_XPRESSNET
+
+	#ifdef ENABLE_XPRESSNET
+	#define XPRESSNETCOMM		new XPressNet(12, 13, 15)
+	#else
+	#define XPRESSNETCOMM		NULL
+	#endif
+
 	#define LABOX_EXCOMMS \
 		Z21COMM, \
 		CANMARKLINCOMM, \
-		SPROGCOMM
+		SPROGCOMM, \
+		XPRESSNETCOMM
 
 #endif
 

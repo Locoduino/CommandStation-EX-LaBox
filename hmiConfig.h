@@ -70,6 +70,8 @@
 #define MENUCHANGETOCHILD       302
 #define MENUCHOSEN              303
 #define MENUTRAINADDRREAD       304
+#define MENUTRAINCVREAD					305
+#define MENUTRAINCVWRITE				306
 #define MENUTYPECOMEBCK         0x8000
 #define MENUTYPELIST            0x7999
 #define MENUACTION              0x7998
@@ -112,6 +114,8 @@
 #define TXT_MenuAddrRead        "Lecture adr Train"
 #define TXT_MenuAddrRetry				"Relire"
 #define TXT_MenuAddrQuit				"Quitter"
+#define TXT_MenuCVRead        	"Lecture CV"
+#define TXT_MenuCVWrite        	"Ecriture CV"
 #define TXT_PhysicalMes         "Mesures U et I"
 #define TXT_Language            "Langue"
 #define TXT_TrainView           "Type de vue trains"
@@ -124,6 +128,20 @@
 #define TXT_noWifi              " !! Pas de WiFi !!"
 #define TXT_WifiOk              "...Wifi ok..."
 #define TXT_BoxAddr             "Adresse Box:"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_CVREAD_LOGO					"LaBox     CV Lecture"
+#define TXT_CVWRITE_LOGO				"LaBox    CV Ecriture"
+#define TXT_CVRW_CVVALUE				"CV      Valeur"
+#define TXT_CVRW_CVOK						"CV      Valeur OK"
+#define TXT_CVRW_CVFAIL					"CV    Valeur ECHEC"
+#define TXT_CVREAD_READING			"       Lecture..."
+#define TXT_CVWRITE_WRITING			"      Ecriture..."
+#define TXT_CVRW_OK							"AutreCV      Quitter"
+#define TXT_CVRW_FAIL						"Refaire +/-  Quitter"
+#define TXT_CVRW_READY					"+            Quitter"
+#define TXT_CVREAD_ADDRESS			"+ -             Lire"
+#define TXT_CVWRITE_ADDRESS			"+ -           Valeur"
+#define TXT_CVWRITE_VALUE				"+ -           Ecrire"
 //#define TXT_LanguageRequest    "Choix de la Langue"
 
     // Message by language : English
@@ -162,6 +180,8 @@
 #define TXT_MenuAddrRead        "Read Train Addr"
 #define TXT_MenuAddrRetry				"Retry"
 #define TXT_MenuAddrQuit				"Quit"
+#define TXT_MenuCVRead        	"Read CV"
+#define TXT_MenuCVWrite        	"Write CV"
 #define TXT_PhysicalMes         "Measures U and I"
 #define TXT_Language            "Language"
 #define TXT_TrainView           "Train view"
@@ -172,7 +192,22 @@
 #define TXT_WifiWaiting         "Connection WiFi..."
 #define TXT_noWifi              " !! No WiFi !!"
 #define TXT_WifiOk              "...Wifi ok..."
-#define TXT_BoxAddr             "Box address :"*/
+#define TXT_BoxAddr             "Box address :"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_CVREAD_LOGO					"LaBox        CV Read"
+#define TXT_CVWRITE_LOGO				"LaBox       CV Write"
+#define TXT_CVRW_CVVALUE				"CV      Value"
+#define TXT_CVRW_CVOK						"CV      Value OK"
+#define TXT_CVRW_CVFAIL					"CV      Value FAIL"
+#define TXT_CVREAD_READING			"       Reading..."
+#define TXT_CVWRITE_WRITING			"       Writing..."
+#define TXT_CVRW_OK							"OtherCV         Quit"
+#define TXT_CVRW_FAIL						"Redo +/-        Quit"
+#define TXT_CVRW_READY					"+               Quit"
+#define TXT_CVREAD_ADDRESS			"+ -             Read"
+#define TXT_CVWRITE_ADDRESS			"+ -            Value"
+#define TXT_CVWRITE_VALUE				"+ -            Write"
+*/
 
 //---------------------- Global section ---------------------------------
 #define Labox_StateDCCOFF        101

@@ -21,6 +21,7 @@
 #include <Arduino.h>
 #include "defines.h"
 #include "hmi.h"
+#include "LaboxModes.h"
 
 #ifdef ENABLE_EXCOMM
 
@@ -56,8 +57,8 @@ void EXCommItem::SetupPrivate(
 bool EXCommItem::addItem(byte t, EXCommItem* apComm) {
 	if (t < MAX_COMMITEMS) {
 		if (apComm) {
-			if ((hmi::progMode && apComm->ProgTrackEnabled) ||
-			   (!hmi::progMode && apComm->MainTrackEnabled)) {
+			if ((LaboxModes::progMode && apComm->ProgTrackEnabled) ||
+			   (!LaboxModes::progMode && apComm->MainTrackEnabled)) {
 			 	commItems[t] = apComm;
    			lastItem = t;
 				return true;

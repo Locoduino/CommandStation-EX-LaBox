@@ -36,6 +36,8 @@ class MenuManagement
 
     //----- menu for prog mode
     menuObject* trainAddrRead;
+    menuObject* trainCVRead;
+    menuObject* trainCVWrite;
 
   protected:
     //----- Members

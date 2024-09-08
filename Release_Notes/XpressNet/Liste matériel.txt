@@ -1,0 +1,15 @@
+J1  Connecteur femelle RJ11 (PCB suivant modèle)
+U1  Régulateur LM7812
+U2  Max 485
+
+R1  120   (Facultatif)
+R2  10K   (Facultatif)
+R3  10K   (Facultatif)
+
+C1  100n
+C2  220µ 16v
+C3  100n
+C4  220µ 16v
+C5  100n
+
+F1  Porte fusible 5x20, empatement 22mm

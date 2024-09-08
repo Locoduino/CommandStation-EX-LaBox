@@ -229,6 +229,12 @@ int menuObject::eventSelect()
 			case MENUTRAINADDRREAD:           // User has selected a sub menu
 				return MENUTRAINADDRREAD;
 				break;
+			case MENUTRAINCVREAD:           // User has selected a sub menu
+				return MENUTRAINCVREAD;
+				break;
+			case MENUTRAINCVWRITE:           // User has selected a sub menu
+				return MENUTRAINCVWRITE;
+				break;
 			default:
 				return MENUCHOSEN;         // It's user selection like Yes or No for exemple
 		}

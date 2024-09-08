@@ -11,6 +11,7 @@
 #include "CanMarklin.h"
 #include "Z21Throttle.h"
 #include "SProg.h"
+#include "XPressNet.h"
 	
 #endif
 #endif

@@ -50,10 +50,11 @@
  */
 
 #include "DCCEX.h"
-#include "EEPROM.h"
+
 #include "version_labox.h"
 #include "EXComm.h"
 #include "Railcom.h"
+#include "LaboxModes.h"
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -100,23 +101,10 @@ void setup() {
       LCD(1, F("Lic GPLv3"));
 	);
 
+	LaboxModes::GetCurrentMode();
+	LaboxModes::SetNextMode(MAIN);
+
 #ifdef USE_HMI
-  EEPROM.begin(512);
-  byte mode = EEPROM.read(hmi::EEPROMModeProgAddress);
-
-  hmi::progMode = false;
-  hmi::silentBootMode = false;
-  if (mode == 'P')
-    hmi::progMode = true;
-  if (mode == 'B')
-    hmi::silentBootMode = true;
-
-  if (hmi::progMode) {
-    // Reset to Main mode for next reboot.
-    EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
-    EEPROM.commit();
-  }
-
   // must be done before Wifi setup
   boxHMI.begin();
 #endif
@@ -149,9 +137,8 @@ void setup() {
   //  detailed pin mappings and may also require modified subclasses of the MotorDriver to implement specialist logic.
   // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.hrr
 
-#ifdef USE_HMI
   // Set up MotorDrivers early to initialize all pins
-  if (hmi::progMode) {
+  if (LaboxModes::progMode) {
     DIAG(F("LaBox Prog mode."));
     TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
   }
@@ -159,13 +146,6 @@ void setup() {
     DIAG(F("LaBox Main mode."));
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
-#else
-		// Only mode main if no screen used.
-    DIAG(F("LaBox Main mode."));
-    TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
-#endif
-
-  //  TrackManager::Setup(MOTOR_SHIELD_TYPE);
 
   // Responsibility 3: Start the DCC engine.
   DCC::begin();
@@ -195,14 +175,13 @@ void setup() {
   CommandDistributor::broadcastPower();
 
 #ifdef USE_HMI
-  if (hmi::progMode) {
+  if (LaboxModes::progMode) {
     // must be done after all other setups.
     boxHMI.setProgMode();
   }
-  if (hmi::silentBootMode) {
+  if (LaboxModes::silentBootMode) {
     // Reset to Main mode for next reboot.
-    EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'M');
-    EEPROM.commit();
+		LaboxModes::SetNextMode(MAIN);
   }
 #endif
 

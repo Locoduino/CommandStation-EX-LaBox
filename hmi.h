@@ -35,12 +35,6 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
     float voltage;
     float current;
     int   nbTrainToView;
-		// True if the ESP is in programmation mode.
-    static bool progMode;
-		// Ture if the boot should not show logos and startup messages on the screen.
-    static bool silentBootMode;
-// Position of the byte 'M' or 'P' for Main or Prog track mode.
-    static int EEPROMModeProgAddress;
 
     //int executionCore;
     

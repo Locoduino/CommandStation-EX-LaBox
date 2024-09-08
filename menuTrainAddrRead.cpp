@@ -12,6 +12,7 @@
 #include "menuTrainAddrRead.h"
 #include "globals.h"
 #include "hmi.h"
+#include "LaboxModes.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <EEPROM.h>
@@ -58,13 +59,8 @@ void menuTrainAddrRead::start()
 {
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::start.. Begin"); 
 
-  if (!hmi::progMode) {
-    if (EEPROM.readByte(hmi::EEPROMModeProgAddress) != 'P') {
-      EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'P');
-      EEPROM.commit();
-    }
-    delay(500);
-    ESP.restart();
+  if (!LaboxModes::progMode) {
+		LaboxModes::Restart(CV1ADDR);
   }
 
   state = StateReading::Reading;
@@ -140,12 +136,8 @@ int menuTrainAddrRead::eventSelect()
 
 	if (state == StateReading::MenuQuit)
 	{
-	  // Reboot ESP32 !
-		// Reset to Main mode for next reboot.
-		EEPROM.writeByte(hmi::EEPROMModeProgAddress, 'B');
-		EEPROM.commit();
-  	ESP.restart();
-	}
+		LaboxModes::Restart(SILENTRETURNTOMAIN);
+  }
 
 	if (state == StateReading::MenuRetry)
 	{

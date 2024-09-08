@@ -25,6 +25,7 @@
 #include "DCCWaveform.h" // for MAX_PACKET_SIZE
 #ifdef ENABLE_RAILCOM
 #include "hmi.h"
+#include "LaboxModes.h"
 #include "Railcom.h"
 #endif
 #include "soc/gpio_sig_map.h"
@@ -77,9 +78,7 @@ extern gpio_num_t railcom_invpin;
 int rmt_channel;                                                       // * Variable n° de canal
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 #ifdef ENABLE_RAILCOM
-#ifdef USE_HMI
-  if (!hmi::progMode)    
-#endif
+  if (!LaboxModes::progMode)    
 	{
 	  gpio_matrix_out(railcom_pin, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
  		gpio_set_level(railcom_pin, 1);                               // * Pin 33 à l'état haut
@@ -110,9 +109,7 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   preamble = (rmt_item32_t*)malloc(preambleLen * sizeof(rmt_item32_t));
 	dp_rc = 0;
 #ifdef ENABLE_RAILCOM
-#ifdef USE_HMI
-  if (!hmi::progMode) 
-#endif
+  if (!LaboxModes::progMode)
 	{     
 		dp_rc = 1;
   	setDCCBitCutOut(preamble);                                    // * Symbole CutOut

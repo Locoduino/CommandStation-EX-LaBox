@@ -1,7 +1,13 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.6.2"
+#define VERSION_LABOX "2.6.3"
+// 2.6.3	- Add ReadCV and WriteCV menu options
+//				-	Add XPressNet interface in EXComm format and config.Labox.h. Not tested. Thanks lebelge.
+//				- Move SPROG interface from Serial2 to Serial1 to allow XPressnet existing with SPROG.
+//				- Fix SPROG for rx/tx pin values and broadcasting CV values.
+//				- CAN Speed in console should be correct.
+//				-	Added class LaboxModes to centralize EEPROM and ESP restart behaviours.
 // 2.6.2	- Fix Railcom
 //				- Improve CanMarklin for better compatibility.
 // 2.6.1	- Add Railcom
