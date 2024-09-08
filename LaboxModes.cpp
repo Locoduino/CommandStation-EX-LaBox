@@ -19,9 +19,9 @@
  */
 
 #include <Arduino.h>
-#include "dcc.h"
-#include "LaboxModes.h"
 #include <EEPROM.h>
+#include "DCC.h"
+#include "LaboxModes.h"
 
 bool LaboxModes::progMode = false;
 ProgType LaboxModes::progModeType = ProgType::MAIN;
