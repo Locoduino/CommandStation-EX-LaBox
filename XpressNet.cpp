@@ -17,7 +17,6 @@
 #include "TrackManager.h"
 #include "DCCWaveform.h"
 #include "DCCEXParser.h"
-#include "XpressNet.h"
 #include "hmi.h"
 #include "EXComm.h"
 #include "EXCommItems.h"
