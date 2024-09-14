@@ -147,6 +147,10 @@ void setup() {
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
   }
 
+#ifdef ENABLE_RAILCOM
+	RailcomBegin();
+#endif
+
   // Responsibility 3: Start the DCC engine.
   DCC::begin();
 
@@ -184,12 +188,6 @@ void setup() {
 		LaboxModes::SetNextMode(MAIN);
   }
 #endif
-
-#ifdef ENABLE_RAILCOM
-Serial.println("RailcomBegin");
-	RailcomBegin();
-#endif
-
 }
 
 void loop() {
