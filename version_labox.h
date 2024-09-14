@@ -1,7 +1,10 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.6.3"
+#define VERSION_LABOX "2.6.4"
+// 2.6.4	- Fix XpressNet.cpp file format.
+//				- Try to fix the crash on some ESP32 when RailCom and CAN are both activated.
+//				  Dont know why this modification works, but it works !
 // 2.6.3	- Add ReadCV and WriteCV menu options
 //				-	Add XPressNet interface in EXComm format and config.Labox.h. Not tested. Thanks lebelge.
 //				- Move SPROG interface from Serial2 to Serial1 to allow XPressnet existing with SPROG.
