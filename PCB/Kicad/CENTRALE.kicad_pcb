@@ -4626,7 +4626,7 @@
 			)
 		)
 		(property "Value" "50k"
-			(at -2.6935 -4.267757 360)
+			(at -2.6935 -4.267757 0)
 			(layer "F.Fab")
 			(uuid "9a7ade3c-a81d-4038-a57c-b220b9c3cd90")
 			(effects
@@ -22339,7 +22339,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "c1"
+	(gr_text "c2"
 		(at 132.362609 139.7 0)
 		(layer "F.SilkS")
 		(uuid "2f3deced-880d-4075-a81b-95c62da5b94d")
