@@ -18,20 +18,17 @@ uint16_t CanMarklin::getId() { return thisId; }
 
 QueueHandle_t xQueue; // Queue pour stocker les messages retour
 
-/************************************************************************
-Retour de LaBox pour les commandes de traction, la fonction emergency stop
-la fonction power on / power off et plus generalement par la suite, toutes
-les fonctions qui emettent une confirmation dans DCC-Ex
-*************************************************************************/
-
-/*--------------------------------------
-  Envoi CAN
-  --------------------------------------*/
-
-void CanMarklin::sendMsg(CANMessage &frame)
+// Utilisation d'un unordered_map pour stocker les locomotives en fonction de leur adresse
+std::unordered_map<uint32_t, CanMarklinLoco> CanMarklinLoco::locoMap;
+// Recherche d'une locomotive par son adresse
+CanMarklinLoco *CanMarklinLoco::findLoco(uint32_t address)
 {
-  if (0 == ACAN_ESP32::can.tryToSend(frame))
-    DIAG(F("[CanMarklin]------ Send error"));
+  auto it = locoMap.find(address); // Rechercher si la locomotive existe déjà dans la map
+  if (it != locoMap.end())
+    return &it->second; // Si on la trouve, retourne un pointeur vers l'objet existant
+  // Si elle n'existe pas, on la crée et on l'ajoute à la map
+  locoMap[address] = CanMarklinLoco(address); // Insertion directe dans la map
+  return &locoMap[address];                   // Retourne la référence à l'objet créé
 }
 
 void ackTask(void *pvParameters)
@@ -53,28 +50,14 @@ void ackTask(void *pvParameters)
   }
 }
 
-// Recherche d'une locomotive par son adresse
-CanMarklinLoco *CanMarklinLoco::findLoco(uint32_t address, std::vector<CanMarklinLoco> &locos)
-{
-  for (auto &loco : locos)
-  {
-    if (loco.gAddress() == address)
-      return &loco;
-  }
-  // Ajout d'une nouvelle locomotive si n'existe pas
-  CanMarklinLoco *newLoco = new CanMarklinLoco(address);
-  locos.push_back(*newLoco); // Ajouter le nouvel objet � la liste
-  return newLoco;
-}
-
 void CanMarklin::begin()
 {
-  DIAG(F("[CANMARKLIN] Configure ESP32 CAN"));
+  DIAG(F("[CANMARKLIN] Configure ESP32 CAN %s"), VERSION_LABOX_CAN);
 
   if (DESIRED_BIT_RATE < 1000000UL)
-    DIAG(F("[CANMARKLIN] CAN id = %d  Bitrate = %d Kb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL, RxPin, TxPin);
+    DIAG(F("[CANMARKLIN] id = %d  Bitrate = %d Kb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL, RxPin, TxPin);
   else
-    DIAG(F("[CANMARKLIN] CAN id = %d  Bitrate = %d Mb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL, RxPin, TxPin);
+    DIAG(F("[CANMARKLIN] id = %d  Bitrate = %d Mb/s  CANH:%d  CANL:%d"), CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL, RxPin, TxPin);
 
   ACAN_ESP32_Settings settings(DESIRED_BIT_RATE);
   settings.mRxPin = RxPin;
@@ -83,8 +66,8 @@ void CanMarklin::begin()
   uint32_t errorCode;
 
   // with filter
-  const uint32_t inIdentifier = 0x00;
-  const uint32_t inDontCareMask = 0x1e0fffff;
+  const uint32_t inIdentifier = 0x00 << 21;
+  const uint32_t inDontCareMask = 0x1e1fffff; // Masque pour ne pas prendre en compte les bits 18-25 si > 7
   const ACAN_ESP32_Filter filter = ACAN_ESP32_Filter::singleExtendedFilter(
       ACAN_ESP32_Filter::data, inIdentifier, inDontCareMask);
   errorCode = ACAN_ESP32::can.begin(DESIRED_BIT_RATE, filter);
@@ -95,10 +78,10 @@ void CanMarklin::begin()
   //  DIAG(F("[CANMARKLIN] : config without filter"));
 
   if (errorCode == 0)
-    DIAG(F("[CANMARKLIN] CAN Configuration OK !"));
+    DIAG(F("[CANMARKLIN] Configuration OK !"));
   else
   {
-    DIAG(F("[CANMARKLIN] CAN Configuration error 0x%x"), errorCode);
+    DIAG(F("[CANMARKLIN] Configuration error 0x%x"), errorCode);
     return;
   }
   xQueue = xQueueCreate(50, sizeof(CANMessage));
@@ -151,19 +134,39 @@ void CanMarklin::loop()
       uint32_t locoAddress = 0;
       CanMarklinLoco *loco = nullptr;
       if (cmde > 0x03 && cmde < CAN_FIRST_NOTLOCO_COMMAND)
+      // if ((cmde > 0x03 && cmde < CAN_FIRST_NOTLOCO_COMMAND) || (cmde == 0x00 && frameIn.data[4] == 0x03))
       {
         static std::vector<CanMarklinLoco> locos;
-        //locoAddress = (frameIn.data[0] << 24) | (frameIn.data[1] << 16) | (frameIn.data[2] << 8) | frameIn.data[3];
-        locoAddress = frameIn.data32[0];
+        locoAddress = (frameIn.data[0] << 24) | (frameIn.data[1] << 16) | (frameIn.data[2] << 8) | frameIn.data[3];
 
-        if (locoAddress >= 0x3FB7 && locoAddress < 0xC000)
-          locoAddress = locoAddress - 0x3FB7; // Pour adresse ???
-        if (locoAddress >= 0xC000 && locoAddress < 0xC0FF)
-          locoAddress = locoAddress - 0xC000; // Pour adresse dcc
-        else if (locoAddress >= 0xFF6E)
-          locoAddress = locoAddress - 0xFF6E; // Pour adresse mfx
+        /*
+        Cas particulier de la MS2 en attendant d'avoir d�velopp� les commandes MFX Bind
+        */
 
-        loco = CanMarklinLoco::findLoco(locoAddress, locos);
+        // if (locoAddress >= 0x4000 && locoAddress < 0x7FFF)
+        //   locoAddress = locoAddress - 0x4000; // Pour adresse MFX
+        // else if (locoAddress >= 0x8000 && locoAddress < 0xBFFF)
+        //   locoAddress = locoAddress - 0x8000; // Pour adresse SX2
+        // else if (locoAddress >= 0xC000 && locoAddress < 0xFFFF)
+        //   locoAddress = locoAddress - 0xC000; // Pour adresse DCC
+
+        switch (locoAddress)
+        {
+        case 16389:
+          locoAddress = 78;
+          break;
+        case 49186:
+          locoAddress = 34;
+          break;
+        case 49152:
+          locoAddress = 3;
+          break;
+        }
+        /*
+        *********************************************************************************
+        */
+
+        loco = CanMarklinLoco::findLoco(locoAddress);
         // Serial.print("loco address : ");
         // Serial.println(loco->gAddress());
         // Serial.print("loco speed : ");
@@ -198,34 +201,42 @@ void CanMarklin::loop()
         if (loco != nullptr)
         {
           uint8_t direction = frameIn.data[4];
-          if (direction > 0)
+          if (direction)
           {
             switch (direction)
             {
             case 1:
-              loco->sDirection(1);
+              loco->sDirection(1); // Avant
               loco->sSpeed(0);
               break;
             case 2:
-              loco->sDirection(0);
+              loco->sDirection(0); // Arri�re
               loco->sSpeed(0);
               break;
             case 3:
-              loco->sDirection(!loco->gDirection());
+              loco->sDirection(!loco->gDirection()); // Inversion
               loco->sSpeed(0);
               break;
             }
             DCC::setThrottle(loco->gAddress(), loco->gSpeed(), loco->gDirection());
+            xQueueSendToBack(xQueue, &frameIn, 0);
           }
-          xQueueSendToBack(xQueue, &frameIn, 0);
         }
         break;
       case CAN_LOCO_FUNCT:
-        DCC::setFn(loco->gAddress(), frameIn.data[4], frameIn.data[5]);
+        if (loco != nullptr)
+        {
+          // DCC::setFn(loco->gAddress(), frameIn.data[4], frameIn.data[5]);
+          DCC::setFn(loco->gAddress(), frameIn.data[4], frameIn.data[5]);
+          Serial.println(loco->gAddress());
+        }
         break;
       case CAN_LOCO_WRITECV_MAIN:
-        // WRITE CV on MAIN <w CAB CV VALUE>
-        DCC::writeCVByteMain(loco->gAddress(), (frameIn.data[4] << 8) | frameIn.data[5], frameIn.data[6]);
+        if (loco != nullptr)
+        {
+          // WRITE CV on MAIN <w CAB CV VALUE>
+          DCC::writeCVByteMain(loco->gAddress(), (frameIn.data[4] << 8) | frameIn.data[5], frameIn.data[6]);
+        }
         break;
       case CAN_SYSTEM_CONTROL:
         switch (frameIn.data[4])
@@ -240,8 +251,11 @@ void CanMarklin::loop()
           xQueueSendToBack(xQueue, &frameIn, 0);
           break;
         case (0x03):
-          DCC::setThrottle(loco->gAddress(), 1, loco->gDirection()); // emergency stop (only one loco)
-          xQueueSendToBack(xQueue, &frameIn, 0);
+          if (loco != nullptr)
+          {
+            DCC::setThrottle(loco->gAddress(), 1, loco->gDirection()); // emergency stop (only one loco)
+            xQueueSendToBack(xQueue, &frameIn, 0);
+          }
           break;
         }
         break;
@@ -302,6 +316,22 @@ void CanMarklin::setFunction(int cab, int16_t functionNumber, bool on)
 void CanMarklin::emergency()
 {
   // CanMarklin::sendMsg(0, CAN_EMERGENCY_STOP, CanMarklin::getId(), thisId, 0);
+}
+
+/************************************************************************
+Retour de LaBox pour les commandes de traction, la fonction emergency stop
+la fonction power on / power off et plus generalement par la suite, toutes
+les fonctions qui emettent une confirmation dans DCC-Ex
+*************************************************************************/
+
+/*--------------------------------------
+  Envoi CAN
+  --------------------------------------*/
+
+void CanMarklin::sendMsg(CANMessage &frame)
+{
+  if (0 == ACAN_ESP32::can.tryToSend(frame))
+    DIAG(F("[CanMarklin]------ Send error"));
 }
 
 #endif

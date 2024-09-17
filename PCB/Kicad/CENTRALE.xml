@@ -1,0 +1,1921 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>D:\Mes documents\Trusty\Documents\Arduino\CommandStation-EX-LaBox\PCB\Kicad\CENTRALE.kicad_sch</source>
+    <date>2024-09-14T19:00:17+0200</date>
+    <tool>Eeschema 8.0.4</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>CENTRALE.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="0.96-OLED1">
+      <value>OLED-128X64</value>
+      <footprint>DISPLAY-OLED-128X64-I2C</footprint>
+      <fields>
+        <field name="Footprint">DISPLAY-OLED-128X64-I2C</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="DISPLAY-OLED-128X64-I2C" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <property name="exclude_from_board"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6e28b39f-59a1-4f79-b700-ebfff91fcf50</tstamps>
+    </comp>
+    <comp ref="1.3-OLED1">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1442d062-1c45-4204-8dce-7ea726f6ad92</tstamps>
+    </comp>
+    <comp ref="C1">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e08085fa-06f7-435e-8d4c-7dfd2def1108</tstamps>
+    </comp>
+    <comp ref="C2">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6636101f-621a-4b4e-9672-a9efe1298b31</tstamps>
+    </comp>
+    <comp ref="C3">
+      <value>220nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d07c9852-1fa4-40ca-9b3a-45379faf2beb</tstamps>
+    </comp>
+    <comp ref="C4">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fa5393d6-c3e4-4b31-a507-98a55f9f6a14</tstamps>
+    </comp>
+    <comp ref="C5">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3032716c-3172-4a12-a2bb-cccd2bafced8</tstamps>
+    </comp>
+    <comp ref="C6">
+      <value>220µF 16V</value>
+      <footprint>E2,5-7</footprint>
+      <fields>
+        <field name="Footprint">E2,5-7</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="CPOL-EUE2.5-7" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>71397e76-b6a2-431e-a781-9527506befc9</tstamps>
+    </comp>
+    <comp ref="C7">
+      <value>470µ25V</value>
+      <footprint>E5-10,5</footprint>
+      <fields>
+        <field name="Footprint">E5-10,5</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="CPOL-EUE5-10.5" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bda15ee9-b44d-4dc8-b2b1-024f6516d860</tstamps>
+    </comp>
+    <comp ref="C8">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>30313d19-a7f5-41cb-b853-40d1cc09c957</tstamps>
+    </comp>
+    <comp ref="C9">
+      <value>470nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a388d5c2-e49f-4b84-89c3-35014d1a593c</tstamps>
+    </comp>
+    <comp ref="C10">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>352bcebc-141f-4980-89ba-bfb1b24112d5</tstamps>
+    </comp>
+    <comp ref="C11">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>33eee4ee-4169-4133-beec-872816296c24</tstamps>
+    </comp>
+    <comp ref="C12">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>82118478-c769-4e93-8016-54af5fe46508</tstamps>
+    </comp>
+    <comp ref="C13">
+      <value>100nF</value>
+      <footprint>C1206</footprint>
+      <fields>
+        <field name="Footprint">C1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="C-EUC1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>aa1fc60f-a852-4e31-96d6-6472f03e0810</tstamps>
+    </comp>
+    <comp ref="D1">
+      <value>1N5819</value>
+      <footprint>SMA-DIODE</footprint>
+      <fields>
+        <field name="Footprint">SMA-DIODE</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MBRA140" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>30cd6950-3901-4121-bc2e-76d91493dbac</tstamps>
+    </comp>
+    <comp ref="D2">
+      <value>1N5819</value>
+      <footprint>SMA-DIODE</footprint>
+      <fields>
+        <field name="Footprint">SMA-DIODE</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MBRA140" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5d8898d0-524f-4fc9-9e68-966b1883c5f1</tstamps>
+    </comp>
+    <comp ref="D3">
+      <value>SS14</value>
+      <footprint>DIOM4325X250N</footprint>
+      <fields>
+        <field name="Footprint">DIOM4325X250N</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="SS14" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b5b5f1dd-623a-471f-bd6f-a8a8993be2a7</tstamps>
+    </comp>
+    <comp ref="D4">
+      <value>1N4148</value>
+      <footprint>DO35-7</footprint>
+      <fields>
+        <field name="Footprint">DO35-7</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="1N4148DO35-7" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6946eb7d-932e-48ac-88cf-33eec8b29a6d</tstamps>
+    </comp>
+    <comp ref="DCC1">
+      <value>1751248</value>
+      <footprint>1751248</footprint>
+      <fields>
+        <field name="Footprint">1751248</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="1751248" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>549455c3-ab6e-454e-94b0-5ca9e521ae0b 48eaa494-0ad3-4e7e-a203-8b82c0c90232</tstamps>
+    </comp>
+    <comp ref="DCC2">
+      <value>691502710002</value>
+      <footprint>691502710002</footprint>
+      <fields>
+        <field name="Footprint">691502710002</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="691502710002" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cb132942-cd26-42fd-95ee-868602b53b37</tstamps>
+    </comp>
+    <comp ref="DCC3">
+      <value>PINHD-1X3</value>
+      <footprint>1X03</footprint>
+      <fields>
+        <field name="Footprint">1X03</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X3" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9e4e372f-70dd-49bb-bbff-df8445e00a98</tstamps>
+    </comp>
+    <comp ref="DOWN1">
+      <value>430456073736</value>
+      <footprint>4304X60737X6</footprint>
+      <fields>
+        <field name="Footprint">4304X60737X6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="430456073736" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>41c614d0-9505-469f-810e-cbd6247c6a10</tstamps>
+    </comp>
+    <comp ref="ESP32">
+      <value>ESP32</value>
+      <footprint>ESP32</footprint>
+      <fields>
+        <field name="Footprint">ESP32</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="ESP32" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>62787ec1-5cfe-457c-a651-feca78bce71f</tstamps>
+    </comp>
+    <comp ref="GOLD_ORB_SM1">
+      <value>OSHWLOGOLOGO5MM</value>
+      <footprint>OSHW_5MM</footprint>
+      <fields>
+        <field name="Footprint">OSHW_5MM</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="OSHWLOGOLOGO5MM" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a8940441-851a-4102-ae98-d6c492184041</tstamps>
+    </comp>
+    <comp ref="GOLD_ORB_SM2">
+      <value>OSHWLOGOLOGO5MM</value>
+      <footprint>OSHW_5MM</footprint>
+      <fields>
+        <field name="Footprint">OSHW_5MM</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="OSHWLOGOLOGO5MM" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1b105113-f935-471e-9300-f012e6cf9008</tstamps>
+    </comp>
+    <comp ref="H1">
+      <value>MOUNT-HOLE2.8</value>
+      <footprint>2,8</footprint>
+      <fields>
+        <field name="Footprint">2,8</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MOUNT-HOLE2.8" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7cb8b3ff-3f9c-4033-955e-fc36f6868d2b</tstamps>
+    </comp>
+    <comp ref="H2">
+      <value>MOUNT-HOLE2.8</value>
+      <footprint>2,8</footprint>
+      <fields>
+        <field name="Footprint">2,8</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MOUNT-HOLE2.8" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1b734947-4591-44d6-ba02-cd89adc71133</tstamps>
+    </comp>
+    <comp ref="H3">
+      <value>MOUNT-HOLE2.8</value>
+      <footprint>2,8</footprint>
+      <fields>
+        <field name="Footprint">2,8</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MOUNT-HOLE2.8" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>14f72930-7974-48af-af09-06448948185b</tstamps>
+    </comp>
+    <comp ref="H4">
+      <value>MOUNT-HOLE2.8</value>
+      <footprint>2,8</footprint>
+      <fields>
+        <field name="Footprint">2,8</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MOUNT-HOLE2.8" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e9ed3bf1-1ce1-48cc-ab7a-6c1b8bfe8ec8</tstamps>
+    </comp>
+    <comp ref="I2C1">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>258fcb41-7033-4835-9fdf-423793cb23b3</tstamps>
+    </comp>
+    <comp ref="IC2">
+      <value>LM358D</value>
+      <footprint>SO08</footprint>
+      <fields>
+        <field name="Footprint">SO08</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="LM358D" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c4c300bc-e982-40ee-bc82-a4fa8a54a3a5 f116f1dc-01c8-4814-8d61-d90cc9ea71c4 435ead52-c169-443a-8062-5377c2062aaf</tstamps>
+    </comp>
+    <comp ref="J2">
+      <value>RJ11</value>
+      <footprint>RJ11-6</footprint>
+      <fields>
+        <field name="Footprint">RJ11-6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="RJ11-6" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d560d59e-193b-4157-a598-2712b0398f0b</tstamps>
+    </comp>
+    <comp ref="J3">
+      <value>RJ11</value>
+      <footprint>RJ11-6</footprint>
+      <fields>
+        <field name="Footprint">RJ11-6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="RJ11-6" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>737724c0-2c60-4036-86dd-d53fbfe67f53</tstamps>
+    </comp>
+    <comp ref="JP1">
+      <value>PINHD-1X13</value>
+      <footprint>1X13</footprint>
+      <fields>
+        <field name="Footprint">1X13</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X13" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8e3d9bd8-08c5-4406-bc8e-0429c28a2fdb</tstamps>
+    </comp>
+    <comp ref="JP2">
+      <value>PINHD-1X2</value>
+      <footprint>1X02</footprint>
+      <fields>
+        <field name="Footprint">1X02</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X2" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>67608a77-f50b-4eec-85d9-1d0bba4c5c73</tstamps>
+    </comp>
+    <comp ref="JP5">
+      <value>PINHD-1X2</value>
+      <footprint>1X02</footprint>
+      <fields>
+        <field name="Footprint">1X02</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X2" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a5359824-884d-4ba5-bd73-d9cfaa4f7fe6</tstamps>
+    </comp>
+    <comp ref="L6203">
+      <value>L6203</value>
+      <footprint>MULTIWATT-11</footprint>
+      <fields>
+        <field name="Footprint">MULTIWATT-11</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="L6203" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bbc86d48-5ce4-4ddd-b79b-6c45ad7d510b</tstamps>
+    </comp>
+    <comp ref="LED2">
+      <value>LED3MM</value>
+      <footprint>LED3MM</footprint>
+      <fields>
+        <field name="Footprint">LED3MM</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="LED3MM" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>aa150034-db8e-4e55-b98f-05afdd8af91a</tstamps>
+    </comp>
+    <comp ref="LED4">
+      <value>LED3MM</value>
+      <footprint>LED3MM</footprint>
+      <fields>
+        <field name="Footprint">LED3MM</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="LED3MM" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1e45069d-383c-4419-85d1-8330e71bdf59</tstamps>
+    </comp>
+    <comp ref="M_COURANT1">
+      <value>PINHD-1X3</value>
+      <footprint>1X03</footprint>
+      <fields>
+        <field name="Footprint">1X03</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X3" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1135a936-ede7-481e-a484-d3fab85b2d0e</tstamps>
+    </comp>
+    <comp ref="P1">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>24047b8b-8504-4ce6-ad2b-e7ab81ef34ef</tstamps>
+    </comp>
+    <comp ref="P2">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fa197c81-ed0a-44da-8c1d-9e4b9ac4be69</tstamps>
+    </comp>
+    <comp ref="R3">
+      <value>33K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>20e54c84-ed7d-4731-8a22-e25ae2877f59</tstamps>
+    </comp>
+    <comp ref="R4">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>67c7719e-37e3-4339-8047-6d0a6be74bdd</tstamps>
+    </comp>
+    <comp ref="R5">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8c8154c7-2b7b-44e1-8694-dfe76312b3d9</tstamps>
+    </comp>
+    <comp ref="R6">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>df485b94-0569-4ae2-9b1f-7e08d191584c</tstamps>
+    </comp>
+    <comp ref="R7">
+      <value>68K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>52b8a34d-faa1-4525-80a1-ec50299c2f1b</tstamps>
+    </comp>
+    <comp ref="R8">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0f340484-43f5-4e43-8a6d-4056e29d2348</tstamps>
+    </comp>
+    <comp ref="R9">
+      <value>120R</value>
+      <footprint>M1206</footprint>
+      <fields>
+        <field name="Footprint">M1206</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_M1206" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cb0458a5-8de3-402d-bc84-e7300939b3d3</tstamps>
+    </comp>
+    <comp ref="R10">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ed78cd7a-c719-43c5-85ba-627e550e56d3</tstamps>
+    </comp>
+    <comp ref="R12">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>59069f0c-cc70-4d07-bc37-804dc3ea7664</tstamps>
+    </comp>
+    <comp ref="R13">
+      <value>0R5</value>
+      <footprint>R2512</footprint>
+      <fields>
+        <field name="Footprint">R2512</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R2512" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f1de17b2-77f9-4731-89b1-0e00eaea67cd</tstamps>
+    </comp>
+    <comp ref="R14">
+      <value>0R5</value>
+      <footprint>R2512</footprint>
+      <fields>
+        <field name="Footprint">R2512</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R2512" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8a6d0e9f-35fd-49b4-bcfd-bf4c1393d045</tstamps>
+    </comp>
+    <comp ref="R15">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a26a563f-dcf8-4dc3-8808-f90991ceb9fe</tstamps>
+    </comp>
+    <comp ref="R16">
+      <value>220K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>04814e1b-c013-4fd0-9fc5-f898fc8ddbab</tstamps>
+    </comp>
+    <comp ref="R17">
+      <value>50k</value>
+      <footprint>3386-MULTI</footprint>
+      <fields>
+        <field name="Footprint">3386-MULTI</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="3386" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>97488d6a-423b-411b-a467-5d846ca073ee</tstamps>
+    </comp>
+    <comp ref="R18">
+      <value>10K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7746434b-c9c9-48c3-a08d-6e02730ecb43</tstamps>
+    </comp>
+    <comp ref="R19">
+      <value>15K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7b06b5be-c805-41f9-8e2a-23b1ec287e16</tstamps>
+    </comp>
+    <comp ref="R20">
+      <value>47K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>763a8ac4-32c4-4735-99a3-ad91d6d9ff14</tstamps>
+    </comp>
+    <comp ref="R21">
+      <value>47K</value>
+      <footprint>R0805</footprint>
+      <fields>
+        <field name="Footprint">R0805</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="R-EU_R0805" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bbb7cf50-dca1-440b-8ab2-d713ff1a73ed</tstamps>
+    </comp>
+    <comp ref="RX/TX1">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c464ac67-d07b-4878-905a-ea6f8d27cd1e</tstamps>
+    </comp>
+    <comp ref="RX2/TX2">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7d0abc77-16a8-4ce1-be52-02b3bcc4a17a</tstamps>
+    </comp>
+    <comp ref="SEL1">
+      <value>430456073736</value>
+      <footprint>4304X60737X6</footprint>
+      <fields>
+        <field name="Footprint">4304X60737X6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="430456073736" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>af655c64-008f-4ecc-b615-20ea755c744c</tstamps>
+    </comp>
+    <comp ref="SJ1">
+      <value>SJ</value>
+      <footprint>SJ</footprint>
+      <fields>
+        <field name="Footprint">SJ</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="SJ" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0862de5e-b5b6-45ca-bb25-3ec987e38f71</tstamps>
+    </comp>
+    <comp ref="SJ2">
+      <value>SJ</value>
+      <footprint>SJ</footprint>
+      <fields>
+        <field name="Footprint">SJ</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="SJ" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bc8b77e2-6747-4d7c-8958-8fc437abe63a</tstamps>
+    </comp>
+    <comp ref="SJ3">
+      <value>SJ</value>
+      <footprint>SJ</footprint>
+      <fields>
+        <field name="Footprint">SJ</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="SJ" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7edb2f6a-57f3-4ee0-93d9-41dc3f261c4c</tstamps>
+    </comp>
+    <comp ref="SJ4">
+      <value>SJ</value>
+      <footprint>SJ</footprint>
+      <fields>
+        <field name="Footprint">SJ</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="SJ" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7a20eed4-0de7-4ded-ba09-88dcb5f209dd</tstamps>
+    </comp>
+    <comp ref="SJ5">
+      <value>SJ</value>
+      <footprint>SJ</footprint>
+      <fields>
+        <field name="Footprint">SJ</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="SJ" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2d833f53-95af-4ea0-b94e-80bb8989b6f5</tstamps>
+    </comp>
+    <comp ref="TEST_5V1">
+      <value>PINHD-1X4</value>
+      <footprint>1X04</footprint>
+      <fields>
+        <field name="Footprint">1X04</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="PINHD-1X4" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3ab67a0e-1cf2-4b96-93e9-9f66a9825950</tstamps>
+    </comp>
+    <comp ref="U$1">
+      <value>DC-DC-STEP-DOWN</value>
+      <footprint>DC-DC-STEP-DOWN</footprint>
+      <fields>
+        <field name="Footprint">DC-DC-STEP-DOWN</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="DC-DC-STEP-DOWN" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4e2cde59-810a-4dea-8810-52da90c1106e</tstamps>
+    </comp>
+    <comp ref="U$4">
+      <value>MP1584</value>
+      <footprint>DC-DC-STEP-DOWN-MP1584</footprint>
+      <fields>
+        <field name="Footprint">DC-DC-STEP-DOWN-MP1584</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="DC-DC-STEP-DOWN-MP1584" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5f23ccf3-ec1a-4dd1-8f0a-0430bcbee28b</tstamps>
+    </comp>
+    <comp ref="U1">
+      <value>MCP2562-E/SN</value>
+      <footprint>SOIC127P600X175-8N</footprint>
+      <fields>
+        <field name="Footprint">SOIC127P600X175-8N</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="MCP2562-E/SN" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a2e05ee5-e330-43da-8e75-04becef869cd</tstamps>
+    </comp>
+    <comp ref="UP1">
+      <value>430456073736</value>
+      <footprint>4304X60737X6</footprint>
+      <fields>
+        <field name="Footprint">4304X60737X6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="430456073736" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3cd1ca54-876a-4df6-8500-19a372da4c45</tstamps>
+    </comp>
+    <comp ref="VIN1">
+      <value>JACK-PLUG0</value>
+      <footprint>SPC4077</footprint>
+      <fields>
+        <field name="Footprint">SPC4077</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="CENTRALE02c3-eagle-import" part="JACK-PLUG0" description=""/>
+      <property name="Sheetname" value="Racine"/>
+      <property name="Sheetfile" value="CENTRALE.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c85dd9d4-7971-4e17-9de5-aaae82c1527e</tstamps>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="CENTRALE02c3-eagle-import" part="1751248">
+      <fields>
+        <field name="Reference">X</field>
+        <field name="Value">1751248</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="K" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="1N4148DO35-7">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">1N4148DO35-7</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="A" name="A" type="passive"/>
+        <pin num="C" name="C" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="3386">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">3386</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+        <pin num="5" name="5" type="passive"/>
+        <pin num="6" name="6" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="430456073736">
+      <fields>
+        <field name="Reference">S</field>
+        <field name="Value">430456073736</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="3" type="passive"/>
+        <pin num="3" name="2" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="691502710002">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">691502710002</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="C-EUC1206">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C-EUC1206</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="CPOL-EUE2.5-7">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">CPOL-EUE2.5-7</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="+" name="+" type="passive"/>
+        <pin num="-" name="-" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="CPOL-EUE5-10.5">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">CPOL-EUE5-10.5</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="+" name="+" type="passive"/>
+        <pin num="-" name="-" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="DC-DC-STEP-DOWN">
+      <fields>
+        <field name="Reference"/>
+        <field name="Value">DC-DC-STEP-DOWN</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="IN+.1" name="IN+.1" type="bidirectional"/>
+        <pin num="IN+.2" name="IN+.2" type="bidirectional"/>
+        <pin num="IN-.1" name="IN-.1" type="bidirectional"/>
+        <pin num="IN-.2" name="IN-.2" type="bidirectional"/>
+        <pin num="OUT+.1" name="OUT+.1" type="bidirectional"/>
+        <pin num="OUT+.2" name="OUT+.2" type="bidirectional"/>
+        <pin num="OUT-.1" name="OUT-.1" type="bidirectional"/>
+        <pin num="OUT-.2" name="OUT-.2" type="bidirectional"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="DC-DC-STEP-DOWN-MP1584">
+      <fields>
+        <field name="Reference"/>
+        <field name="Value">DC-DC-STEP-DOWN-MP1584</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="IN+.1" name="IN+.1" type="bidirectional"/>
+        <pin num="IN+.2" name="IN+.2" type="bidirectional"/>
+        <pin num="IN-.1" name="IN-.1" type="bidirectional"/>
+        <pin num="IN-.2" name="IN-.2" type="bidirectional"/>
+        <pin num="OUT+.1" name="OUT+.1" type="bidirectional"/>
+        <pin num="OUT+.2" name="OUT+.2" type="bidirectional"/>
+        <pin num="OUT-.1" name="OUT-.1" type="bidirectional"/>
+        <pin num="OUT-.2" name="OUT-.2" type="bidirectional"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="DISPLAY-OLED-128X64-I2C">
+      <fields>
+        <field name="Reference"/>
+        <field name="Value">DISPLAY-OLED-128X64-I2C</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="GND" type="power_in"/>
+        <pin num="2" name="VCC" type="power_in"/>
+        <pin num="3" name="SCL" type="bidirectional"/>
+        <pin num="4" name="SDA" type="bidirectional"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="ESP32">
+      <fields>
+        <field name="Reference">IC</field>
+        <field name="Value">ESP32</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="3V3" name="3V3" type="power_in"/>
+        <pin num="5V" name="5V" type="power_in"/>
+        <pin num="EN" name="EN" type="bidirectional"/>
+        <pin num="GND" name="GND" type="power_in"/>
+        <pin num="GND2" name="GND2" type="power_in"/>
+        <pin num="IO2" name="IO2" type="bidirectional"/>
+        <pin num="IO4" name="IO4" type="bidirectional"/>
+        <pin num="IO5" name="IO5" type="bidirectional"/>
+        <pin num="IO12" name="IO12" type="bidirectional"/>
+        <pin num="IO13" name="IO13" type="bidirectional"/>
+        <pin num="IO14" name="IO14" type="bidirectional"/>
+        <pin num="IO15" name="IO15" type="bidirectional"/>
+        <pin num="IO16" name="IO16" type="bidirectional"/>
+        <pin num="IO17" name="IO17" type="bidirectional"/>
+        <pin num="IO18" name="IO18" type="bidirectional"/>
+        <pin num="IO19" name="IO19" type="bidirectional"/>
+        <pin num="IO21" name="IO21" type="bidirectional"/>
+        <pin num="IO22" name="IO22" type="bidirectional"/>
+        <pin num="IO23" name="IO23" type="bidirectional"/>
+        <pin num="IO25" name="IO25" type="bidirectional"/>
+        <pin num="IO26" name="IO26" type="bidirectional"/>
+        <pin num="IO27" name="IO27" type="bidirectional"/>
+        <pin num="IO32" name="IO32" type="bidirectional"/>
+        <pin num="IO33" name="IO33" type="bidirectional"/>
+        <pin num="IO34" name="IO34" type="bidirectional"/>
+        <pin num="IO35" name="IO35" type="bidirectional"/>
+        <pin num="IO36" name="IO36" type="bidirectional"/>
+        <pin num="IO39" name="IO39" type="bidirectional"/>
+        <pin num="RXD0" name="RXD0" type="bidirectional"/>
+        <pin num="TXD0" name="TXD0" type="bidirectional"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="JACK-PLUG0">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">JACK-PLUG0</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="L6203">
+      <fields>
+        <field name="Reference">IC</field>
+        <field name="Value">L6203</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="OUT2" type="output"/>
+        <pin num="2" name="VS" type="power_in"/>
+        <pin num="3" name="OUT1" type="output"/>
+        <pin num="4" name="CBOOT1" type="input"/>
+        <pin num="5" name="IN1" type="input"/>
+        <pin num="6" name="GND" type="power_in"/>
+        <pin num="7" name="IN2" type="input"/>
+        <pin num="8" name="CBOOT2" type="input"/>
+        <pin num="9" name="VREF" type="input"/>
+        <pin num="10" name="SENSE" type="input"/>
+        <pin num="11" name="ENABLE" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="LED3MM">
+      <fields>
+        <field name="Reference">LED</field>
+        <field name="Value">LED3MM</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="A" name="A" type="passive"/>
+        <pin num="K" name="C" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="LM358D">
+      <fields>
+        <field name="Reference">IC</field>
+        <field name="Value">LM358D</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="OUT" type="output"/>
+        <pin num="2" name="-IN" type="input"/>
+        <pin num="3" name="+IN" type="input"/>
+        <pin num="4" name="V-" type="power_in"/>
+        <pin num="5" name="+IN" type="input"/>
+        <pin num="6" name="-IN" type="input"/>
+        <pin num="7" name="OUT" type="output"/>
+        <pin num="8" name="V+" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="MBRA140">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">MBRA140</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="A" name="A" type="passive"/>
+        <pin num="C" name="C" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="MCP2562-E/SN">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">MCP2562-E{slash}SN</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="TXD" type="input"/>
+        <pin num="2" name="VSS" type="power_in"/>
+        <pin num="3" name="VDD" type="power_in"/>
+        <pin num="4" name="RXD" type="output"/>
+        <pin num="5" name="VIO" type="power_in"/>
+        <pin num="6" name="CANL" type="input"/>
+        <pin num="7" name="CANH" type="input"/>
+        <pin num="8" name="STBY" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="MOUNT-HOLE2.8">
+      <fields>
+        <field name="Reference">H</field>
+        <field name="Value">MOUNT-HOLE2.8</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="OSHWLOGOLOGO5MM">
+      <fields>
+        <field name="Reference">GOLD_ORB_SM</field>
+        <field name="Value">OSHWLOGOLOGO5MM</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="PINHD-1X13">
+      <fields>
+        <field name="Reference">JP</field>
+        <field name="Value">PINHD-1X13</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+        <pin num="5" name="5" type="passive"/>
+        <pin num="6" name="6" type="passive"/>
+        <pin num="7" name="7" type="passive"/>
+        <pin num="8" name="8" type="passive"/>
+        <pin num="9" name="9" type="passive"/>
+        <pin num="10" name="10" type="passive"/>
+        <pin num="11" name="11" type="passive"/>
+        <pin num="12" name="12" type="passive"/>
+        <pin num="13" name="13" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="PINHD-1X2">
+      <fields>
+        <field name="Reference">JP</field>
+        <field name="Value">PINHD-1X2</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="PINHD-1X3">
+      <fields>
+        <field name="Reference">JP</field>
+        <field name="Value">PINHD-1X3</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="PINHD-1X4">
+      <fields>
+        <field name="Reference">JP</field>
+        <field name="Value">PINHD-1X4</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="R-EU_M1206">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R-EU_M1206</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="R-EU_R0805">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R-EU_R0805</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="R-EU_R2512">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R-EU_R2512</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="RJ11-6">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">RJ11-6</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+        <pin num="5" name="5" type="passive"/>
+        <pin num="6" name="6" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="SJ">
+      <fields>
+        <field name="Reference">SJ</field>
+        <field name="Value">SJ</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="CENTRALE02c3-eagle-import" part="SS14">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">SS14</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="A" name="A" type="passive"/>
+        <pin num="C" name="K" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="CENTRALE02c3-eagle-import">
+      <uri>D:\Mes documents\Trusty\Documents\Arduino\CommandStation-EX-LaBox\PCB\Kicad/CENTRALE02c3-eagle-import.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="/3V3">
+      <node ref="0.96-OLED1" pin="2" pinfunction="VCC" pintype="power_in"/>
+      <node ref="1.3-OLED1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="C12" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="C13" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="ESP32" pin="3V3" pinfunction="3V3" pintype="power_in"/>
+      <node ref="I2C1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="IC2" pin="8" pinfunction="V+" pintype="power_in"/>
+      <node ref="JP1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="M_COURANT1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R12" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R15" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R17" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R17" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="R17" pin="6" pinfunction="6" pintype="passive"/>
+      <node ref="R20" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R21" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="RX/TX1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="RX2/TX2" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="U1" pin="5" pinfunction="VIO" pintype="power_in"/>
+    </net>
+    <net code="2" name="/VS">
+      <node ref="C7" pin="+" pinfunction="+" pintype="passive"/>
+      <node ref="D3" pin="C" pinfunction="K" pintype="passive"/>
+      <node ref="L6203" pin="2" pinfunction="VS" pintype="power_in"/>
+      <node ref="R7" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="U$1" pin="IN+.1" pinfunction="IN+.1" pintype="bidirectional"/>
+      <node ref="U$1" pin="IN+.2" pinfunction="IN+.2" pintype="bidirectional"/>
+      <node ref="U$4" pin="IN+.1" pinfunction="IN+.1" pintype="bidirectional"/>
+      <node ref="U$4" pin="IN+.2" pinfunction="IN+.2" pintype="bidirectional"/>
+      <node ref="VIN1" pin="3" pinfunction="3" pintype="passive"/>
+    </net>
+    <net code="3" name="Net-(1.3-OLED1-Pad1)">
+      <node ref="0.96-OLED1" pin="4" pinfunction="SDA" pintype="bidirectional"/>
+      <node ref="1.3-OLED1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="ESP32" pin="IO21" pinfunction="IO21" pintype="bidirectional"/>
+      <node ref="I2C1" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="R15" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="4" name="Net-(1.3-OLED1-Pad2)">
+      <node ref="0.96-OLED1" pin="3" pinfunction="SCL" pintype="bidirectional"/>
+      <node ref="1.3-OLED1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="ESP32" pin="IO22" pinfunction="IO22" pintype="bidirectional"/>
+      <node ref="I2C1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="R12" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="5" name="Net-(C9-Pad1)">
+      <node ref="C9" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="ESP32" pin="EN" pinfunction="EN" pintype="bidirectional"/>
+    </net>
+    <net code="6" name="Net-(C11-Pad2)">
+      <node ref="C11" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="ESP32" pin="IO34" pinfunction="IO34" pintype="bidirectional"/>
+      <node ref="R7" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R8" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="7" name="Net-(D4-PadC)">
+      <node ref="D4" pin="C" pinfunction="C" pintype="passive"/>
+      <node ref="R18" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="8" name="Net-(DCC1A-K)">
+      <node ref="C2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="D1" pin="C" pinfunction="C" pintype="passive"/>
+      <node ref="DCC1" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="DCC2" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="DCC3" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="L6203" pin="1" pinfunction="OUT2" pintype="output"/>
+      <node ref="R6" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="9" name="Net-(DCC1B-K)">
+      <node ref="C1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="D2" pin="C" pinfunction="C" pintype="passive"/>
+      <node ref="DCC1" pin="2" pinfunction="K" pintype="passive"/>
+      <node ref="DCC2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="DCC3" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="DCC3" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="L6203" pin="3" pinfunction="OUT1" pintype="output"/>
+      <node ref="LED2" pin="A" pinfunction="A" pintype="passive"/>
+      <node ref="LED4" pin="K" pinfunction="C" pintype="passive"/>
+    </net>
+    <net code="10" name="Net-(DOWN1-2)">
+      <node ref="DOWN1" pin="3" pinfunction="2" pintype="passive"/>
+      <node ref="DOWN1" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="ESP32" pin="IO19" pinfunction="IO19" pintype="bidirectional"/>
+      <node ref="P1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="P2" pin="3" pinfunction="3" pintype="passive"/>
+    </net>
+    <net code="11" name="Net-(DOWN1-3)">
+      <node ref="0.96-OLED1" pin="1" pinfunction="GND" pintype="power_in"/>
+      <node ref="1.3-OLED1" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="C10" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C11" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C12" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C13" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C3" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C4" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="C6" pin="-" pinfunction="-" pintype="passive"/>
+      <node ref="C7" pin="-" pinfunction="-" pintype="passive"/>
+      <node ref="C8" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C9" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="D1" pin="A" pinfunction="A" pintype="passive"/>
+      <node ref="D2" pin="A" pinfunction="A" pintype="passive"/>
+      <node ref="D3" pin="A" pinfunction="A" pintype="passive"/>
+      <node ref="DOWN1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="DOWN1" pin="2" pinfunction="3" pintype="passive"/>
+      <node ref="ESP32" pin="GND" pinfunction="GND" pintype="power_in"/>
+      <node ref="ESP32" pin="GND2" pinfunction="GND2" pintype="power_in"/>
+      <node ref="I2C1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="IC2" pin="4" pinfunction="V-" pintype="power_in"/>
+      <node ref="IC2" pin="5" pinfunction="+IN" pintype="input"/>
+      <node ref="IC2" pin="6" pinfunction="-IN" pintype="input"/>
+      <node ref="JP1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="JP5" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="L6203" pin="6" pinfunction="GND" pintype="power_in"/>
+      <node ref="M_COURANT1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="P1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="P2" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R10" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R13" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R14" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R4" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R8" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="RX/TX1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="RX2/TX2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="SEL1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="SEL1" pin="2" pinfunction="3" pintype="passive"/>
+      <node ref="TEST_5V1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="TEST_5V1" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="U$1" pin="IN-.1" pinfunction="IN-.1" pintype="bidirectional"/>
+      <node ref="U$1" pin="IN-.2" pinfunction="IN-.2" pintype="bidirectional"/>
+      <node ref="U$1" pin="OUT-.1" pinfunction="OUT-.1" pintype="bidirectional"/>
+      <node ref="U$1" pin="OUT-.2" pinfunction="OUT-.2" pintype="bidirectional"/>
+      <node ref="U$4" pin="IN-.1" pinfunction="IN-.1" pintype="bidirectional"/>
+      <node ref="U$4" pin="IN-.2" pinfunction="IN-.2" pintype="bidirectional"/>
+      <node ref="U$4" pin="OUT-.1" pinfunction="OUT-.1" pintype="bidirectional"/>
+      <node ref="U$4" pin="OUT-.2" pinfunction="OUT-.2" pintype="bidirectional"/>
+      <node ref="U1" pin="2" pinfunction="VSS" pintype="power_in"/>
+      <node ref="U1" pin="8" pinfunction="STBY" pintype="input"/>
+      <node ref="UP1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="UP1" pin="2" pinfunction="3" pintype="passive"/>
+      <node ref="VIN1" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="12" name="Net-(ESP32-PadIO12)">
+      <node ref="ESP32" pin="IO12" pinfunction="IO12" pintype="bidirectional"/>
+      <node ref="JP1" pin="6" pinfunction="6" pintype="passive"/>
+    </net>
+    <net code="13" name="Net-(ESP32-PadIO13)">
+      <node ref="ESP32" pin="IO13" pinfunction="IO13" pintype="bidirectional"/>
+      <node ref="JP1" pin="5" pinfunction="5" pintype="passive"/>
+    </net>
+    <net code="14" name="Net-(ESP32-PadIO14)">
+      <node ref="ESP32" pin="IO14" pinfunction="IO14" pintype="bidirectional"/>
+      <node ref="JP1" pin="7" pinfunction="7" pintype="passive"/>
+    </net>
+    <net code="15" name="Net-(ESP32-PadIO15)">
+      <node ref="ESP32" pin="IO15" pinfunction="IO15" pintype="bidirectional"/>
+      <node ref="JP1" pin="4" pinfunction="4" pintype="passive"/>
+    </net>
+    <net code="16" name="Net-(ESP32-PadIO16)">
+      <node ref="ESP32" pin="IO16" pinfunction="IO16" pintype="bidirectional"/>
+      <node ref="RX2/TX2" pin="4" pinfunction="4" pintype="passive"/>
+    </net>
+    <net code="17" name="Net-(ESP32-PadIO17)">
+      <node ref="ESP32" pin="IO17" pinfunction="IO17" pintype="bidirectional"/>
+      <node ref="RX2/TX2" pin="3" pinfunction="3" pintype="passive"/>
+    </net>
+    <net code="18" name="Net-(ESP32-PadIO25)">
+      <node ref="ESP32" pin="IO25" pinfunction="IO25" pintype="bidirectional"/>
+      <node ref="JP1" pin="10" pinfunction="10" pintype="passive"/>
+    </net>
+    <net code="19" name="Net-(ESP32-PadIO26)">
+      <node ref="ESP32" pin="IO26" pinfunction="IO26" pintype="bidirectional"/>
+      <node ref="JP1" pin="9" pinfunction="9" pintype="passive"/>
+    </net>
+    <net code="20" name="Net-(ESP32-PadIO35)">
+      <node ref="ESP32" pin="IO35" pinfunction="IO35" pintype="bidirectional"/>
+      <node ref="JP1" pin="11" pinfunction="11" pintype="passive"/>
+      <node ref="R20" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="21" name="Net-(ESP32-PadIO39)">
+      <node ref="ESP32" pin="IO39" pinfunction="IO39" pintype="bidirectional"/>
+      <node ref="JP1" pin="12" pinfunction="12" pintype="passive"/>
+      <node ref="R21" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="22" name="Net-(ESP32-PadRXD0)">
+      <node ref="ESP32" pin="RXD0" pinfunction="RXD0" pintype="bidirectional"/>
+      <node ref="RX/TX1" pin="4" pinfunction="4" pintype="passive"/>
+    </net>
+    <net code="23" name="Net-(ESP32-PadTXD0)">
+      <node ref="ESP32" pin="TXD0" pinfunction="TXD0" pintype="bidirectional"/>
+      <node ref="SJ3" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="24" name="Net-(IC2A-+IN)">
+      <node ref="C8" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="IC2" pin="3" pinfunction="+IN" pintype="input"/>
+      <node ref="R16" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R5" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="25" name="Net-(IC2A--IN)">
+      <node ref="C5" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="IC2" pin="2" pinfunction="-IN" pintype="input"/>
+      <node ref="R18" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R19" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R3" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R4" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="SJ5" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="26" name="Net-(IC2A-OUT)">
+      <node ref="C10" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="C5" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="D4" pin="A" pinfunction="A" pintype="passive"/>
+      <node ref="ESP32" pin="IO36" pinfunction="IO36" pintype="bidirectional"/>
+      <node ref="IC2" pin="1" pinfunction="OUT" pintype="output"/>
+      <node ref="M_COURANT1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R3" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="SJ4" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="SJ5" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="27" name="Net-(JP2-Pad1)">
+      <node ref="JP2" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R9" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="28" name="Net-(L6203-CBOOT1)">
+      <node ref="C1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="L6203" pin="4" pinfunction="CBOOT1" pintype="input"/>
+    </net>
+    <net code="29" name="Net-(L6203-CBOOT2)">
+      <node ref="C2" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="L6203" pin="8" pinfunction="CBOOT2" pintype="input"/>
+    </net>
+    <net code="30" name="Net-(L6203-ENABLE)">
+      <node ref="ESP32" pin="IO32" pinfunction="IO32" pintype="bidirectional"/>
+      <node ref="L6203" pin="11" pinfunction="ENABLE" pintype="input"/>
+      <node ref="R10" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="31" name="Net-(L6203-IN1)">
+      <node ref="ESP32" pin="IO33" pinfunction="IO33" pintype="bidirectional"/>
+      <node ref="L6203" pin="5" pinfunction="IN1" pintype="input"/>
+    </net>
+    <net code="32" name="Net-(L6203-IN2)">
+      <node ref="ESP32" pin="IO27" pinfunction="IO27" pintype="bidirectional"/>
+      <node ref="JP1" pin="8" pinfunction="8" pintype="passive"/>
+      <node ref="L6203" pin="7" pinfunction="IN2" pintype="input"/>
+    </net>
+    <net code="33" name="Net-(L6203-SENSE)">
+      <node ref="JP5" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="L6203" pin="10" pinfunction="SENSE" pintype="input"/>
+      <node ref="R13" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R14" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R5" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="34" name="Net-(L6203-VREF)">
+      <node ref="C3" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="L6203" pin="9" pinfunction="VREF" pintype="input"/>
+    </net>
+    <net code="35" name="Net-(LED2-C)">
+      <node ref="LED2" pin="K" pinfunction="C" pintype="passive"/>
+      <node ref="LED4" pin="A" pinfunction="A" pintype="passive"/>
+      <node ref="R6" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="36" name="Net-(R16-Pad2)">
+      <node ref="R16" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="R17" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="R17" pin="4" pinfunction="4" pintype="passive"/>
+    </net>
+    <net code="37" name="Net-(R19-Pad1)">
+      <node ref="R19" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="SJ4" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="38" name="Net-(RX/TX1-Pad3)">
+      <node ref="RX/TX1" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="SJ3" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="39" name="Net-(SEL1-2)">
+      <node ref="ESP32" pin="IO18" pinfunction="IO18" pintype="bidirectional"/>
+      <node ref="P1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="P2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="SEL1" pin="3" pinfunction="2" pintype="passive"/>
+      <node ref="SEL1" pin="4" pinfunction="4" pintype="passive"/>
+    </net>
+    <net code="40" name="Net-(U1-CANH)">
+      <node ref="J2" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="J2" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="J3" pin="3" pinfunction="3" pintype="passive"/>
+      <node ref="J3" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="JP2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="U1" pin="7" pinfunction="CANH" pintype="input"/>
+    </net>
+    <net code="41" name="Net-(U1-CANL)">
+      <node ref="J2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="J2" pin="5" pinfunction="5" pintype="passive"/>
+      <node ref="J3" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="J3" pin="5" pinfunction="5" pintype="passive"/>
+      <node ref="R9" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="U1" pin="6" pinfunction="CANL" pintype="input"/>
+    </net>
+    <net code="42" name="Net-(U1-RXD)">
+      <node ref="ESP32" pin="IO4" pinfunction="IO4" pintype="bidirectional"/>
+      <node ref="U1" pin="4" pinfunction="RXD" pintype="output"/>
+    </net>
+    <net code="43" name="Net-(U1-TXD)">
+      <node ref="ESP32" pin="IO5" pinfunction="IO5" pintype="bidirectional"/>
+      <node ref="U1" pin="1" pinfunction="TXD" pintype="input"/>
+    </net>
+    <net code="44" name="Net-(U1-VDD)">
+      <node ref="C4" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="C6" pin="+" pinfunction="+" pintype="passive"/>
+      <node ref="ESP32" pin="5V" pinfunction="5V" pintype="power_in"/>
+      <node ref="JP1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="TEST_5V1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="TEST_5V1" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="U$1" pin="OUT+.1" pinfunction="OUT+.1" pintype="bidirectional"/>
+      <node ref="U$1" pin="OUT+.2" pinfunction="OUT+.2" pintype="bidirectional"/>
+      <node ref="U$4" pin="OUT+.1" pinfunction="OUT+.1" pintype="bidirectional"/>
+      <node ref="U$4" pin="OUT+.2" pinfunction="OUT+.2" pintype="bidirectional"/>
+      <node ref="U1" pin="3" pinfunction="VDD" pintype="power_in"/>
+    </net>
+    <net code="45" name="Net-(UP1-2)">
+      <node ref="ESP32" pin="IO23" pinfunction="IO23" pintype="bidirectional"/>
+      <node ref="P1" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="P2" pin="4" pinfunction="4" pintype="passive"/>
+      <node ref="UP1" pin="3" pinfunction="2" pintype="passive"/>
+      <node ref="UP1" pin="4" pinfunction="4" pintype="passive"/>
+    </net>
+    <net code="46" name="unconnected-(ESP32-PadIO2)">
+      <node ref="ESP32" pin="IO2" pinfunction="IO2" pintype="bidirectional"/>
+    </net>
+    <net code="47" name="unconnected-(IC2B-OUT-Pad7)">
+      <node ref="IC2" pin="7" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="48" name="unconnected-(J2-Pad1)">
+      <node ref="J2" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="49" name="unconnected-(J2-Pad6)">
+      <node ref="J2" pin="6" pinfunction="6" pintype="passive"/>
+    </net>
+    <net code="50" name="unconnected-(J3-Pad1)">
+      <node ref="J3" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="51" name="unconnected-(J3-Pad6)">
+      <node ref="J3" pin="6" pinfunction="6" pintype="passive"/>
+    </net>
+    <net code="52" name="unconnected-(JP1-Pad13)">
+      <node ref="JP1" pin="13" pinfunction="13" pintype="passive"/>
+    </net>
+    <net code="53" name="unconnected-(R17-Pad5)">
+      <node ref="R17" pin="5" pinfunction="5" pintype="passive"/>
+    </net>
+    <net code="54" name="unconnected-(SJ1-Pad1)">
+      <node ref="SJ1" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="55" name="unconnected-(SJ1-Pad2)">
+      <node ref="SJ1" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="56" name="unconnected-(SJ2-Pad1)">
+      <node ref="SJ2" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="57" name="unconnected-(SJ2-Pad2)">
+      <node ref="SJ2" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="58" name="unconnected-(VIN1-Pad2)">
+      <node ref="VIN1" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+  </nets>
+</export>

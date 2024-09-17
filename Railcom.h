@@ -13,6 +13,6 @@
 #include "DCCRMT.h"
 
 void RailcomBegin();
-void StarTimerCutOut();
-void setDCCBitCutOut(rmt_item32_t* item);
+void StarTimerCutOut(rmt_channel_t channel);
+int setDCCBitCutOut(rmt_item32_t* item);
 #endif

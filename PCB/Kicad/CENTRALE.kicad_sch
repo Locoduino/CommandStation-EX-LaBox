@@ -12450,6 +12450,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 299.72 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "3eb357f8-6c57-42dd-a4fb-f11d1e656b09")
 		)
@@ -12511,6 +12520,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 289.56 200.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 289.56 200.66 0)
 			(effects
 				(font
@@ -12588,6 +12606,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 205.74 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "3f3983e5-1ec5-4f7d-bd12-047f6604aa23")
 		)
@@ -12649,6 +12676,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 368.3 228.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 368.3 228.6 0)
 			(effects
 				(font
@@ -12721,6 +12757,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 314.96 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 314.96 172.72 0)
 			(effects
 				(font
@@ -12804,6 +12849,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 116.84 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
@@ -12859,6 +12913,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 149.86 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 149.86 43.18 0)
 			(effects
 				(font
@@ -12930,6 +12993,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 116.84 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
@@ -12986,6 +13058,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 237.49 228.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 237.49 228.6 0)
 			(effects
 				(font
@@ -13063,6 +13144,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 325.12 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f3357485-b6db-4c56-9f2d-9071ae2e39a7")
 		)
@@ -13125,6 +13215,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 248.92 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 248.92 124.46 0)
 			(effects
 				(font
@@ -13209,6 +13308,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 292.1 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e9f6f543-7ec8-488b-9aca-e6a196514d16")
 		)
@@ -13276,6 +13384,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 320.04 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 320.04 241.3 0)
 			(effects
 				(font
@@ -13353,6 +13470,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 152.4 223.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "ac2f6069-10bd-47b1-9da6-30ef05a3aac0")
 		)
@@ -13414,6 +13540,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 327.66 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 327.66 226.06 0)
 			(effects
 				(font
@@ -13491,6 +13626,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 205.74 223.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "A"
 			(uuid "a1c0ecb1-83ae-4c51-8bb1-c126d0376b2b")
 		)
@@ -13552,6 +13696,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 96.52 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 96.52 81.28 0)
 			(effects
 				(font
@@ -13629,6 +13782,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 88.9 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "136266f2-a71e-4a9b-ac1e-bb1da15a76c1")
 		)
@@ -13690,6 +13852,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 314.96 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 314.96 66.04 0)
 			(effects
 				(font
@@ -13773,6 +13944,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 187.96 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "14b72527-732c-4158-beb4-8384348dcd1f")
 		)
@@ -13840,6 +14020,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 208.28 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 208.28 137.16 0)
 			(effects
 				(font
@@ -13917,6 +14106,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 368.3 251.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 368.3 251.46 0)
 			(effects
 				(font
@@ -14012,6 +14210,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 254 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "be1b3407-e5ed-4b95-adb3-385577713213")
 		)
@@ -14074,6 +14281,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 266.7 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 266.7 35.56 0)
 			(effects
 				(font
@@ -14169,6 +14385,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 205.74 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "b7d9f24b-59ab-4dfb-94fa-ece2e32a8a06")
 		)
@@ -14230,6 +14455,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 254 210.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 254 210.82 0)
 			(effects
 				(font
@@ -14307,6 +14541,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 279.4 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "369b3659-c181-47dc-8452-e2de8b1cd204")
 		)
@@ -14368,6 +14611,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 210.82 223.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 210.82 223.52 0)
 			(effects
 				(font
@@ -14438,6 +14690,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 261.62 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 261.62 60.96 0)
 			(effects
 				(font
@@ -14525,6 +14786,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 93.98 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 93.98 132.08 0)
 			(effects
 				(font
@@ -14686,6 +14956,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 213.36 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "920b1566-9775-4a0f-87ef-e76c57484711")
 		)
@@ -14747,6 +15026,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 154.94 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 154.94 187.96 0)
 			(effects
 				(font
@@ -14824,6 +15112,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 307.34 251.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "02c43930-2c0e-49d9-b811-155189160739")
 		)
@@ -14885,6 +15182,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 332.74 246.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 332.74 246.38 0)
 			(effects
 				(font
@@ -14955,6 +15261,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 314.96 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 314.96 119.38 0)
 			(effects
 				(font
@@ -15038,6 +15353,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 284.48 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "+"
 			(uuid "5e6ca305-2b2a-4bbd-8304-3c766e1c0de3")
 		)
@@ -15100,6 +15424,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 165.1 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 165.1 167.64 0)
 			(effects
 				(font
@@ -15189,6 +15522,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 55.88 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "d9f52537-653a-4dee-8cc2-cc5470eae6c3")
 		)
@@ -15250,6 +15592,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 320.04 246.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 320.04 246.38 0)
 			(effects
 				(font
@@ -15327,6 +15678,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 325.12 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c2ad3a49-c475-44a7-901e-50baef927973")
 		)
@@ -15388,6 +15748,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 314.96 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 314.96 236.22 0)
 			(effects
 				(font
@@ -15465,6 +15834,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 116.84 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
@@ -15520,6 +15898,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 175.26 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 175.26 139.7 0)
 			(effects
 				(font
@@ -15603,6 +15990,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 119.38 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c658b109-8708-4539-861e-76420f175676")
 		)
@@ -15664,6 +16060,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 347.98 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 347.98 243.84 0)
 			(effects
 				(font
@@ -15741,6 +16146,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 170.18 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "27477966-69c3-4f44-adcc-e25c8b4658ce")
 		)
@@ -15810,6 +16224,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 157.48 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "a2abc84b-8987-4a83-b329-dceb6c04fe7c")
 		)
@@ -15871,6 +16294,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 27.94 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 27.94 147.32 0)
 			(effects
 				(font
@@ -15981,6 +16413,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 307.34 200.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "46a86228-c0e8-4066-9f4a-a4928f8d3278")
 		)
@@ -16062,6 +16503,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 237.49 256.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "1d1828e0-ef6a-4d62-86f7-04de80195c59")
 		)
@@ -16134,6 +16584,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 274.32 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "aa23ec5a-3a93-4f2d-aca1-66f8b542d6e4")
 		)
@@ -16195,6 +16654,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 177.8 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 177.8 101.6 0)
 			(effects
 				(font
@@ -16290,6 +16758,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 81.28 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "b71e57a1-0d6f-4aaa-b359-d9045f57a188")
 		)
@@ -16351,6 +16828,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 195.58 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 195.58 241.3 0)
 			(effects
 				(font
@@ -16428,6 +16914,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 149.86 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
@@ -16483,6 +16978,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 238.76 223.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 238.76 223.52 0)
 			(effects
 				(font
@@ -16560,6 +17064,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 116.84 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "a5239193-e060-47ab-92ce-e0ce94749e27")
 		)
@@ -16621,6 +17134,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 226.06 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 226.06 137.16 0)
 			(effects
 				(font
@@ -16704,6 +17226,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 215.9 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "A"
 			(uuid "63d50fba-15e0-4ef3-a56c-3c64c078a7cc")
 		)
@@ -16773,6 +17304,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 63.5 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "2bb8ee85-bdd6-415d-b9bf-de572d52bfca")
 		)
@@ -16834,6 +17374,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 187.96 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 187.96 208.28 0)
 			(effects
 				(font
@@ -16938,6 +17487,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 289.56 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "89711f39-6d00-4fee-9dff-6eb0d2bd8070")
 		)
@@ -16999,6 +17557,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 243.84 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 243.84 71.12 0)
 			(effects
 				(font
@@ -17076,6 +17643,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 109.22 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7e47f703-9790-4c34-9d14-1de39c308f06")
 		)
@@ -17145,6 +17721,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 322.58 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 322.58 218.44 0)
 			(effects
 				(font
@@ -17240,6 +17825,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 231.14 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "08af2bdd-3ae2-44a1-bf78-f2c6d296d24f")
 		)
@@ -17304,6 +17898,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 157.48 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 157.48 177.8 0)
 			(effects
 				(font
@@ -17381,6 +17984,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 261.62 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "52c4e66b-718b-4a2d-8a16-a62432c8fa45")
 		)
@@ -17450,6 +18062,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 165.1 223.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c7bd964e-6063-4802-85ea-2a5dd3fba324")
 		)
@@ -17511,6 +18132,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 147.32 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 147.32 167.64 0)
 			(effects
 				(font
@@ -17600,6 +18230,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 223.52 223.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "8eb9444f-6643-489b-8c83-9ba20cc4fb10")
 		)
@@ -17661,6 +18300,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 213.36 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 213.36 205.74 0)
 			(effects
 				(font
@@ -17738,6 +18386,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 116.84 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(instances
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
@@ -17793,6 +18450,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 132.08 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 132.08 220.98 0)
 			(effects
 				(font
@@ -17864,6 +18530,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 322.58 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 322.58 218.44 0)
 			(effects
 				(font
@@ -17959,6 +18634,15 @@
 				(hide yes)
 			)
 		)
+		(property "LPSC PN" ""
+			(at 177.8 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "cf6a2fb6-301e-47f3-a4a0-9ef674598de9")
 		)
@@ -18021,6 +18705,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 264.16 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 264.16 124.46 0)
 			(effects
 				(font
@@ -18096,6 +18789,15 @@
 			)
 		)
 		(property "Description" ""
+			(at 292.1 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LPSC PN" ""
 			(at 292.1 63.5 0)
 			(effects
 				(font

@@ -234,6 +234,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -6.1 -6.1)
 			(end 6.1 -6.1)
@@ -486,6 +487,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -6.1 -6.1)
 			(end 6.1 -6.1)
@@ -738,6 +740,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.905 -1.27)
 			(end 2.54 -0.635)
@@ -1001,6 +1004,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 4.445 -1.27)
 			(end 5.08 -0.635)
@@ -1448,6 +1452,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -3.175 1.27)
 			(end -4.445 1.27)
@@ -1896,6 +1901,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 2.286 -49.403)
 			(end 2.286 -6.477)
@@ -2713,6 +2719,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -10.75 4.5)
 			(end -2.56 4.5)
@@ -3178,6 +3185,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_arc
 			(start 1.5512 1.3126)
 			(mid 0.854953 1.843405)
@@ -3481,6 +3489,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -2.286 -0.762)
 			(end -2.286 0.762)
@@ -3780,6 +3789,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -6.1 -6.1)
 			(end 6.1 -6.1)
@@ -4032,6 +4042,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -2.667 0.381)
 			(end -2.667 -0.381)
@@ -4237,6 +4248,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 3.75 3.35)
 			(end 3.75 3.65)
@@ -4614,7 +4626,7 @@
 			)
 		)
 		(property "Value" "50k"
-			(at -2.6935 -4.267757 180)
+			(at -2.6935 -4.267757 360)
 			(layer "F.Fab")
 			(uuid "9a7ade3c-a81d-4038-a57c-b220b9c3cd90")
 			(effects
@@ -4622,7 +4634,7 @@
 					(size 1.180592 1.180592)
 					(thickness 0.089408)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
@@ -4664,6 +4676,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -4.699 4.6482)
 			(end -3.81 4.6482)
@@ -4927,7 +4940,7 @@
 			(uuid "7d512d14-3ca4-4934-b506-eb07d268c7dc")
 		)
 		(fp_text user "3"
-			(at 3.8065 -2.767757 -90)
+			(at 3.8065 -2.767757 90)
 			(layer "F.Fab")
 			(uuid "9004cee7-358e-4c08-9d64-a05f28a4e7b6")
 			(effects
@@ -4935,7 +4948,7 @@
 					(size 1.143 1.143)
 					(thickness 0.127)
 				)
-				(justify left bottom)
+				(justify right top)
 			)
 		)
 		(pad "1" thru_hole roundrect
@@ -5084,6 +5097,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 15.875 -1.27)
 			(end 16.51 -0.635)
@@ -6358,6 +6372,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 1.5 0)
@@ -6658,6 +6673,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_arc
 			(start -1.7929 -0.9562)
 			(mid -1.045438 -1.7424)
@@ -6961,6 +6977,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 14.859 9.017)
 			(end -14.859 9.017)
@@ -7232,6 +7249,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -0.889 1.143)
 			(end -0.254 1.143)
@@ -7457,6 +7475,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 6.858 5.207)
 			(end 6.858 -10.414)
@@ -7606,9 +7625,10 @@
 		(at 182.787754 131.970493)
 		(descr "tactile push button, 6x6mm e.g. PHAP33xx series, height=13mm")
 		(tags "tact sw push 6mm")
-		(property "Reference" "REF**"
+		(property "Reference" "SMALL_SEL"
 			(at 3.25 -2 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "73f6c441-11c0-4b02-8dab-3ca3e2f2e448")
 			(effects
 				(font
@@ -7620,6 +7640,7 @@
 		(property "Value" "SW_PUSH_6mm_H13mm"
 			(at 3.75 6.7 0)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "5306bdf6-ab35-4112-adcf-51d30366090b")
 			(effects
 				(font
@@ -7667,7 +7688,7 @@
 				)
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -0.25 1.5)
 			(end -0.25 3)
@@ -8016,6 +8037,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -3.81 -0.635)
 			(end -3.81 0.635)
@@ -8371,6 +8393,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -3.175 1.27)
 			(end -4.445 1.27)
@@ -8819,6 +8842,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -9.7 1.87)
 			(end -9.7 -1.43)
@@ -9245,6 +9269,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 11.049 8.382)
 			(end -11.049 8.382)
@@ -9516,6 +9541,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -5.08 -0.635)
 			(end -5.08 0.635)
@@ -9964,6 +9990,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 5.08 0.635)
 			(end 4.445 1.27)
@@ -10411,6 +10438,7 @@
 				)
 			)
 		)
+		(attr exclude_from_bom allow_missing_courtyard)
 		(fp_circle
 			(center 0 0)
 			(end 1.5 0)
@@ -10711,6 +10739,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 6.858 5.207)
 			(end 6.858 -10.414)
@@ -10922,6 +10951,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 1.905 -1.27)
 			(end 2.54 -0.635)
@@ -11185,6 +11215,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 13.716 13.97)
 			(end 7.62 13.97)
@@ -11678,9 +11709,10 @@
 		(at 160.627348 131.907538)
 		(descr "tactile push button, 6x6mm e.g. PHAP33xx series, height=13mm")
 		(tags "tact sw push 6mm")
-		(property "Reference" "REF**"
+		(property "Reference" "SMALL_DOWN"
 			(at 3.25 -2 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "7bea8603-7e51-458a-99d8-89fcd3408203")
 			(effects
 				(font
@@ -11692,6 +11724,7 @@
 		(property "Value" "SW_PUSH_6mm_H13mm"
 			(at 3.75 6.7 0)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "2f51139b-14b5-4c75-aafe-77722124c61e")
 			(effects
 				(font
@@ -11739,7 +11772,7 @@
 				)
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -0.25 1.5)
 			(end -0.25 3)
@@ -12088,6 +12121,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 1.5 0)
@@ -12388,6 +12422,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -3.81 -0.635)
 			(end -3.81 0.635)
@@ -12743,6 +12778,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 5 3.3)
 			(end -5.5 3.3)
@@ -12912,6 +12948,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -5.08 -0.635)
 			(end -5.08 0.635)
@@ -13297,7 +13334,7 @@
 		(at 144.093696 132.049854)
 		(descr "tactile push button, 6x6mm e.g. PHAP33xx series, height=13mm")
 		(tags "tact sw push 6mm")
-		(property "Reference" "REF"
+		(property "Reference" "SMALL_UP"
 			(at 3.25 -2 0)
 			(layer "F.SilkS")
 			(hide yes)
@@ -13312,6 +13349,7 @@
 		(property "Value" "SW_PUSH_6mm_H13mm"
 			(at 3.75 6.7 0)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "e7414c5a-fe8a-49d0-88ed-84aa66a3c441")
 			(effects
 				(font
@@ -13359,7 +13397,7 @@
 				)
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -0.25 1.5)
 			(end -0.25 3)
@@ -13708,6 +13746,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -3.175 1.27)
 			(end -4.445 1.27)
@@ -14154,6 +14193,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_poly
 			(pts
 				(xy 0.313572 -2.296999) (xy 0.428341 -1.672144) (xy 0.528692 -1.649844) (xy 0.645316 -1.598011)
@@ -14264,6 +14304,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -3.81 -0.635)
 			(end -3.81 0.635)
@@ -14619,6 +14660,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 1.5 0)
@@ -14919,6 +14961,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -15100,6 +15143,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.3 -0.8001) (xy 0.3 -0.8001) (xy 0.3 0.8001) (xy -0.3 0.8001)
@@ -15231,7 +15275,7 @@
 			)
 		)
 		(property "Value" "33K"
-			(at -1.753456 1.284662 180)
+			(at -1.753456 1.284662 0)
 			(layer "B.Fab")
 			(uuid "1843d2c0-629c-44e7-8460-03ced60a2111")
 			(effects
@@ -15239,7 +15283,7 @@
 					(size 1.176528 1.176528)
 					(thickness 0.093472)
 				)
-				(justify right mirror)
+				(justify left mirror)
 			)
 		)
 		(property "Footprint" ""
@@ -15281,6 +15325,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -15462,6 +15507,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.651 -0.762)
 			(end 1.651 0.762)
@@ -15633,7 +15679,7 @@
 			)
 		)
 		(property "Value" "47K"
-			(at -0.802653 -3.650666 180)
+			(at -0.802653 -3.650666 0)
 			(layer "B.Fab")
 			(uuid "3661902e-90e5-456c-bea6-67cccf66598c")
 			(effects
@@ -15641,7 +15687,7 @@
 					(size 1.176528 1.176528)
 					(thickness 0.093472)
 				)
-				(justify right mirror)
+				(justify left mirror)
 			)
 		)
 		(property "Footprint" ""
@@ -15683,6 +15729,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -15864,6 +15911,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -16226,6 +16274,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -16345,7 +16394,7 @@
 		(at 110.709944 106.250243 -90)
 		(descr "<b>RESISTOR</b><p>")
 		(property "Reference" "R21"
-			(at 5.05 -0.149666 -90)
+			(at 5.05 -0.149666 90)
 			(layer "B.SilkS")
 			(uuid "a28b42a6-1c1a-4667-9b8b-ad6bdfd23632")
 			(effects
@@ -16353,7 +16402,7 @@
 					(size 1.176528 1.176528)
 					(thickness 0.093472)
 				)
-				(justify right mirror)
+				(justify left mirror)
 			)
 		)
 		(property "Value" "47K"
@@ -16407,6 +16456,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -16588,6 +16638,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -16769,6 +16820,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -16950,6 +17002,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.651 -0.762)
 			(end 1.651 0.762)
@@ -17318,6 +17371,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -17499,6 +17553,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -17680,6 +17735,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -17861,6 +17917,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -18042,6 +18099,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.651 -0.762)
 			(end 1.651 0.762)
@@ -18263,6 +18321,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -18444,6 +18503,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.397 -1.016)
 			(end -1.397 -1.016)
@@ -18666,6 +18726,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_line
 			(start -1.575 -2.45)
 			(end -1.575 2.45)
@@ -19071,6 +19132,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -19252,6 +19314,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -19433,6 +19496,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -19614,6 +19678,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_line
 			(start 2.4 -1.9)
 			(end -2.4 -1.9)
@@ -19912,6 +19977,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -20093,6 +20159,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -20520,6 +20587,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -20701,6 +20769,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.651 -0.762)
 			(end 1.651 0.762)
@@ -20924,6 +20993,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -21106,6 +21176,7 @@
 				)
 			)
 		)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_poly
 			(pts
 				(xy 0.313572 2.296999) (xy 0.428341 1.672144) (xy 0.528692 1.649844) (xy 0.645316 1.598011) (xy 0.760648 1.546752)
@@ -21217,6 +21288,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.4001) (xy 0.1999 -0.4001) (xy 0.1999 0.4001) (xy -0.1999 0.4001)
@@ -21543,6 +21615,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -21724,6 +21797,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -21905,6 +21979,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)
@@ -22086,6 +22161,7 @@
 				)
 			)
 		)
+		(attr smd)
 		(fp_poly
 			(pts
 				(xy -0.1999 -0.5001) (xy 0.1999 -0.5001) (xy 0.1999 0.5001) (xy -0.1999 0.5001)

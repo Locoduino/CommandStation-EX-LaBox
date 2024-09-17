@@ -70,21 +70,9 @@ void setEOT(rmt_item32_t* item) {
 // is only ONE common ISR routine for all channels.
 RMTChannel *channelHandle[8] = { 0 };
 
-#ifdef ENABLE_RAILCOM
-extern gpio_num_t railcom_pin;
-extern gpio_num_t railcom_invpin;
-#endif
-
-int rmt_channel;                                                       // * Variable n° de canal
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 #ifdef ENABLE_RAILCOM
-  if (!LaboxModes::progMode)    
-	{
-	  gpio_matrix_out(railcom_pin, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
- 		gpio_set_level(railcom_pin, 1);                               // * Pin 33 à l'état haut
- 		rmt_channel = channel;                                              // * Mémorise n° de canal
- 		StarTimerCutOut();        
-	}                                    // * Start Timer CutOut
+	StarTimerCutOut(channel);        
 #endif
   RMTChannel *tt = channelHandle[channel];
   if (tt) tt->RMTinterrupt();
@@ -109,11 +97,7 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   preamble = (rmt_item32_t*)malloc(preambleLen * sizeof(rmt_item32_t));
 	dp_rc = 0;
 #ifdef ENABLE_RAILCOM
-  if (!LaboxModes::progMode)
-	{     
-		dp_rc = 1;
-  	setDCCBitCutOut(preamble);                                    // * Symbole CutOut
-	}
+	dp_rc = setDCCBitCutOut(preamble);                                    // * Symbole CutOut
 #endif
   for (byte n = dp_rc; n < plen; n++)                             
     setDCCBit1(preamble + n);      // preamble bits

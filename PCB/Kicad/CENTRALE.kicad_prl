@@ -2,7 +2,7 @@
   "board": {
     "active_layer": 31,
     "active_layer_preset": "",
-    "auto_track_width": false,
+    "auto_track_width": true,
     "hidden_netclasses": [],
     "hidden_nets": [
       "N$1",
@@ -22,7 +22,7 @@
       "N$6",
       "N$12"
     ],
-    "high_contrast_mode": 0,
+    "high_contrast_mode": 2,
     "net_color_mode": 1,
     "opacity": {
       "images": 0.7300000190734863,
@@ -82,7 +82,7 @@
       36,
       37
     ],
-    "visible_layers": "ffc4055_fffffffe",
+    "visible_layers": "fffc3ff_ffffffff",
     "zone_display_mode": 0
   },
   "git": {

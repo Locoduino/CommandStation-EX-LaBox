@@ -2,11 +2,12 @@
 #include "DCCRMT.h"
 #include "DCCTimer.h"
 #include "Railcom.h"
+#include "LaboxModes.h"
 
 #ifdef ENABLE_RAILCOM
 //----------------------------------------------------------------------------
 hw_timer_t * TimerCutOut = NULL;
-extern int rmt_channel;                                                             // * Variable
+int rmt_channel;                                                             // * Variable
 int p;                                                                        // * Variable
 gpio_num_t railcom_pin;
 gpio_num_t railcom_invpin;
@@ -51,16 +52,26 @@ void RailcomBegin() {
   }
 }
 
-void StarTimerCutOut() {                                                   // * Start Timer 
-  timerAlarmWrite(TimerCutOut, 160, true);          // * En continu
-  timerAlarmEnable(TimerCutOut);
-  p = 0;
+void StarTimerCutOut(rmt_channel_t channel) {                                                   // * Start Timer 
+  if (!LaboxModes::progMode) {
+	  gpio_matrix_out(railcom_pin, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
+ 		gpio_set_level(railcom_pin, 1);                               // * Pin 33 à l'état haut
+ 		rmt_channel = channel;                                              // * Mémorise n° de canal
+  	timerAlarmWrite(TimerCutOut, 160, true);          // * En continu
+  	timerAlarmEnable(TimerCutOut);
+  	p = 0;
+	}
 }
 
-void setDCCBitCutOut(rmt_item32_t* item) {                     // * Temps CutOut fixé à 488µs (TCE Max.)
-  item->level0    = 1;
-  item->duration0 = 29;                                        // * 29µs CutOut Start (TCS)
-  item->level1    = 0;
-  item->duration1 = 215;                                       // * 215 + 29 + 215 = 459µs (TCE - TCS)
+int setDCCBitCutOut(rmt_item32_t* item) {                     // * Temps CutOut fixé à 488µs (TCE Max.)
+  if (!LaboxModes::progMode) {     
+		item->level0    = 1;
+		item->duration0 = 29;                                        // * 29µs CutOut Start (TCS)
+		item->level1    = 0;
+		item->duration1 = 215;                                       // * 215 + 29 + 215 = 459µs (TCE - TCS)
+		return 1;
+	}
+
+	return 0;
 }
 #endif

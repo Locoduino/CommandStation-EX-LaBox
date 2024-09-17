@@ -19,6 +19,7 @@
 #include "TrackManager.h"
 #include "MotorDriver.h"
 #include "EXComm.h"
+#include <unordered_map>
 
 #define CAN_SYSTEM_CONTROL 0x00
 #define CAN_LOCO_SPEED 0x04
@@ -28,7 +29,9 @@
 
 #define CAN_FIRST_NOTLOCO_COMMAND 0x09
 
-#define VERSION_LABOX_CAN "0.7.1"
+#define VERSION_LABOX_CAN "0.7.3"
+// 0.7.3  - 12/09/24 : Modification du filtre ACAN_ESP32_Filter
+// 0.7.2  - 07/09/24 : Optimisatin de la recherche findLoco de la classe CanMarklinLoco
 // 0.7.1  - 05/09/24 : Modifications importantes pour les codes de commandes Respect précis du protocole Marklin
 // 0.7.0	- 26/08/24 : Passage à EXComm
 // 0.6.4  - 29/03/24 : Reformattage léger avec remplacement des commandes hexa par des defines.
@@ -62,7 +65,11 @@ private:
   bool direction;
 
 public:
+  // Constructeur par défaut
+  CanMarklinLoco() : address(0), speed(0), direction(1) {}
+  // Constructeur avec paramètre adresse
   CanMarklinLoco(uint32_t addr) : address(addr), direction(1) {}
+
   void sAddress(uint32_t address) { this->address = address; }
   void sSpeed(uint16_t speed) { this->speed = speed; }
   void sDirection(uint8_t direction) { this->direction = direction; }
@@ -70,8 +77,8 @@ public:
   uint16_t gSpeed() const { return speed; }
   uint8_t gDirection() const { return direction; }
 
-  static std::vector<CanMarklinLoco> locos;
-  static CanMarklinLoco *findLoco(uint32_t address, std::vector<CanMarklinLoco> &locos);
+  static std::unordered_map<uint32_t, CanMarklinLoco> locoMap;
+  static CanMarklinLoco *findLoco(uint32_t address);
 };
 
 class CanMarklin : public EXCommItem
@@ -113,6 +120,7 @@ public:
     if (SendCommands)
       setPower(iSOn);
   }
+
   void sendThrottle(uint16_t cab, uint8_t tSpeed, bool tDirection)
   {
     if (SendCommands)
@@ -137,9 +145,9 @@ public:
 
   static void setPower(bool iSOn);
   static void setThrottle(uint16_t cab, uint8_t tSpeed, bool tDirection);
-  
-  static void setSpeed(uint16_t cab, uint8_t tSpeed);
-  static void setDirection(uint16_t cab, bool tDirection);
+
+  // static void setSpeed(uint16_t cab, uint8_t tSpeed);
+  // static void setDirection(uint16_t cab, bool tDirection);
   static void setFunction(int cab, int16_t functionNumber, bool on);
   static void emergency();
 
