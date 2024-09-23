@@ -42,7 +42,7 @@ void ackTask(void *pvParameters)
     if (status == pdPASS)
     {
       frame.id &= ~0xFFFF;
-      frame.id |= 1 << 17;             // R�ponse
+      frame.id |= 1 << 17;             // Réponse
       frame.id |= CanMarklin::getId(); // ID expediteur
       CanMarklin::sendMsg(frame);
     }
@@ -97,10 +97,10 @@ void CanMarklin::loop()
   CANMessage frameIn;
   if (ACAN_ESP32::can.receive(frameIn))
   {
-    const uint8_t prio = (frameIn.id & 0x1E000000) >> 25; // Priorit�
+    const uint8_t prio = (frameIn.id & 0x1E000000) >> 25; // Priorité
     const uint8_t cmde = (frameIn.id & 0x1FE0000) >> 17;  // Commande
     const uint8_t resp = (frameIn.id & 0x10000) >> 16;    // Reponse
-    const uint16_t exped = (frameIn.id & 0xFFFF);         // Exp�diteur
+    const uint16_t exped = (frameIn.id & 0xFFFF);         // Expéditeur
 
     char cmdName[20];
     switch (cmde)
@@ -140,7 +140,7 @@ void CanMarklin::loop()
         locoAddress = (frameIn.data[0] << 24) | (frameIn.data[1] << 16) | (frameIn.data[2] << 8) | frameIn.data[3];
 
         /*
-        Cas particulier de la MS2 en attendant d'avoir d�velopp� les commandes MFX Bind
+        Cas particulier de la MS2 en attendant d'avoir développé les commandes MFX Bind
         */
 
         // if (locoAddress >= 0x4000 && locoAddress < 0x7FFF)
@@ -175,7 +175,7 @@ void CanMarklin::loop()
         // Serial.println(loco->gDirection());
       }
 
-      switch (cmde) // Commande appel�e
+      switch (cmde) // Commande appelée
       {
       case CAN_LOCO_SPEED:
         if (loco != nullptr)
@@ -192,10 +192,10 @@ void CanMarklin::loop()
         xQueueSendToBack(xQueue, &frameIn, 0);
         break;
       case CAN_LOCO_DIREC:
-        // Signification du param�tre Direction :
+        // Signification du paramètre Direction :
         // 0 = sens de marche sans changement
         // 1 = sens de marche avant
-        // 2 = sens de marche arri�re
+        // 2 = sens de marche arrière
         // 3 = inverser le sens de marche
 
         if (loco != nullptr)
@@ -210,7 +210,7 @@ void CanMarklin::loop()
               loco->sSpeed(0);
               break;
             case 2:
-              loco->sDirection(0); // Arri�re
+              loco->sDirection(0); // Arrière
               loco->sSpeed(0);
               break;
             case 3:

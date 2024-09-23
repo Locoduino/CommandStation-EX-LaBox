@@ -41,9 +41,13 @@
 
 static std::vector<NetworkClientUDP> clientsUDP; // a list to hold all UDP clients
 
-#define DIAG_Z21	 				if (Diag::Z21THROTTLE) DIAG
-#define DIAG_Z21DATA		 	if (Diag::Z21THROTTLEDATA) DIAG
-#define DIAG_Z21VERBOSE	 	if (Diag::Z21THROTTLEVERBOSE) DIAG
+bool Z21Throttle::Z21THROTTLE=false;
+bool Z21Throttle::Z21THROTTLEVERBOSE=false;
+bool Z21Throttle::Z21THROTTLEDATA=false;
+
+#define DIAG_Z21	 				if (Z21Throttle::Z21THROTTLE) DIAG
+#define DIAG_Z21DATA		 	if (Z21Throttle::Z21THROTTLEDATA) DIAG
+#define DIAG_Z21VERBOSE	 	if (Z21Throttle::Z21THROTTLEVERBOSE) DIAG
 
 #define LOOPLOCOS(THROTTLECHAR, CAB)  for (int loco=0;loco<MAX_MY_LOCO;loco++) \
       if ((myLocos[loco].throttle==THROTTLECHAR || '*'==THROTTLECHAR) && (CAB<0 || myLocos[loco].cab==CAB))
@@ -65,22 +69,19 @@ bool Z21EXCommItem::beginItem() {
 #ifdef DCCPP_DEBUG_MODE
 	CircularBuffer::Test();
 #endif
-	bool retf = false;
+	bool retf = true;
 
-  if (WiFi.status() == WL_CONNECTED) {
-		IPAddress ip;
+	IPAddress ip;
 
-		if (WiFi.getMode() == wifi_mode_t::WIFI_MODE_STA)
-			ip = WiFi.localIP();
-		if (WiFi.getMode() == wifi_mode_t::WIFI_MODE_AP)
-			ip = WiFi.softAPIP();	
+	if (WiFi.getMode() == wifi_mode_t::WIFI_MODE_STA)
+		ip = WiFi.localIP();
+	if (WiFi.getMode() == wifi_mode_t::WIFI_MODE_AP)
+		ip = WiFi.softAPIP();	
 
+	uint8_t ret = NetworkClientUDP::client.begin(ip, UDPport);
+	if (ret == 1) {
 		retf = true;
-		uint8_t ret = NetworkClientUDP::client.begin(ip, UDPport);
-		if (ret == 1) {
-			retf = true;
-			NetworkClientUDP::client.flush();
-		}
+		NetworkClientUDP::client.flush();
 	}
 
 	if (retf)
@@ -108,12 +109,12 @@ int readUdpPacket() {
 					if (len < Z21_MAXIMAL_UDP_MSG_SIZE) {
 						clientsUDP[clientId].pudpBuffer->PushBytes(udp, len);
 
-						//if (Diag::Z21THROTTLEDATA) clientsUDP[clientId].pudpBuffer->printStatus();
+						//if (Z21Throttle::Z21THROTTLEDATA) clientsUDP[clientId].pudpBuffer->printStatus();
 					}
 					else {
 						DIAG_Z21(F("[Z21] %d <- long message ignored : udp_len:%d   first byte : %d"), clientId, len, udp[0]);
 
-						if (Diag::Z21THROTTLEDATA) {
+						if (Z21Throttle::Z21THROTTLEDATA) {
 							for(int i = 0; i < 10; i++) {
 								if (len > i*10) {
 									DIAG_Z21DATA(F("[Z21] UDP %d-%d : 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x"),
@@ -143,7 +144,7 @@ int readUdpPacket() {
 }
 
 void Z21Throttle::loop() {
-  if (WiFi.status() != WL_CONNECTED || Z21EXCommItem::UDPport < 0) {
+  if (Z21EXCommItem::UDPport < 0) {
 		return;
 	}
 
@@ -234,7 +235,7 @@ void Z21Throttle::loop() {
 
 /** Print the list of assigned locomotives. */
 void Z21Throttle::printLocomotives(bool addTab) {
-	if (!Diag::Z21THROTTLE)
+	if (!Z21Throttle::Z21THROTTLE)
 		return;
 
 	DIAG(F("[Z21]       Locomotives ------------------"));
@@ -245,7 +246,7 @@ void Z21Throttle::printLocomotives(bool addTab) {
 
 /** Print the list of assigned locomotives. */
 void printClientsUDP() {
-	if (!Diag::Z21THROTTLE) return;
+	if (!Z21Throttle::Z21THROTTLE) return;
 
 	DIAG(F("[Z21]       UDP Clients ------------------"));
 	for (int clientId = 0; clientId < clientsUDP.size(); clientId++)
@@ -257,7 +258,7 @@ void printClientsUDP() {
 
 /** Print the list of assigned locomotives. */
 void Z21Throttle::printThrottles(bool inPrintLocomotives) {
-	if (!Diag::Z21THROTTLE)	return;
+	if (!Z21Throttle::Z21THROTTLE)	return;
 
 	DIAG(F("[Z21]       Throttles ---------------"));
 	for (Z21Throttle* wt = firstThrottle; wt != NULL; wt = wt->nextThrottle) {
@@ -834,7 +835,7 @@ bool Z21Throttle::parse() {
 						case LAN_X_DB0_SET_LOCO_FUNCTION:
 							DIAG_Z21VERBOSE(F("[Z21] %d LOCO DCC FUNCTION"), this->clientid);
 							setFunction(DB[2], DB[3], DB[4]);
-							if (Diag::Z21THROTTLE) {
+							if (Z21Throttle::Z21THROTTLE) {
 								// Debug capacity to print data...
 								byte function = DB[4];
 								bitClear(function, 6);

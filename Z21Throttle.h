@@ -75,7 +75,11 @@ class Z21Throttle {
 		static int cvAddress;
 		static int cvValue;
 
-	private: 
+	  static bool Z21THROTTLE;
+	  static bool Z21THROTTLEVERBOSE;
+	  static bool Z21THROTTLEDATA;
+		
+private: 
 		Z21Throttle(int clientId);
 		~Z21Throttle();
 

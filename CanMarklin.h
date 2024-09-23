@@ -32,9 +32,9 @@
 #define VERSION_LABOX_CAN "0.7.3"
 // 0.7.3  - 12/09/24 : Modification du filtre ACAN_ESP32_Filter
 // 0.7.2  - 07/09/24 : Optimisatin de la recherche findLoco de la classe CanMarklinLoco
-// 0.7.1  - 05/09/24 : Modifications importantes pour les codes de commandes Respect précis du protocole Marklin
-// 0.7.0	- 26/08/24 : Passage à EXComm
-// 0.6.4  - 29/03/24 : Reformattage léger avec remplacement des commandes hexa par des defines.
+// 0.7.1  - 05/09/24 : Modifications importantes pour les codes de commandes Respect prÃ©cis du protocole Marklin
+// 0.7.0	- 26/08/24 : Passage Ã  EXComm
+// 0.6.4  - 29/03/24 : Reformattage lÃ©ger avec remplacement des commandes hexa par des defines.
 //                     utilisation du define CAN pour exclure la compilation de ces sources
 //                     utilisation de DIAG pour les messages Ã  la console.
 // 0.6.3  - 21/02/24 : Modification des identifiants de messages CAN
@@ -65,9 +65,9 @@ private:
   bool direction;
 
 public:
-  // Constructeur par défaut
+  // Constructeur par dÃ©faut
   CanMarklinLoco() : address(0), speed(0), direction(1) {}
-  // Constructeur avec paramètre adresse
+  // Constructeur avec paramÃ¨tre adresse
   CanMarklinLoco(uint32_t addr) : address(addr), direction(1) {}
 
   void sAddress(uint32_t address) { this->address = address; }

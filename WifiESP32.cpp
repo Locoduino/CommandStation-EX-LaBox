@@ -366,8 +366,6 @@ void WifiESP::loop() {
       }
     } // all clients
 
-    // UDP clients
-    
     WiThrottle::loop(outboundRing);
 
     // something to write out?

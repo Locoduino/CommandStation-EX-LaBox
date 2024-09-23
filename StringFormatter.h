@@ -28,9 +28,6 @@ class Diag {
   static bool CMD;
   static bool WIFI;
   static bool WITHROTTLE;
-  static bool Z21THROTTLE;
-  static bool Z21THROTTLEVERBOSE;
-  static bool Z21THROTTLEDATA;
   static bool ETHERNET;
   static bool LCN;
   
