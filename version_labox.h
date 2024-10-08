@@ -1,7 +1,14 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.6.6"
+#define VERSION_LABOX "2.7.0"
+// 2.7.0	-	Add broadcast functions to EXComm
+//				- EXComm/EXCommItem classes refactoring to rationalize code.
+//				-	Z21Throttle class has been cleaned for scories of old code, class MYLOCOZ21 removed, 
+//					and some 'notify' functions become static to be able to braodcast from EXCommItem class.
+//				- Cleaning of the menu, removing empty commands.
+//				- A new menu option 'Informations' has been added. Sub options give the way to show informations
+//					of Labox itslef (About...), wifi status, and all EXComm items.
 // 2.6.6	-	Fix AP WiFi mode for Z21 and WiThrottle.
 // 2.6.5	- Reduce imprint of Railcom code in DCCRMT.cpp
 //				-	Improvements in CanMarklin

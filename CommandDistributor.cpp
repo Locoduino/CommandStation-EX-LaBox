@@ -31,6 +31,7 @@
 #include "DCC.h"
 #include "TrackManager.h"
 #include "StringFormatter.h"
+#include "EXComm.h"
 
 // variables to hold clock time
 int16_t lastclocktime;
@@ -116,6 +117,10 @@ void CommandDistributor::broadcastToClients(clientType type) {
 
   // Broadcast to Serials
   if (type==COMMAND_TYPE) SerialManager::broadcast(broadcastBufferWriter->getString());
+#ifdef ENABLE_EXCOMM
+  // Broadcast to EXCOMM
+  if (type==COMMAND_TYPE) EXComm::broadcast((byte *) broadcastBufferWriter->getString()); 
+#endif
 
 #ifdef CD_HANDLE_RING
   // If we are broadcasting from a wifi/eth process we need to complete its output

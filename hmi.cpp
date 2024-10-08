@@ -14,7 +14,7 @@
 #include "LaboxModes.h"
 #include "icons.h"
 #include "menumanagement.h"
-#include "globals.h"
+#include "hmiGlobals.h"
 #include "menuobject.h"
 
 #if defined(ARDUINO_ARCH_ESP32)

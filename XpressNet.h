@@ -18,8 +18,10 @@ const bool DIAG_XPNET = false;
 class XPressNet: public EXCommItem {
 public:
 	XPressNet(int inRxPin, int inTxPin, int inDirPin);
-	bool beginItem();
-	bool loopItem();
+	bool begin() override;
+	bool loop() override;
+
+	void getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) override;
 
 	static void Decodage();
 	static void Tx9(int dTx);

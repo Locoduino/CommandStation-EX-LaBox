@@ -10,7 +10,6 @@
 #ifdef USE_HMI
 #include "menuobject.h"
 #include "menuTrainCvRead.h"
-#include "globals.h"
 #include "hmi.h"
 #include "LaboxModes.h"
 #include <Adafruit_GFX.h>

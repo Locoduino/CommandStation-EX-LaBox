@@ -10,10 +10,11 @@
 
 #define MAX_COMMITEMS		8
 
-/** This is a class to handle external communications.
-An instance of this class receive message from external world and call DCCEX API functions.
+class EXCommItem;	// see below...
+
+/** This is a class to handle all EXCommItem external communications.
 */
-class EXCommItem {
+class EXComm {
   private:
     static bool addItem(byte t, EXCommItem* item);
     static byte lastItem;
@@ -31,6 +32,31 @@ class EXCommItem {
                 );
 
 	public:
+
+	  static bool DIAGBASE;
+		static String *pInfos;
+		static int infosCount;
+
+  	static void Setup();
+		static void begin();
+		static void loop();
+		static void print();
+
+		static int getAllInfo(byte maxSize);
+
+		static void broadcast(byte *message);
+
+		static void sendPower(bool iSOn);
+	  static void sendThrottle(uint16_t cab, uint8_t tSpeed, bool tDirection);
+  	static void sendFunction(uint16_t cab, int16_t functionNumber, bool on);
+  	static void sendEmergency();
+};
+
+/** This is a class to handle external communications.
+An instance of this class receive message from external world and call DCCEX API functions.
+*/
+class EXCommItem {
+	public:
 		String name;
 		// If true, this item will be called in Labox main mode.
 		bool MainTrackEnabled;
@@ -38,16 +64,6 @@ class EXCommItem {
 		bool ProgTrackEnabled;
 		// If true, this item's loop method must be called at each loop.
 		bool AlwaysLoop;
-
-  	static void Setup();
-		static void beginItems();
-		static void loop();
-		static void printItems();
-
-		static void sendPowerItems(bool iSOn);
-	  static void sendThrottleItems(uint16_t cab, uint8_t tSpeed, bool tDirection);
-  	static void sendFunctionItems(int cab, int16_t functionNumber, bool on);
-  	static void sendEmergencyItems();
 
 		/** Create a new instance
 		@param inName	item new name.
@@ -73,14 +89,14 @@ class EXCommItem {
 		If the begin() is not called at least one time, the EXCommItem is not started and will not work !
 		@return True if the begin() has been executed without problem, otherwise false.
 		*/
-		virtual bool beginItem() = 0;
+		virtual bool begin() = 0;
 		/** Ends the usage of the EXCommItem. The EXCommItem is now ready to restart...
 		*/
-		virtual void endItem() {}
+		virtual void end() {}
 		/** Function to call in the main execution loop to receive bytes.
 		@return True if the loop() has been executed without problem, otherwise false.
 		*/
-		virtual bool loopItem() = 0;
+		virtual bool loop() = 0;
 
 		// Send functions
 	  virtual void sendPower(bool iSOn) {}
@@ -88,11 +104,19 @@ class EXCommItem {
   	virtual void sendFunction(int cab, int16_t functionNumber, bool on) {}
   	virtual void sendEmergency() {}
 
+  	virtual void broadcastLoco(int16_t slot) {}
+  	virtual void broadcastSensor(int16_t id, bool value) {}
+  	virtual void broadcastTurnout(int16_t id, bool isClosed) {}
+  	virtual void broadcastClockTime(int16_t time, int8_t rate) {}
+  	virtual void broadcastPower() {}
+
+		virtual void getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) {}
+
 	#ifdef DCCPP_DEBUG_MODE
 		/** Print the status of the Throttle.
 		@remark Only available if DCCPP_DEBUG_MODE is defined.
 		*/
-		virtual void printItem();
+		virtual void print();
 	#endif
 };
 	

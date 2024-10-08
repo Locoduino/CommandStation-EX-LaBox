@@ -90,7 +90,7 @@ void DCC::setThrottle( uint16_t cab, uint8_t tSpeed, bool tDirection)  {
 	}
 #endif
 #ifdef ENABLE_EXCOMM
-	EXCommItem::sendThrottleItems(cab, tSpeed, tDirection);
+	EXComm::sendThrottle(cab, tSpeed, tDirection);
 #endif
 }
 
@@ -204,7 +204,7 @@ bool DCC::setFn( int cab, int16_t functionNumber, bool on) {
 	  }
 #endif
 #ifdef ENABLE_EXCOMM
-		EXCommItem::sendFunctionItems(cab, functionNumber, on);
+		EXComm::sendFunction(cab, functionNumber, on);
 #endif
 		return true;
   }

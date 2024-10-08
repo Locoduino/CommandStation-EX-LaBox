@@ -88,6 +88,25 @@ bool SProg::test_func[];
 int SPROGCvValue = -1;
 int SPROGCvAddress = 0;
 
+SProg::SProg(int inRxPin, int inTxPin) : EXCommItem("SPROG") {
+	rxPin = inRxPin;
+	txPin = inTxPin;
+	Serial1.begin(9600, SERIAL_8N1, rxPin, txPin);
+
+	this->MainTrackEnabled = false;
+	this->ProgTrackEnabled = true;
+	this->AlwaysLoop = true;
+}
+
+void SProg::setup() {
+ 	DIAG(F("[SPROG] Serial1 Txd:%d   Rxd:%d"), txPin, rxPin);
+	test_cab = 3;
+	test_speed = 0;
+	test_dir = true;
+	for (int i = 0; i < 28; i++)
+		test_func[i] = false;
+}
+
 void SProg::ReadWord() {
 	String id = EEPROM.readString(WORD_EEPROM_POS);
 	if (id == SPROG_IDENTIFIER)
@@ -153,13 +172,15 @@ void SProg::SetWord(int16_t inNewWord) {
 void SProg::printAll(Print *stream) {
 }
 
-void SProg::setup() {
- 	DIAG(F("[SPROG] Serial1 Txd:%d   Rxd:%d"), txPin, rxPin);
-	test_cab = 3;
-	test_speed = 0;
-	test_dir = true;
-	for (int i = 0; i < 28; i++)
-		test_func[i] = false;
+void SProg::getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) 
+{
+	char mess[maxSize*2];
+
+	sprintf(mess, "[SPROG] Serial1");
+	*pMess1 = mess;
+
+	sprintf(mess, "[SPROG] Tx:%d Rx:%d", txPin, rxPin);
+	*pMess2 = mess;
 }
 
 #include "StringFormatter.h"
@@ -172,7 +193,7 @@ void SProg::setup() {
 
 char buffer[256];
 
-void SProg::loop() {
+void SProg::loopInternal() {
 
 	if (stateCV == StateCV::Reading || stateCV == StateCV::Writing)
 		return;

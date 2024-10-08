@@ -50,7 +50,21 @@ void ackTask(void *pvParameters)
   }
 }
 
-void CanMarklin::begin()
+void CanMarklin::getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) 
+{
+	char mess[maxSize*2];
+
+  if (DESIRED_BIT_RATE < 1000000UL)
+		sprintf(mess, "[CANM] id:%d / %dK", CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL);
+	else
+		sprintf(mess, "[CANM] id:%d / %dM", CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL);
+	*pMess1 = mess;
+
+	sprintf(mess, "[CANM] Tx:%d Rx:%d", TxPin, RxPin);
+	*pMess2 = mess;
+}
+
+void CanMarklin::beginItem()
 {
   DIAG(F("[CANMARKLIN] Configure ESP32 CAN %s"), VERSION_LABOX_CAN);
 
@@ -92,7 +106,7 @@ void CanMarklin::begin()
   Reception CAN
   --------------------------------------*/
 
-void CanMarklin::loop()
+void CanMarklin::loopItem()
 {
   CANMessage frameIn;
   if (ACAN_ESP32::can.receive(frameIn))

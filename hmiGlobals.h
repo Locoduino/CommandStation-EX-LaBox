@@ -30,7 +30,7 @@ enum enumWifiMode :byte {wifiAp, wifiClient};
 #define _HMIDEBUG_ERROR              // Error level 
 //#define _HMIDEBUG_FUNCTION           // Log begin and exit function
 //#define _HMIDEBUG_PARAMS             // Log parameters at function beginning 
-//#define _HMIDEBUG_LEVEL1             // Level 1 Log
+#define _HMIDEBUG_LEVEL1             // Level 1 Log
 //#define _HMIDEBUG_LEVEL2             // Level 2 Log
 //#define _HMIDEBUG_LEVEL3             // Level 3 Log
 //#define _HMIDEBUG_SIMUL              // simulates physical measurements

@@ -1,4 +1,4 @@
-/*
+﻿/*
    LaBox Project
    XpressNet part
 
@@ -73,7 +73,7 @@ XPressNet::XPressNet(int inRxPin, int inTxPin, int inDirPin) : EXCommItem("XPres
 	dirPin = inDirPin;
 }
 
-bool XPressNet::beginItem() {
+bool XPressNet::begin() {
   uart_config_t uart_config = {              //configure UART_NUM_2 for RS485
     .baud_rate = 62500,
     .data_bits = UART_DATA_8_BITS,
@@ -97,7 +97,21 @@ bool XPressNet::beginItem() {
 	return true;
 }
 
-bool XPressNet::loopItem() {
+void XPressNet::getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) 
+{
+	char mess[maxSize*2];
+
+	sprintf(mess, "[XPNET] Serial2");
+	*pMess1 = mess;
+
+	sprintf(mess, "[XPNET] Tx:%d Rx:%d", txPin, rxPin);
+	*pMess2 = mess;
+
+	sprintf(mess, "[XPNET] dir:%d", dirPin);
+	*pMess3 = mess;
+}
+
+bool XPressNet::loop() {
   if (Serial2.available() ) {
     Bi = 0;                                     // Buffer Index 0
     Xor = 0;

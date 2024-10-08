@@ -13,7 +13,7 @@
 #include "DCCEX.h"
 
 #ifdef USE_HMI
-#include "globals.h"
+#include "hmiGlobals.h"
 #include "menuobject.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>

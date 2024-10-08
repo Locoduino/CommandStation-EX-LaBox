@@ -18,7 +18,6 @@
 #include "menuTrainAddrRead.h"
 #include "menuTrainCvRead.h"
 #include "menuTrainCvWrite.h"
-#include "globals.h"
 
 extern enumHMIState  _HMIState ;
 extern enumHMIState  _HMIState_prev;
@@ -45,47 +44,16 @@ MenuManagement::MenuManagement(hmi*  screen)
     V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
     V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
     V3Trains    = new menuObject(display, TrainView, TXT_V3Trains, 3);
-  physicalMes   = new menuInformation(display, (menuObject*)baseMenu, TXT_PhysicalMes, MENUACTION);    // Classe à définir
+  physicalMes   = new menuInformation(display, baseMenu, TXT_PhysicalMes, MENUACTION);    // Classe à définir
   lstEvent      = new menuObject(display, baseMenu, TXT_LstEvent, MENUACTION);
-  language      = new menuObject(display, baseMenu, TXT_Language, MENUTYPELIST);
-    languageFr  = new menuObject(display, language, "Francais", 0);
-    languageEn  = new menuObject(display, language, "English",  1);
-    languageSp  = new menuObject(display, language, "Espanol",  2);
-    languageDe  = new menuObject(display, language, "Deutsch",  3);
-  wifi          = new menuObject(display, baseMenu, TXT_MenuWifi,MENUTYPELIST);
-    wifiInfo    = new menuInformation(display, (menuObject*)wifi, TXT_MenuWifiInfo, MENUACTION);    // Classe à définir
-    wifiActivate= new menuObject(display, wifi, TXT_MenuActivWifi, MENUTYPELIST);
-      wifionLine  = new menuObject(display, wifiActivate, TXT_MenuOnLine,   0);
-      wifiOffLine = new menuObject(display, wifiActivate, TXT_MenuOffLine,  1);
-/*     wifiDHCP    =  new menuObject(display, wifi, TXT_MenuDHCP, MENUTYPELIST);
-      DHCPonLine  = new menuObject(display, wifiActivate, TXT_MenuYes,   0);
-      DHCPOffLine = new menuObject(display, wifiActivate, TXT_MenuNo,  1);
-    wifiDHCP    =  new menuObject(display, wifi, TXT_MenuDHCP, MENUTYPELIST);
-      DHCPonLine  = new menuObject(display, wifiActivate, TXT_MenuYes,   0);
-      DHCPOffLine = new menuObject(display, wifiActivate, TXT_MenuNo,  1); */
-  can           = new menuObject(display, baseMenu, TXT_MenuCAN, MENUTYPELIST);
-    can_gw      = new menuObject(display, can, TXT_MenuCAN_GW, MENUTYPELIST);
-      can_gw_on = new menuObject(display, can_gw, TXT_MenuOn,     1);
-      can_gw_off= new menuObject(display, can_gw, TXT_MenuOff,    2);
-    canInfo     = new menuInformation(display,  can,TXT_MenuCANInfo, MENUACTION);
-  infoSystem    = new menuInformation(display, baseMenu, TXT_MenuInfosSys, MENUACTION);
+  info					= new menuObject(display, baseMenu, TXT_MenuInfos, MENUTYPELIST);
+  	about				= new menuInformation(display, info, TXT_MenuAbout, MENUINFORMATION_ABOUT);
+    wifiInfo    = new menuInformation(display, info, TXT_MenuWifiInfo, MENUINFORMATION_WIFI);
+#ifdef ENABLE_EXCOMM
+    exCommInfo  = new menuInformation(display, info, TXT_MenuEXCOMMInfo, MENUINFORMATION_EXCOMM);
+#endif
   reset         = new menuObject(display, baseMenu, TXT_MenuSoftReset, MENUTYPELIST);
     resetConfirm= new menuObject(display, reset, TXT_MenuResetConfirm, MENUACTION);
-/*       resetYes  = new menuObject(display, resetConfirm, TXT_MenuYes,  1);
-      resetNo   = new menuObject(display, resetConfirm, TXT_MenuNo,   2); */
-  factoryReset  = new menuObject(display, baseMenu, TXT_MenuFacReset, MENUTYPELIST);
-    factoryResetConfirm  = new menuObject(display, factoryReset, TXT_MenuFacResetConfirm, MENUACTION);
-/*       FactoryYes= new menuObject(display, factoryResetConfirm, TXT_MenuYes,  1);
-      FactoryNo = new menuObject(display, factoryResetConfirm, TXT_MenuNo,   2); */
-
-
-// Todo, ajouter liste �v�nements
-//Type de vue dashboard
-/* Type de vue des trains
-@IP de la box, masque de sous-réseau, passerelle
-Mode AP ou client
-Serveur DHCP ou adressage IP statique */
-
 }
 /*!
     @brief  begin
@@ -169,7 +137,7 @@ void MenuManagement::BtnSelectPressed()
 
   switch(status)
   {
-    case MENUEXIT :
+    case MENUEXIT:
       _HMIDEBUG_LEVEL1_PRINT("Exit menu ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->caption);
       if(activeMenu->parent)
       {
@@ -179,139 +147,113 @@ void MenuManagement::BtnSelectPressed()
       {
         _HMIState = StateExitMenu;
       }
-    break;
-    case MENUCHANGETOCHILD :
+    	break;
+
+    case MENUCHANGETOCHILD:
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
       activeMenu->parent->resetMenu();
+			break;
 
-    break;
-    case MENUTRAINADDRREAD :
-      _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-      _HMIDEBUG_LEVEL1_PRINT(" to SPECIAL menu ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-      activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
-      activeMenu->start();
-
-    break;
-    case MENUTRAINCVREAD :
+    case MENUTRAINADDRREAD:
+    case MENUTRAINCVREAD:
+    case MENUTRAINCVWRITE:
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
       activeMenu->start();
+			break;
 
-    break;
-    case MENUTRAINCVWRITE :
-      _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-      _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-      activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
-      activeMenu->start();
-
-    break;
     case MENUCHOSEN :
       _HMIDEBUG_LEVEL1_PRINT("Menu choice ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);_HMIDEBUG_LEVEL1_PRINT(" has been made : ");
       _HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];
-      if(activeMenu == language)
-      {
-        _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_CRITICAL_PRINT(activeMenu->caption);
-        _HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_CRITICAL_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-        _HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_CRITICAL_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
 
-      }else
-      {
-        if(activeMenu == onOffLine)
-        {
-          _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-          _HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-          _HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");        
-        }else
-        {
-          if(activeMenu == wifiActivate)
-          {
-            _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-            _HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-            _HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-          }else
-          {
-            if(activeMenu == resetConfirm)
-            {
-              _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-              _HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-              _HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-#ifdef ARDUINO_ARCH_ESP32
-              // !! Only for ESP !!
-							LaboxModes::Restart(MAIN);
-#endif
-            }else
-            {
-              if(activeMenu == factoryResetConfirm)
-              {
-                _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-                _HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-                _HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-                // Restore default setting
+			bool found = false;
+			switch(activeMenu->value)
+			{
+				case MENUINFORMATION_ABOUT:
+				case MENUINFORMATION_WIFI:
+				case MENUINFORMATION_EXCOMM:
+					_HMIDEBUG_LEVEL1_PRINT("Change sub menu to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->caption);
+					activeMenu->start();
+					found = true;
+					break;
+			}
 
+			if (found)
+				break;
+
+			if(activeMenu == onOffLine)
+			{
+				_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+				_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+				_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");        
+			}else
+			{
+				if(activeMenu == resetConfirm)
+				{
+					_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+					_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+					_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
 #ifdef ARDUINO_ARCH_ESP32
-                // !! Only for ESP !!
-								LaboxModes::Restart(MAIN);
+					// !! Only for ESP !!
+					LaboxModes::Restart(MAIN);
 #endif
-              }else
-              {
-                if(activeMenu == lstEvent)
-                {
-                  _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-                  //_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-                  //_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-                  // Restore default setting
-                  _HMIState = StateBrowseEventLst ;
-                  baseMenu->resetMenu();
-                }else
-                {
-                  if(activeMenu == V1Train)
-                  {
-                    _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-                    //_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-                    //_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-                    // Restore default setting
-                    ((hmi*) display)->nbTrainToView = 1 ;
-                    _HMIState = StateExitMenu;
-                  }else
-                  {
-                    if(activeMenu == V2Trains)
-                    {
-                      _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-                      //_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-                      //_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-                      // Restore default setting
-                      ((hmi*) display)->nbTrainToView = 2 ;
-                      _HMIState = StateExitMenu;
-                    }else
-                    {
-                      if(activeMenu == V3Trains)
-                      {
-                        _HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-                        //_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-                        //_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-                        // Restore default setting
-                        ((hmi*) display)->nbTrainToView = 3 ;
-                        _HMIState = StateExitMenu;
-                      }else
-                      {
-                        _HMIDEBUG_CRITICAL_PRINT("Critical error, no choice menu found for ");_HMIDEBUG_CRITICAL_PRINTLN(activeMenu->caption);
-                      }
-                    }
-                  }
-                }
-              }
-            }
+				}else
+        {
+					if(activeMenu == lstEvent)
+					{
+						_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+						//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+						//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
+						// Restore default setting
+						_HMIState = StateBrowseEventLst ;
+						baseMenu->resetMenu();
+					}else
+					{
+						if(activeMenu == V1Train)
+						{
+							_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+							//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+							//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
+							// Restore default setting
+							((hmi*) display)->nbTrainToView = 1 ;
+							_HMIState = StateExitMenu;
+						}else
+            {
+							if(activeMenu == V2Trains)
+							{
+								_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+								//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+								//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
+								// Restore default setting
+								((hmi*) display)->nbTrainToView = 2 ;
+								_HMIState = StateExitMenu;
+							}else
+							{
+								if(activeMenu == V3Trains)
+								{
+									_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
+									//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+									//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
+									// Restore default setting
+									((hmi*) display)->nbTrainToView = 3 ;
+									_HMIState = StateExitMenu;
+								}else
+								{
+									_HMIDEBUG_CRITICAL_PRINT("Critical error, no choice menu found for ");_HMIDEBUG_CRITICAL_PRINTLN(activeMenu->caption);
+								}
+							}
+						}
           }
         }
       }
       baseMenu->resetMenu();      
       activeMenu = activeMenu->parent;
       _HMIEvent = noEvent;
-    break;
+    	break;
   }
   _HMIDEBUG_FCT_PRINTLN("MenuManagement::BtnSelectPressed.. End");   
 }

@@ -18,7 +18,7 @@
 #include "HmiInterface.hpp"
 
 #include "hmiTrain.h"
-#include "globals.h"
+#include "hmiGlobals.h"
 
 class MenuManagement;
 

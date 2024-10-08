@@ -10,7 +10,6 @@
 #include "hmi.h"
 #include "hmiTrain.h"
 #include "icons.h"
-#include "globals.h"
 
 #ifdef USE_HMI
 extern enumHMIState  _HMIState ;

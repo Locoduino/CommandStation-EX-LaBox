@@ -28,10 +28,10 @@
 #define HMI_CurrentK            0.9        	// Current scaling coefficient
 #define HMI_deltaCurrent				0			// Current value shift with I=0
 // Stack / string allocation sizes
-#define HMI_StackNbCarElt       20          // 10 elements into the stack
+#define HMI_StackNbCarElt       20          // 20 elements into the stack
 #define HMI_EventMaxToDisplay   5           // We can display in full screnn 7 lines of event
-#define HMI_MessageSize         20          // 12 characters for on message // Voir si il faut maintenir
-#define HMI_MenueMessageSize    20          // 18 characters for un caption in menu
+#define HMI_MessageSize         20          // 20 characters for on message // Voir si il faut maintenir
+#define HMI_MenueMessageSize    20          // 20 characters for un caption in menu
 #define LineCarNbMax            20          // 1 ligne with FreeSerif9pt7b police, you can show 20 caracters max.
 #define HMI_NbMemorisedTrain    10          // 
 #define nbCycleToWaitWifi       50        
@@ -72,6 +72,11 @@
 #define MENUTRAINADDRREAD       304
 #define MENUTRAINCVREAD					305
 #define MENUTRAINCVWRITE				306
+
+#define MENUINFORMATION_ABOUT		400
+#define MENUINFORMATION_WIFI		401
+#define MENUINFORMATION_EXCOMM	402
+
 #define MENUTYPECOMEBCK         0x8000
 #define MENUTYPELIST            0x7999
 #define MENUACTION              0x7998
@@ -95,21 +100,18 @@
 #define TXT_MenuActivWifi       "Activation Wifi"
 #define TXT_MenuDHCP            "DHCP"
 #define TXT_MenuResetConfirm    "Confirmation Reset"
-#define TXT_MenuFacResetConfirm "Factory Reset?"
 #define TXT_MenuYes             "Oui"
 #define TXT_MenuNo              "Non"
 #define TXT_MenuParams          "Parametres"
-#define TXT_MenuWifi            "Wifi"
-#define TXT_MenuWifiInfo        "Infos WiFi"
-#define TXT_MenuCANInfo         "Infos CAN"
-#define TXT_MenuCAN             "Reseaux CAN"
-#define TXT_MenuCAN_GW          "Passerelle CAN/Wifi"
+#define TXT_MenuInfos						"Informations"
+#define TXT_MenuAbout						"A propos de..."
+#define TXT_MenuAboutCSEX				"CS-EX %s     <sortie>"
+#define TXT_MenuInfoButtons			"             <sortie>"
+#define TXT_MenuWifiInfo        "WiFi"
+#define TXT_MenuEXCOMMInfo			"EXCOMM"
 #define TXT_MenuOn              "On"
 #define TXT_MenuOff             "Off"
-#define TXT_MenuCANAddr         "Adresse CAN"
-#define TXT_MenuInfosSys        "Info Systeme"
 #define TXT_MenuSoftReset       "Redemarrage"
-#define TXT_MenuFacReset        "Factory Reset"
 #define TXT_MenuBack            "< Retour >"
 #define TXT_MenuAddrRead        "Lecture adr Train"
 #define TXT_MenuAddrRetry				"Relire"
@@ -117,7 +119,6 @@
 #define TXT_MenuCVRead        	"Lecture CV"
 #define TXT_MenuCVWrite        	"Ecriture CV"
 #define TXT_PhysicalMes         "Mesures U et I"
-#define TXT_Language            "Langue"
 #define TXT_TrainView           "Type de vue trains"
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
@@ -142,7 +143,6 @@
 #define TXT_CVREAD_ADDRESS			"+ -             Lire"
 #define TXT_CVWRITE_ADDRESS			"+ -           Valeur"
 #define TXT_CVWRITE_VALUE				"+ -           Ecrire"
-//#define TXT_LanguageRequest    "Choix de la Langue"
 
     // Message by language : English
 // maximum line size : 					 ++++++++++++++++++++
@@ -155,27 +155,25 @@
 #define TXT_StopAll             "!STOP ALL!"
 #define TXT_StartDCC            "<DCC On>"
 #define TXT_ShortCircuit        "SHORT-CIRCUIT"
-#define TXT_MenuDCCOffLine       "Stop DCC"
+#define TXT_MenuDCCOffLine      "Stop DCC"
 #define TXT_MenuOnLine          "On line"
 #define TXT_MenuOffLine         "Off line"
 #define TXT_MenuActivWifi       "Wifi Activation"
+#define TXT_MenuDHCP            "DHCP"
 #define TXT_MenuResetConfirm    "Reset confirmation ?"
-#define TXT_MenuFacResetConfirm "Factory Reset?"
 #define TXT_MenuYes             "Yes"
 #define TXT_MenuNo              "No"
-#define TXT_MenuDHCP            "DHCP"
 #define TXT_MenuParams          "Parameters"
-#define TXT_MenuWifi            "Wifi"
-#define TXT_MenuWifiInfo        "Infos WiFi"
-#define TXT_MenuCANInfo         "Infos CAN"
+#define TXT_MenuInfos						"Informations"
+#define TXT_MenuAbout						"About..."
+#define TXT_MenuAboutCSEX				"CS-EX %s       <quit>"
+#define TXT_MenuInfoButtons			"               <quit>"
+#define TXT_MenuWifiInfo        "WiFi"
+#define TXT_MenuEXCOMMInfo			"EXCOMM"
 #define TXT_MenuCAN             "Networks CAN"
-#define TXT_MenuCAN_GW          "Gateway CAN/Wifi"
 #define TXT_MenuOn              "On"
 #define TXT_MenuOff             "Off"
-#define TXT_MenuCANAddr         "Address CAN"
-#define TXT_MenuInfosSys        "Info System"
 #define TXT_MenuSoftReset       "Reboot"
-#define TXT_MenuFacReset        "Factory Reset"
 #define TXT_MenuBack            "< Return >"
 #define TXT_MenuAddrRead        "Read Train Addr"
 #define TXT_MenuAddrRetry				"Retry"
@@ -183,11 +181,11 @@
 #define TXT_MenuCVRead        	"Read CV"
 #define TXT_MenuCVWrite        	"Write CV"
 #define TXT_PhysicalMes         "Measures U and I"
-#define TXT_Language            "Language"
 #define TXT_TrainView           "Train view"
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
 #define TXT_V3Trains            "3 trains"
+// maximum line size : 					 ++++++++++++++++++++
 #define TXT_LstEvent            "Event list"
 #define TXT_WifiWaiting         "Connection WiFi..."
 #define TXT_noWifi              " !! No WiFi !!"

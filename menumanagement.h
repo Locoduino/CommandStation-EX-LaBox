@@ -46,41 +46,21 @@ class MenuManagement
     menuObject* onOffLine;
     menuObject* onOffLineOn;
     menuObject* onOffLineOff;
-    menuObject* wifi;
-    menuObject* wifiInfo;
-    menuObject* wifiActivate;
     menuObject* lstEvent;
-    menuObject* can;
-    menuObject* can_gw;
-    menuObject* can_gw_on;
-    menuObject* can_gw_off;
-    menuObject* canSetAddr;
-    menuObject* canInfo;
-    menuObject* infoSystem;
-    menuObject* factoryReset;
-    menuObject* factoryResetConfirm;
+    menuObject* info;
+    menuObject* about;
+    menuObject* wifiInfo;
+    menuObject* exCommInfo;
     menuObject* reset;
     menuObject* resetConfirm;
-    menuObject* language;
-    menuObject* languageFr;
-    menuObject* languageEn;
-    menuObject* languageSp;
-    menuObject* languageDe;
     menuObject* physicalMes;
     menuObject* TrainView;
     menuObject* V1Train;
     menuObject* V2Trains;
     menuObject* V3Trains;
-    menuObject* wifionLine;
-    menuObject* wifiOffLine; 
-/*     menuObject* resetYes;
-    menuObject* resetNo; 
-    menuObject* FactoryYes;
-    menuObject* FactoryNo; */
     int menuState;
     menuObject* activeMenu ;
     //menuObject* activeMenu_prev ;
-
 
     Adafruit_SSD1306*  display;
     byte  nbMenuItems;

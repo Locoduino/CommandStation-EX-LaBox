@@ -159,8 +159,8 @@ void setup() {
 
   //--- Configure external comms
 #ifdef ENABLE_EXCOMM
-  EXCommItem::Setup();
-	EXCommItem::beginItems();
+  EXComm::Setup();
+	EXComm::begin();
 #endif
 
 // Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
@@ -201,7 +201,7 @@ void loop() {
   SerialManager::loop();
 
 #ifdef ENABLE_EXCOMM
-  EXCommItem::loop();
+  EXComm::loop();
 #endif
 
 // Responsibility 3: Optionally handle any incoming WiFi traffic

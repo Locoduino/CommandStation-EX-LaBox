@@ -20,19 +20,26 @@
 
 #include <Arduino.h>
 #include "defines.h"
+#include "DCCEXParser.h"
 #include "hmi.h"
-#include "LaboxModes.h"
 
 #ifdef ENABLE_EXCOMM
 
+#include "LaboxModes.h"
 #include "EXComm.h"
 #include "EXCommItems.h"
 
-byte EXCommItem::lastItem = 0;
-byte EXCommItem::nextCycleItem = MAX_COMMITEMS;
-EXCommItem* EXCommItem::commItems[MAX_COMMITEMS];
+bool EXComm::DIAGBASE = false;
 
-void EXCommItem::Setup() {
+#define DIAG_EXCOMM		if (EXComm::DIAGBASE) DIAG
+
+byte EXComm::lastItem = 0;
+byte EXComm::nextCycleItem = MAX_COMMITEMS;
+EXCommItem* EXComm::commItems[MAX_COMMITEMS];
+String *EXComm::pInfos = NULL;
+int EXComm::infosCount = 0;
+
+void EXComm::Setup() {
 	lastItem = 0;
 	SetupPrivate(LABOX_EXCOMMS);
 	nextCycleItem = MAX_COMMITEMS;
@@ -40,7 +47,7 @@ void EXCommItem::Setup() {
 
 // The setup call is done this way so that the tracks can be in a list 
 // from the config... the tracks default to NULL in the declaration                 
-void EXCommItem::SetupPrivate(
+void EXComm::SetupPrivate(
         EXCommItem * comm0, EXCommItem * comm1, EXCommItem * comm2,
         EXCommItem * comm3, EXCommItem * comm4, EXCommItem * comm5,
         EXCommItem * comm6, EXCommItem * comm7 ) {       
@@ -54,7 +61,7 @@ void EXCommItem::SetupPrivate(
     addItem(7, comm7);
 }
 
-bool EXCommItem::addItem(byte t, EXCommItem* apComm) {
+bool EXComm::addItem(byte t, EXCommItem* apComm) {
 	if (t < MAX_COMMITEMS) {
 		if (apComm) {
 			if ((LaboxModes::progMode && apComm->ProgTrackEnabled) ||
@@ -63,6 +70,9 @@ bool EXCommItem::addItem(byte t, EXCommItem* apComm) {
    			lastItem = t;
 				return true;
   		}
+			else {
+				DIAG(F("[%s] item not applicable in this mode."), apComm->getName());
+			}
 		}
 
 		commItems[t] = NULL;
@@ -71,21 +81,21 @@ bool EXCommItem::addItem(byte t, EXCommItem* apComm) {
 	return false;
 }
 
-void EXCommItem::beginItems() {
+void EXComm::begin() {
 	//printItems();
 	for (int i = 0; i <= lastItem; i++) {
     if (commItems[i] != NULL) {
 			//DIAG(F("%d %s"), i, commItems[i]->name);
-	    commItems[i]->beginItem();
+	    commItems[i]->begin();
 		}
 	}
 }
 
-void EXCommItem::loop() {
+void EXComm::loop() {
 	// Execute 'AlwaysLoop' items
 	for (int i = 0; i <= lastItem; i++) {
     if (commItems[i] != NULL && commItems[i]->AlwaysLoop) {
-	    commItems[i]->loopItem();
+	    commItems[i]->loop();
 		}
 	}
 
@@ -97,38 +107,115 @@ void EXCommItem::loop() {
 		return;
 	// If not already done in the previous for !
   if (!commItems[nextCycleItem]->AlwaysLoop)
-	  commItems[nextCycleItem]->loopItem();
+	  commItems[nextCycleItem]->loop();
 }
 
-void EXCommItem::sendPowerItems(bool iSOn) {
+void EXComm::broadcast(byte *com)
+{
+	DIAG_EXCOMM(F("[EXCOMM] broadcast : %s"), com);
+	int16_t p[DCCEXParser::MAX_COMMAND_PARAMS];
+	while (com[0] == '<' || com[0] == ' ')
+			com++; // strip off any number of < or spaces
+	byte opcode = com[0];
+	byte params = DCCEXParser::splitValues(p, com, false);
+	
+	switch (opcode)
+	{
+	case 'l':   // LOCO <l CAB SPEED DIRECTION>
+			DIAG_EXCOMM(F("[EXCOMM] broadcast loco"));
+			if (params >= 0) {
+				for (int i = 0; i <= lastItem; i++) {
+					if (commItems[i] != NULL) {
+						commItems[i]->broadcastLoco(p[0]);
+					}
+				}
+			}
+			return;
+
+	case 'H': // TURNOUT <H ADDRESS ACTIVATE>
+			DIAG_EXCOMM(F("[EXCOMM] broadcast turnout"));
+			if (params >= 1) {
+				for (int i = 0; i <= lastItem; i++) {
+					if (commItems[i] != NULL) {
+						commItems[i]->broadcastTurnout(p[0], p[1]);
+					}
+				}
+			}
+			return;
+		
+	case 'j': // CLOACKTIME <jC TIME RATE>
+			DIAG_EXCOMM(F("[EXCOMM] broadcast clock time"));
+			if (params >= 1) {
+				for (int i = 0; i <= lastItem; i++) {
+					if (commItems[i] != NULL) {
+						commItems[i]->broadcastClockTime(p[0], p[1]);
+					}
+				}
+			}
+			return;
+		
+	case 'p': // POWER  <px name> where x is 0 or 1
+			DIAG_EXCOMM(F("[EXCOMM] broadcast power"));
+			for (int i = 0; i <= lastItem; i++) {
+				if (commItems[i] != NULL) {
+					commItems[i]->broadcastPower();
+				}
+			}
+			return;
+
+	case 'Q':	// SENSOR ON
+			DIAG_EXCOMM(F("[EXCOMM] broadcast sensor ON"));
+			if (params >= 0) {
+				for (int i = 0; i <= lastItem; i++) {
+					if (commItems[i] != NULL) {
+						commItems[i]->broadcastSensor(p[0], 1);
+					}
+				}
+			}
+			return;
+
+	case 'q':	// SENSOR OFF
+			DIAG_EXCOMM(F("[EXCOMM] broadcast sensor OFF"));
+			if (params >= 0) {
+				for (int i = 0; i <= lastItem; i++) {
+					if (commItems[i] != NULL) {
+						commItems[i]->broadcastSensor(p[0], 0);
+					}
+				}
+			}
+			return;
+	}
+}
+
+void EXComm::sendPower(bool iSOn) {
 	for (int i = 0; i <= lastItem; i++) {
     if (commItems[i] != NULL)
 	    commItems[i]->sendPower(iSOn);
 	}
 }
 
-void EXCommItem::sendThrottleItems(uint16_t cab, uint8_t tSpeed, bool tDirection) {
+void EXComm::sendThrottle(uint16_t cab, uint8_t tSpeed, bool tDirection) {
 	for (int i = 0; i <= lastItem; i++) {
     if (commItems[i] != NULL)
 	    commItems[i]->sendThrottle(cab, tSpeed, tDirection);
 	}
 }
 
-void EXCommItem::sendFunctionItems(int cab, int16_t functionNumber, bool on) {
+void EXComm::sendFunction(uint16_t cab, int16_t functionNumber, bool on) {
 	for (int i = 0; i <= lastItem; i++) {
     if (commItems[i] != NULL)
 	    commItems[i]->sendFunction(cab, functionNumber, on);
 	}
 }
 
-void EXCommItem::sendEmergencyItems() {
+void EXComm::sendEmergency() {
 	for (int i = 0; i <= lastItem; i++) {
     if (commItems[i] != NULL)
 	    commItems[i]->sendEmergency();
 	}
 }
 
-void EXCommItem::printItems() {
+void EXComm::print() {
 	DIAG(F("EXComm items:"));
 	int i = 0;
 	for (; i < MAX_COMMITEMS;) {
@@ -143,5 +230,59 @@ void EXCommItem::printItems() {
 	DIAG(F("Lastitem: %d"), lastItem);
 }
 
+int EXComm::getAllInfo(byte maxSize)
+{
+	if (pInfos == NULL)
+	{
+		pInfos = new String[(lastItem + 1) * 2];
+		String mess1, mess2, mess3;
+		for(int i = 0; i <= lastItem; i++)
+		{
+			if (commItems[i] == NULL)
+				continue;
 
+			mess1.clear();
+			mess2.clear();
+			mess3.clear();
+			commItems[i]->getInfos(&mess1, &mess2, &mess3, maxSize);
+			if (mess1.length() <= maxSize && mess1.length() > 0)
+				pInfos[infosCount++] = mess1;
+			else
+			{
+				if (mess1.length() > 0)
+				{
+					Serial.print("[");
+					Serial.print(commItems[i]->getName());
+					Serial.println("] info1 too long");
+				}
+			}
+
+			if (mess2.length() <= maxSize && mess2.length() > 0)
+				pInfos[infosCount++] = mess2;
+			else
+			{
+				if (mess2.length() > 0)
+				{
+					Serial.print("[");
+					Serial.print(commItems[i]->getName());
+					Serial.println("] info2 too long");
+				}
+			}
+
+			if (mess3.length() <= maxSize && mess3.length() > 0)
+				pInfos[infosCount++] = mess3;
+			else
+			{
+				if (mess3.length() > 0)
+				{
+					Serial.print("[");
+					Serial.print(commItems[i]->getName());
+					Serial.println("] info3 too long");
+				}
+			}
+		}
+	}
+
+	return infosCount;
+}
 #endif

@@ -64,18 +64,13 @@ const bool DIAG_SPROG = true;
 class SProg : public EXCommItem {
 public:
 	// EXCommItem part
-	SProg(int inRxPin, int inTxPin) : EXCommItem("SPROG") {
-		rxPin = inRxPin;
-		txPin = inTxPin;
-		Serial1.begin(9600, SERIAL_8N1, rxPin, txPin);
+	SProg(int inRxPin, int inTxPin);
 
-		this->MainTrackEnabled = false;
-		this->ProgTrackEnabled = true;
-		this->AlwaysLoop = true;
-	}
+	bool begin() override { setup(); return true; }
+	bool loop() override { loopInternal(); return true; }
 
-	bool beginItem() { setup(); return true; }
-	bool loopItem() { loop(); return true; }
+	void getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) override;
+
 	// End EXCommItem
 
 	struct SProgWord {
@@ -116,7 +111,7 @@ public:
 	static bool test_func[29];
 
   static void setup();
-	static void loop();
+	static void loopInternal();
 	static void parse(byte *command);
 	static int16_t splitValues(int16_t result[SPROG_MAX_COMMAND_PARAMS], const byte *cmd);
 

@@ -90,6 +90,9 @@ private:
   static uint16_t thisId;
   static bool SendCommands;
 
+  static void beginItem();
+  static void loopItem();
+	
 public:
   // EXCommItem part
   CanMarklin(uint16_t id, gpio_num_t rxPin, gpio_num_t txPin, uint32_t bitRate, bool sendCommands) : EXCommItem("CAN")
@@ -104,43 +107,46 @@ public:
     this->AlwaysLoop = false;
   }
 
-  bool beginItem()
+  bool begin() override
   {
-    begin();
-    return true;
-  }
-  bool loopItem()
-  {
-    loop();
+    beginItem();
     return true;
   }
 
-  void sendPower(bool iSOn)
+  bool loop() override
+  {
+    loopItem();
+    return true;
+  }
+
+  void sendPower(bool iSOn) override
   {
     if (SendCommands)
       setPower(iSOn);
   }
 
-  void sendThrottle(uint16_t cab, uint8_t tSpeed, bool tDirection)
+  void sendThrottle(uint16_t cab, uint8_t tSpeed, bool tDirection) override
   {
     if (SendCommands)
       setThrottle(cab, tSpeed, tDirection);
   }
 
-  void sendFunction(int cab, int16_t functionNumber, bool on)
+  void sendFunction(int cab, int16_t functionNumber, bool on) override
   {
     if (SendCommands)
       setFunction(cab, functionNumber, on);
   }
-  void sendEmergency()
+
+  void sendEmergency() override
   {
     if (SendCommands)
       emergency();
   }
-  // End EXCommItem
 
-  static void begin();
-  static void loop();
+  void getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) override;
+
+// End EXCommItem
+
   static uint16_t getId();
 
   static void setPower(bool iSOn);
