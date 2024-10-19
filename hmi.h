@@ -28,13 +28,13 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
     //----- Members
     hmi(TwoWire *twi);
     void begin();
-    void setProgMode();
     void update();
     byte laBoxState;
     MenuManagement *menu;
     float voltage;
     float current;
     int   nbTrainToView;
+		bool stopStateMachine;
 
     //int executionCore;
     

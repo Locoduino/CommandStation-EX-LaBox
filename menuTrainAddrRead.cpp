@@ -5,7 +5,8 @@
  * @Author : Cedric Bellec
  * @Organization : Locoduino.org
  */
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 
 #ifdef USE_HMI
 #include "menuobject.h"
@@ -14,7 +15,6 @@
 #include "LaboxModes.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <EEPROM.h>
 
 int locoID = 0;
 bool longAddress = false;
@@ -42,7 +42,7 @@ void locoIdCallback(int16_t inId)
 	}
 
   locoID = inId;
-	if (locoID > 0)
+	if (locoID > 0)	// loco address cannot be 0 !
 	{
 		state = StateReading::MenuQuit;
 	}
@@ -131,7 +131,6 @@ void menuTrainAddrRead::eventDown()
 int menuTrainAddrRead::eventSelect()
 {
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. Begin"); 
-  //menuObject::eventSelect();	// Do not come back to Labox main menu... We have to reboot before !
 
 	if (state == StateReading::MenuQuit)
 	{
@@ -140,7 +139,7 @@ int menuTrainAddrRead::eventSelect()
 
 	if (state == StateReading::MenuRetry)
 	{
-		menuTrainAddrRead::start();
+		this->start();
 	}
 
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. End");  
@@ -186,12 +185,6 @@ void menuTrainAddrRead::update()
   display->setCursor(5, 53);
 	if (state == StateReading::MenuRetry)
 	{
-/*    display->fillRect(5, 53, 60, 9 , WHITE);
-		display->setTextColor(BLACK);
-	  display->println(TXT_MenuAddrRetry);
-	  display->setCursor(64, 53);
-		display->setTextColor(WHITE);
-	  display->println(TXT_MenuAddrQuit);*/
     sprintf(message,">%s<",TXT_MenuAddrRetry);
 	  display->println(message);
 	  display->setCursor(64, 53);
@@ -201,12 +194,6 @@ void menuTrainAddrRead::update()
 	else
 	if (state == StateReading::MenuQuit)
 	{
-/*		display->setTextColor(WHITE);
-	  display->println(TXT_MenuAddrRetry);
-	  display->setCursor(64, 53);
-    display->fillRect(64, 53, 110, 9 , WHITE);
-		display->setTextColor(BLACK);
-	  display->println(TXT_MenuAddrQuit);*/
     sprintf(message," %s ",TXT_MenuAddrRetry);
 	  display->println(message);
 	  display->setCursor(64, 53);

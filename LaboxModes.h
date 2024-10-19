@@ -11,7 +11,8 @@ enum ProgType {
 	CV1ADDR = 'P',
 	CVREAD = 'Q',
 	CVWRITE = 'R',
-	SILENTRETURNTOMAIN = 'B'
+	SILENTRETURNTOMAIN = 'B',
+	IDENTIFY = 'I'
 };
 
 /** This is a class to handle external communications.
@@ -19,6 +20,9 @@ An instance of this class receive message from external world and call DCCEX API
 */
 class LaboxModes {
 	public:
+
+	  static bool DIAGLABOXMODES;
+
 		// True if the ESP is in programmation mode.
     static bool progMode;
 		// Type of programmation mode.
@@ -29,6 +33,7 @@ class LaboxModes {
     static int EEPROMModeProgAddress;
 
   	static void GetCurrentMode();
+		static void SetProgMode();
 		static void SetNextMode(ProgType inType = MAIN);
 		static void Restart(ProgType inType = SILENTRETURNTOMAIN);
 };

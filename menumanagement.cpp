@@ -7,7 +7,8 @@
  * @Author : Cedric Bellec
  * @Organization : Locoduino.org
  */
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 
 #ifdef USE_HMI
 #include "hmi.h"
@@ -18,6 +19,8 @@
 #include "menuTrainAddrRead.h"
 #include "menuTrainCvRead.h"
 #include "menuTrainCvWrite.h"
+#include "menuDecoderIdentification.h"
+#include "menuShuttleSample.h"
 
 extern enumHMIState  _HMIState ;
 extern enumHMIState  _HMIState_prev;
@@ -40,6 +43,8 @@ MenuManagement::MenuManagement(hmi*  screen)
   trainAddrRead = new menuTrainAddrRead(display, baseMenu, TXT_MenuAddrRead,  MENUTRAINADDRREAD);
   trainCVRead 	= new menuTrainCvRead(display, baseMenu, TXT_MenuCVRead,  MENUTRAINCVREAD);
   trainCVWrite 	= new menuTrainCvWrite(display, baseMenu, TXT_MenuCVWrite,  MENUTRAINCVWRITE);
+  trainIdent	 	= new menuDecoderIdentification(display, baseMenu, TXT_MenuIdent,  MENUTRAINIDENT);
+  shuttle	 			= new menuShuttleSample(display, baseMenu, TXT_MenuShuttle,  MENUSHUTTLESAMPLE);
   TrainView     = new menuObject(display, baseMenu, TXT_TrainView, MENUTYPELIST);
     V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
     V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
@@ -159,6 +164,8 @@ void MenuManagement::BtnSelectPressed()
     case MENUTRAINADDRREAD:
     case MENUTRAINCVREAD:
     case MENUTRAINCVWRITE:
+    case MENUTRAINIDENT:
+    case MENUSHUTTLESAMPLE:
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];

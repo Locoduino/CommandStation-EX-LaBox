@@ -62,6 +62,9 @@ void CanMarklin::getInfos(String *pMess1, String *pMess2, String *pMess3, byte m
 
 	sprintf(mess, "[CANM] Tx:%d Rx:%d", TxPin, RxPin);
 	*pMess2 = mess;
+
+	sprintf(mess, "[CANM] ", VERSION_LABOX_CAN);
+	*pMess3 = mess;
 }
 
 void CanMarklin::beginItem()

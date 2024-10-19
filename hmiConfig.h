@@ -72,6 +72,8 @@
 #define MENUTRAINADDRREAD       304
 #define MENUTRAINCVREAD					305
 #define MENUTRAINCVWRITE				306
+#define MENUTRAINIDENT					307
+#define MENUSHUTTLESAMPLE				308
 
 #define MENUINFORMATION_ABOUT		400
 #define MENUINFORMATION_WIFI		401
@@ -118,6 +120,8 @@
 #define TXT_MenuAddrQuit				"Quitter"
 #define TXT_MenuCVRead        	"Lecture CV"
 #define TXT_MenuCVWrite        	"Ecriture CV"
+#define TXT_MenuIdent	        	"Ident. decodeur"
+#define TXT_MenuShuttle	       	"Va&Vient EXRail"
 #define TXT_PhysicalMes         "Mesures U et I"
 #define TXT_TrainView           "Type de vue trains"
 #define TXT_V1Train             "1 train"
@@ -143,6 +147,20 @@
 #define TXT_CVREAD_ADDRESS			"+ -             Lire"
 #define TXT_CVWRITE_ADDRESS			"+ -           Valeur"
 #define TXT_CVWRITE_VALUE				"+ -           Ecrire"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_IDENT_LOGO					"LaBox       Decodeur"
+#define TXT_IDENT_READING7			"         Lecture cv7"
+#define TXT_IDENT_READING8			"         Lecture cv8"
+#define TXT_IDENT_LOCOADDRESS		"+ -           Lancer"
+#define TXT_IDENT_ERRORCV7			"ERREUR CV7"
+#define TXT_IDENT_ERRORCV8			"ERREUR CV8 cv7=%d"
+#define TXT_IDENT_UNKNOWNID			"Inconnu cv8=%d"
+#define TXT_IDENT_SEENMRA				"See NMRA 9.2.2.5 pdf"
+#define TXT_IDENT_VERSION				"Version: %d"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_SHUTTLE_LOGO				"LaBox EXRail shuttle"
+#define TXT_SHUTTLE_RUNNING			"Va&Vient EN ROUTE"
+#define TXT_SHUTTLE_STOP				"Stop"
 
     // Message by language : English
 // maximum line size : 					 ++++++++++++++++++++
@@ -180,6 +198,8 @@
 #define TXT_MenuAddrQuit				"Quit"
 #define TXT_MenuCVRead        	"Read CV"
 #define TXT_MenuCVWrite        	"Write CV"
+#define TXT_MenuIdent	        	"Identify decoder"
+#define TXT_MenuShuttle	       	"Shuttle EXRail"
 #define TXT_PhysicalMes         "Measures U and I"
 #define TXT_TrainView           "Train view"
 #define TXT_V1Train             "1 train"
@@ -205,6 +225,20 @@
 #define TXT_CVREAD_ADDRESS			"+ -             Read"
 #define TXT_CVWRITE_ADDRESS			"+ -            Value"
 #define TXT_CVWRITE_VALUE				"+ -            Write"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_IDENT_LOGO					"LaBox        Decoder"
+#define TXT_IDENT_READING7			"         Reading cv7"
+#define TXT_IDENT_READING8			"         Reading cv8"
+#define TXT_IDENT_LOCOADDRESS		"+ -            Start"
+#define TXT_IDENT_ERRORCV7			"ERROR CV7"
+#define TXT_IDENT_ERRORCV8			"ERROR CV8 cv7=%d"
+#define TXT_IDENT_UNKNOWNID			"Unknown cv8=%d"
+#define TXT_IDENT_SEENMRA				"See NMRA 9.2.2.5 pdf"
+#define TXT_IDENT_VERSION				"Version: %d"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_SHUTTLE_LOGO				"LaBox EXRail shuttle"
+#define TXT_SHUTTLE_RUNNING			"Shuttle RUNNING"
+#define TXT_SHUTTLE_STOP				"Stop"
 */
 
 //---------------------- Global section ---------------------------------

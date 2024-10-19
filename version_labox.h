@@ -1,7 +1,11 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.7.0"
+#define VERSION_LABOX "2.8.0"
+// 2.8.0	- Add command to identify the Decoder using CV7/CV8.
+//				- CAN : the version of CAN interface is added to CAN information.
+//				- Add command 'Shuttle test' with a -very- small shuttle automation program.
+//				- When emergency stop used, the Oled screen give 'ESTOP' as speed.
 // 2.7.0	-	Add broadcast functions to EXComm
 //				- EXComm/EXCommItem classes refactoring to rationalize code.
 //				-	Z21Throttle class has been cleaned for scories of old code, class MYLOCOZ21 removed, 

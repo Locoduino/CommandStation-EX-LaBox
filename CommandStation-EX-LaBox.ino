@@ -181,7 +181,7 @@ void setup() {
 #ifdef USE_HMI
   if (LaboxModes::progMode) {
     // must be done after all other setups.
-    boxHMI.setProgMode();
+    LaboxModes::SetProgMode();
   }
   if (LaboxModes::silentBootMode) {
     // Reset to Main mode for next reboot.

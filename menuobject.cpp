@@ -10,7 +10,8 @@
  * @Organization : Locoduino.org
  */
 
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 
 #ifdef USE_HMI
 #include "hmiGlobals.h"
@@ -214,7 +215,7 @@ void menuObject::eventDown()
 */
 int menuObject::eventSelect()
 {
-	_HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. Begin"); 
+	_HMIDEBUG_CRITICAL_PRINTLN("menuObject::eventSelect.. Begin"); 
 
 	if (selectedMenu != NULL)
 	{
@@ -227,22 +228,21 @@ int menuObject::eventSelect()
 				return MENUCHANGETOCHILD;
 				break;
 			case MENUTRAINADDRREAD:           // User has selected a sub menu
-				return MENUTRAINADDRREAD;
-				break;
 			case MENUTRAINCVREAD:           // User has selected a sub menu
-				return MENUTRAINCVREAD;
-				break;
 			case MENUTRAINCVWRITE:           // User has selected a sub menu
-				return MENUTRAINCVWRITE;
+			case MENUTRAINIDENT:           // User has selected a sub menu
+			case MENUSHUTTLESAMPLE:           // User has selected a sub menu
+				return selectedMenu->value;
 				break;
 			default:
 				return MENUCHOSEN;         // It's user selection like Yes or No for exemple
 		}
 	}
 
-	_HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. End"); 
+	_HMIDEBUG_CRITICAL_PRINTLN("menuObject::eventSelect.. End"); 
 	return 0;
 }
+
 /*!
     @brief  Thing to do before opening the option
     @param  None

@@ -1,4 +1,5 @@
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 #include "hmi.h"
 #include "hmiConfig.h"
 #include "HmiInterface.hpp"

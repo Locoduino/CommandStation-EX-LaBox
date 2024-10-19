@@ -1,4 +1,6 @@
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
+#include "TrackManager.h"
 #include "DCCRMT.h"
 #include "DCCTimer.h"
 #include "Railcom.h"

@@ -125,7 +125,7 @@ class LookList {
     RMFT2(int route, uint16_t cab);
     ~RMFT2();
     static void readLocoCallback(int16_t cv);
-    static void createNewTask(int route, uint16_t cab);
+    static RMFT2* createNewTask(int route, uint16_t cab);
     static void turnoutEvent(int16_t id, bool closed);  
     static void activateEvent(int16_t addr, bool active);
     static void changeEvent(int16_t id, bool change);

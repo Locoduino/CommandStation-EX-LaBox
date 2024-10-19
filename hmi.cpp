@@ -5,7 +5,10 @@
  * @Author : Cedric Bellec
  * @Organization : Locoduino.org
  */
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
+#include "TrackManager.h"
+
 #ifdef USE_HMI
 
 #include "Wire.h"
@@ -31,7 +34,7 @@ int IRAM_ATTR local_adc1_get_raw(int channel);
 #ifdef USE_HMI
  // variables must be global due to static methods
 enumEvent     _HMIEvent;
-enumHMIState  _HMIState ;
+enumHMIState  _HMIState;
 
 hmi::hmi(TwoWire *twi) : Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT) // ,twi, -1) !
 {
@@ -39,6 +42,8 @@ hmi::hmi(TwoWire *twi) : Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT) // ,twi, 
   laBoxState      = Labox_StateDCCOFF;
   _HMIState        = StateDashboard;
   positioneventlst= 0;
+	stopStateMachine = false;
+
   // Init train list
   for(int i=0; i < HMI_NbMemorisedTrain; i++)
   {
@@ -108,7 +113,7 @@ void hmi::begin()
     @return None (void).
     @note
 */
-void hmi::setProgMode()
+/*void hmi::setProgMode()
 {
   _HMIDEBUG_FCT_PRINTLN("hmi::setProgMode().. Begin");
 
@@ -130,8 +135,14 @@ void hmi::setProgMode()
   	menu->trainCVWrite->start();
 	}
 
+	if (LaboxModes::progModeType == ProgType::IDENTIFY)
+	{
+  	menu->setMenu(menu->trainIdent);
+  	menu->trainIdent->start();
+	}
+
   _HMIDEBUG_FCT_PRINTLN("hmi::setProgMode().. End");
-}
+}*/
 
 /*!
     @brief  update, call to refresh screen
@@ -184,7 +195,7 @@ void hmi::stateMachine()
     return;
 #endif*/
 
-  if (DCCACK::isActive())
+  if (this->stopStateMachine || DCCACK::isActive())
     return;
 
   _HMIDEBUG_FCT_PRINTLN("hmi::stateMachine().. Begin");

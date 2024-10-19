@@ -1,13 +1,13 @@
 /*
  * La Box Project
- * menuTrainCvWrite Classe
+ * menuShuttleSample Classe
  *
  * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
 
-#ifndef __MENUTRAINCVWRITE__
-#define __MENUTRAINCVWRITE__
+#ifndef __MENUSHUTTLESAMPLE__
+#define __MENUSHUTTLESAMPLE__
 
 #ifdef USE_HMI
 #include "menuobject.h"
@@ -15,14 +15,14 @@
 
 class hmi;
 
-class menuTrainCvWrite : public menuObject
+class menuShuttleSample : public menuObject
 {
   public:
     //----- Members
 
 
     //----- functions
-    menuTrainCvWrite(Adafruit_SSD1306* screen, menuObject* parent, const char* title, int value);
+    menuShuttleSample(Adafruit_SSD1306* screen, menuObject* parent, const char* title, int value);
     void begin() override;
     void update() override;
     void eventUp() override;

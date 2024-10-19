@@ -6,7 +6,8 @@
  * @Organization : Locoduino.org
  */
 
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 #include "hmi.h"
 #include "hmiTrain.h"
 #include "icons.h"
@@ -137,7 +138,14 @@ void hmiTrain::dashboard(int pos_x1, int pos_y1, int pos_x2, int pos_y2)
   display->println(message);
   //--------------------- Speed value --------------------------
   display->setCursor( pos_x1, pos_y2-25);
-  sprintf(message, "%03d", speed);
+  if (speed <= 1)
+	{
+		sprintf(message, "ESTOP");
+	}
+	else
+	{
+		sprintf(message, "%03d", speed);
+	}
   display->println(message);
   //-------------------- Arrows drawing ------------------------
   if(mode == HMI_OrderForward)
@@ -211,8 +219,17 @@ void hmiTrain::dashboard1T()
   display->println(message);
   //--------------------- Speed value --------------------------
   display->setTextSize(2);
-  display->setCursor( 67, 3);
-  sprintf(message, "%03d", speed);
+  if (speed <= 1)
+	{
+  	display->setCursor( 50, 3);
+		sprintf(message, "ESTOP");
+	}
+	else
+	{
+  	display->setCursor( 67, 3);
+		sprintf(message, "%03d", speed);
+	}
+
   display->println(message);
   //-------------------- Arrows drawing ------------------------
   for(int k=0; k<15; k=k+6)

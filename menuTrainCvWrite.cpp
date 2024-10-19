@@ -5,7 +5,8 @@
  * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 
 #ifdef USE_HMI
 #include "menuobject.h"
@@ -14,7 +15,6 @@
 #include "LaboxModes.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <EEPROM.h>
 
 int writeCVValue = -1;
 int writeCVAddress = 0;

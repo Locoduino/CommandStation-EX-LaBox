@@ -5,7 +5,8 @@
  * @Author : Cedric Bellec
  * @Organization : Locoduino.org
  */
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 
 #ifdef USE_HMI
 #include <WiFi.h>
@@ -20,7 +21,7 @@
 #include "hmi.h"
 #include "version.h"
 #include "version_labox.h"
-#include "excomm.h"
+#include "EXComm.h"
 
 bool updatedInfo;
 char messageInfo[30];
@@ -138,8 +139,6 @@ void menuInformation::eventDown()
 int menuInformation::eventSelect()
 {
   _HMIDEBUG_FCT_PRINTLN("menuInformation::eventSelect.. Begin"); 
-	//DIAG(F("selectedMenu : %d"), selectedMenu);
-  //menuObject::eventSelect();
 
   _HMIDEBUG_FCT_PRINTLN("menuInformation::eventSelect.. End");  
   return MENUEXIT;

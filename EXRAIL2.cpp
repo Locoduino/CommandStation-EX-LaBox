@@ -490,11 +490,13 @@ RMFT2::~RMFT2() {
       }
 }
 
-void RMFT2::createNewTask(int route, uint16_t cab) {
+// LaBox return type changed
+RMFT2* RMFT2::createNewTask(int route, uint16_t cab) {
       int pc=sequenceLookup->find(route);
-      if (pc<0) return;
+      if (pc<0) return NULL;
       RMFT2* task=new RMFT2(pc);
       task->loco=cab;
+			return task;
 }
 
 void RMFT2::driveLoco(byte speed) {

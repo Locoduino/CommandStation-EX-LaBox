@@ -5,7 +5,8 @@
  * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
-#include "DCCEX.h"
+#include "defines.h"
+#include "DCC.h"
 
 #ifdef USE_HMI
 #include "menuobject.h"
@@ -14,7 +15,6 @@
 #include "LaboxModes.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <EEPROM.h>
 
 int CVValue = -1;
 int CVAddress = 0;
@@ -169,8 +169,6 @@ void menuTrainCvRead::eventDown()
 int menuTrainCvRead::eventSelect()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvRead::eventSelect.. Begin"); 
-	DIAGREAD("select begin");
-	//menuObject::eventSelect();
 
 	if (readState == FixingAddress)
 	{
@@ -179,7 +177,6 @@ int menuTrainCvRead::eventSelect()
 		DCC::readCV(CVAddress, ptr);
 		readState = Reading;
 		displayInProgress = false;
-		DIAGREAD("select end");
 		_HMIDEBUG_FCT_PRINTLN("menuTrainCvRead::eventSelect.. End");  
 		return 0;
 	}

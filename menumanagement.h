@@ -38,6 +38,8 @@ class MenuManagement
     menuObject* trainAddrRead;
     menuObject* trainCVRead;
     menuObject* trainCVWrite;
+    menuObject* trainIdent;
+    menuObject* shuttle;
 
   protected:
     //----- Members

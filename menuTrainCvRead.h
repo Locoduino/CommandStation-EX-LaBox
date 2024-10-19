@@ -2,7 +2,7 @@
  * La Box Project
  * menuTrainCvRead Classe
  *
- * @Author : Cedric Bellec
+ * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
 
@@ -23,17 +23,17 @@ class menuTrainCvRead : public menuObject
 
     //----- functions
     menuTrainCvRead(Adafruit_SSD1306* screen, menuObject* parent, const char* title, int value);
-    void begin();
-    void update();
-    void eventUp();
-    void eventDown();
-    int  eventSelect();
-    void start();
+    void begin() override;
+    void update() override;
+    void eventUp() override;
+    void eventDown() override;
+    int  eventSelect() override;
+    void start() override;
 
   protected:
     //----- Members
     //----- functions
-    void resetMenu();
+    void resetMenu() override;
 };
 #endif
 
