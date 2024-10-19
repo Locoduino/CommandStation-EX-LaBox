@@ -8,7 +8,7 @@
 #include "defines.h"
 #include "DCC.h"
 #include "TrackManager.h"
-#include "EXRail2.h"
+#include "EXRAIL2.h"
 
 #ifdef USE_HMI
 #include "menuobject.h"
