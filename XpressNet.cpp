@@ -1,4 +1,4 @@
-﻿/*
+/*
    LaBox Project
    XpressNet part
 
@@ -68,9 +68,9 @@ int rxPin, txPin, dirPin;
 
 XPressNet::XPressNet(int inRxPin, int inTxPin, int inDirPin) : EXCommItem("XPressNet")
 {
-	rxPin = inRxPin;
-	txPin = inTxPin;
-	dirPin = inDirPin;
+   rxPin = inRxPin;
+   txPin = inTxPin;
+   dirPin = inDirPin;
 }
 
 bool XPressNet::begin() {
@@ -92,23 +92,23 @@ bool XPressNet::begin() {
   minAdress = 0;                                //  Plage d'adressage des périphériques,
   maxAdress = 34;                               //  31 adresses + 4 adresses prioritaires
 
- 	DIAG(F("[XPRESSNET] Serial2 Txd:%d   Rxd:%d   Dir:%d"), txPin, rxPin, dirPin);
+   DIAG(F("[XPRESSNET] Serial2 Txd:%d   Rxd:%d   Dir:%d"), txPin, rxPin, dirPin);
 
-	return true;
+   return true;
 }
 
 void XPressNet::getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) 
 {
-	char mess[maxSize*2];
+   char mess[maxSize*2];
 
-	sprintf(mess, "[XPNET] Serial2");
-	*pMess1 = mess;
+   sprintf(mess, "[XPNET] Serial2");
+   *pMess1 = mess;
 
-	sprintf(mess, "[XPNET] Tx:%d Rx:%d", txPin, rxPin);
-	*pMess2 = mess;
+   sprintf(mess, "[XPNET] Tx:%d Rx:%d", txPin, rxPin);
+   *pMess2 = mess;
 
-	sprintf(mess, "[XPNET] dir:%d", dirPin);
-	*pMess3 = mess;
+   sprintf(mess, "[XPNET] dir:%d", dirPin);
+   *pMess3 = mess;
 }
 
 bool XPressNet::loop() {
@@ -120,8 +120,8 @@ bool XPressNet::loop() {
       Xor ^= BufXpress[Bi++];                   // Xor des datas
     }
     if (Xor != 0) {                             // Si pas d'erreur, Xor = 0
-		 	DIAG(F("[XPRESSNET] Wrong checksum"));    // Mauvais checksum, retour
-			return false;
+         DIAG(F("[XPRESSNET] Wrong checksum"));    // Mauvais checksum, retour
+         return false;
     }
     else {
       MemoAdrAppel = Adress40[Ti];             // Mémorise adresse d'appel
@@ -131,7 +131,7 @@ bool XPressNet::loop() {
         Adress60[n] = MemoAdrRep;
       }
       Decodage();                              // Décodage de la trame reçue
-    }		
+    }    
   }
 
   currentTime = millis();
@@ -142,7 +142,7 @@ bool XPressNet::loop() {
     Serial2.write(Adress40[Ti]);                // Envoi adresse aux périphériques (A = adresse, P = Parité.   P10A AAAA
   }
 
-	return true;
+   return true;
 }
 
 void XpressCvValueCallback(int16_t inValue) {
@@ -162,14 +162,14 @@ void XpressCvWriteValueCallback(int16_t inValue) {
 void XPressNet::Decodage() {
   int Adr;
   if (DIAG_XPNET)
-	{
+   {
     for (n = 0; n < Bi + 1; n++) {                     // DEBUG
       if (BufXpress[n] < 10) Serial.print("0");
       Serial.print(BufXpress[n], HEX);
       Serial.print(" ");
     }
     Serial.println();
-	}
+   }
 
   switch (BufXpress[0]) {
     case 0xE4:
@@ -229,8 +229,8 @@ void XPressNet::Decodage() {
       if (BufXpress[1] == 0x16) {
         XpressCvAddress = BufXpress[2];
         XpressCvValue = BufXpress[3];
-		  	if (DIAG_XPNET)
-        	DIAG(F("[XPRESSNET] Write CV %d  value:%d."), XpressCvAddress, XpressCvValue);               // DEBUG
+         if (DIAG_XPNET)
+         DIAG(F("[XPRESSNET] Write CV %d  value:%d."), XpressCvAddress, XpressCvValue);               // DEBUG
         void (*ptr)(int16_t) = &XpressCvWriteValueCallback;
         DCC::writeCVByte(XpressCvAddress, XpressCvValue, ptr);
         stateCV = Writing;
@@ -244,8 +244,8 @@ void XPressNet::Decodage() {
         // Serial.println("Demande Cv");                 // DEBUG
         XpressCvAddress = BufXpress[2];
         XpressCvValue = -1;
-		  	if (DIAG_XPNET)
-        	DIAG(F("[XPRESSNET] Read CV %d."), XpressCvAddress);               // DEBUG
+         if (DIAG_XPNET)
+         DIAG(F("[XPRESSNET] Read CV %d."), XpressCvAddress);               // DEBUG
         void (*ptr)(int16_t) = &XpressCvValueCallback;
         DCC::readCV(XpressCvAddress, ptr);
         stateCV = Reading;
@@ -279,8 +279,8 @@ void XPressNet::Decodage() {
         case 0x10:                                         // Lecture du CV Service mode
           if (stateCV == StateCV::Reading_OK) {
             stateCV = StateCV::Ready;
-				  	if (DIAG_XPNET)
-  	  	    	DIAG(F("[XPRESSNET] Reading answer Cv."), XpressCvAddress, XpressCvValue);               // DEBUG
+               if (DIAG_XPNET)
+            DIAG(F("[XPRESSNET] Reading answer Cv."), XpressCvAddress, XpressCvValue);               // DEBUG
             DeconnectPin();
             Tx9(Adress60[Ti]);
             Tx9(0x63);
@@ -291,8 +291,8 @@ void XPressNet::Decodage() {
             ConnectPin();
           }
           else if (stateCV == StateCV::Reading) {
-				  	if (DIAG_XPNET)
-  	  	    	DIAG(F("[XPRESSNET] Reading..."));               // DEBUG
+               if (DIAG_XPNET)
+            DIAG(F("[XPRESSNET] Reading..."));               // DEBUG
             DeconnectPin();
             Tx9(Adress60[Ti]);
             Tx9(0x61);                                      // BUSY
