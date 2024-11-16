@@ -42,11 +42,13 @@
 static std::vector<NetworkClientUDP> clientsUDP; // a list to hold all UDP clients
 
 bool Z21Throttle::DIAGBASE=false;
+bool Z21Throttle::DIAGRWCV=false;
 bool Z21Throttle::DIAGBROADCAST=false;
 bool Z21Throttle::DIAGDATA=false;
 bool Z21Throttle::DIAGVERBOSE=false;
 
 #define DIAG_Z21	 				if (Z21Throttle::DIAGBASE) DIAG
+#define DIAG_Z21RWCV			if (Z21Throttle::DIAGRWCV) DIAG
 #define DIAG_Z21BROADCAST	if (Z21Throttle::DIAGBROADCAST) DIAG
 #define DIAG_Z21DATA		 	if (Z21Throttle::DIAGDATA) DIAG
 #define DIAG_Z21VERBOSE	 	if (Z21Throttle::DIAGVERBOSE) DIAG
@@ -749,7 +751,7 @@ void Z21Throttle::cvReadProg(byte inDB1, byte inDB2) {
 
 	int cvAddress = ((inDB1 & 0x3F) << 8) + inDB2 + 1;
 
-	DIAG_Z21(F("[Z21] %d: cvRead Prog %d"), clientid, cvAddress);
+	DIAG_Z21RWCV(F("[Z21] %d: cvRead Prog %d"), clientid, cvAddress);
 
 	Z21Throttle::readWriteThrottle = this;
 	Z21Throttle::cvAddress = cvAddress - 1;
@@ -760,18 +762,18 @@ void Z21Throttle::cvReadProg(byte inDB1, byte inDB2) {
 
 // Working as cvReadProg for the moment...
 void Z21Throttle::cvReadMain(byte inDB1, byte inDB2) {
-	if (Z21Throttle::readWriteThrottle != NULL)
+/*	if (Z21Throttle::readWriteThrottle != NULL)
 		return;
 
 	int cvAddress = ((inDB1 & 0x3F) << 8) + inDB2 + 1;
 
-	DIAG_Z21(F("[Z21] %d: cvRead Main cv %d"), clientid, cvAddress);
+	DIAG_Z21RWCV(F("[Z21] %d: cvRead Main cv %d"), clientid, cvAddress);
 
 	Z21Throttle::readWriteThrottle = this;
 	Z21Throttle::cvAddress = cvAddress - 1;
 
 	void (*ptr)(int16_t) = &Z21CvValueCallback;
-	DCC::readCV(cvAddress, ptr);
+	DCC::readCV(cvAddress, ptr);*/
 }
 
 //
@@ -784,7 +786,7 @@ void Z21Throttle::cvWriteProg(byte inDB1, byte inDB2, byte inDB3) {
 
 	int cvAddress = ((inDB1 & 0x3F) << 8) + inDB2 + 1;
 
-	DIAG_Z21(F("[Z21] %d: cvWrite Prog cv %d value %d"), clientid, cvAddress, inDB3);
+	DIAG_Z21RWCV(F("[Z21] %d: cvWrite Prog cv %d value %d"), clientid, cvAddress, inDB3);
 
 	Z21Throttle::readWriteThrottle = this;
 	Z21Throttle::cvAddress = cvAddress - 1;
@@ -794,20 +796,42 @@ void Z21Throttle::cvWriteProg(byte inDB1, byte inDB2, byte inDB3) {
 }
 
 // Working as cvReadProg for the moment...
-void Z21Throttle::cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4) {
-	if (Z21Throttle::readWriteThrottle != NULL)
-		return;
-
+int Z21Throttle::cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4) {
 	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
 	int cvAddress = ((inDB3 & B00000011) << 8) + inDB4 + 1;
+/*
+	DIAG_Z21RWCV(F("[Z21] %d: cvRead Pom Loco %d cv %d"), clientid, locoAddress, cvAddress);
 
-	DIAG_Z21(F("[Z21] %d: cvRead Pom Loco %d cv %d"), clientid, locoAddress, cvAddress);
-
-	Z21Throttle::readWriteThrottle = this;
 	Z21Throttle::cvAddress = cvAddress - 1;
 
 	void (*ptr)(int16_t) = &Z21CvValueCallback;
-	DCC::readCV(cvAddress, ptr);
+	DCC::readCV(cvAddress, ptr);*/
+	return cvAddress;
+}
+
+void Z21Throttle::cvWriteBytePom(byte inDB1, byte inDB2, byte inDB3, byte inDB4, byte inDB5) {
+	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
+	int cvAddress = ((inDB3 & B00000011) << 8) + inDB4 + 1;
+
+	DIAG_Z21RWCV(F("[Z21] %d: cvWrite Byte Pom Loco %d cv %d = %d"), clientid, locoAddress, cvAddress, inDB5);
+
+	Z21Throttle::cvAddress = cvAddress - 1;
+
+	DCC::writeCVByteMain(locoAddress, cvAddress, inDB5);
+}
+
+void Z21Throttle::cvWriteBitPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4, byte inDB5) {
+	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
+	int cvAddress = ((inDB3 & B00000011) << 8) + inDB4 + 1;
+
+	Z21Throttle::cvAddress = cvAddress - 1;
+
+	byte bitNum = inDB5 & B00000011 << 8;
+	bool value = inDB5 & B00000100;
+
+	DIAG_Z21RWCV(F("[Z21] %d: cvWrite Bit Pom Loco %d cv %d : bit %d = %s"), clientid, locoAddress, cvAddress, bitNum, value?"1":"0");
+
+	DCC::writeCVBitMain(cvAddress, inDB3, bitNum, value);
 }
 
 bool Z21Throttle::parse() {
@@ -953,7 +977,7 @@ bool Z21Throttle::parse() {
 					break;
 				case LAN_X_HEADER_CV_READ:
 					if (TrackManager::getProgDriver() != NULL) {
-						DIAG_Z21VERBOSE(F("[Z21] %d: CV READ PROG "), this->clientid);
+						DIAG_Z21RWCV(F("[Z21] %d: CV READ PROG "), this->clientid);
 						// DB0 should be 0x11
 						cvReadProg(DB[2], DB[3]);
 					}
@@ -963,20 +987,49 @@ bool Z21Throttle::parse() {
 						//
 
 						// If no prog track, read on the main track !
-						DIAG_Z21VERBOSE(F("[Z21] %d: CV READ MAIN "), this->clientid);
+						DIAG_Z21RWCV(F("[Z21] %d: CV READ MAIN "), this->clientid);
 						// DB0 should be 0x11
 						cvReadMain(DB[2], DB[3]);
 					}
 					done = true;
 					break;
 				case LAN_X_HEADER_CV_POM:
-					DIAG_Z21VERBOSE(F("[Z21] %d: CV READ POM"), this->clientid);
-					// DB0 should be 0x11
-					cvReadPom(DB[2], DB[3], DB[4], DB[5]);
-					done = true;
+					DB0 = DB[1];
+					switch (DB0) {
+						case LAN_X_DB0_CV_POM_WRITE:
+						{
+							byte code = DB[4] & 0b11111100;
+							switch(code)
+							{
+								case LAN_X_DB3_CV_POM_READ_BYTE:
+									// Only by Railcom with Zimo decoders...
+									{
+										int cvAddress = ((DB[4] & B00000011) << 8) + DB[5] + 1;
+										int add = cvReadPom(DB[2], DB[3], DB[4], DB[5]);
+										DIAG_Z21RWCV(F("[Z21] %d: CV POM READ BYTE DUMMY cv %d"), this->clientid, cvAddress);
+										notifyCvNACK(add);
+									}
+									break;
+								case LAN_X_DB3_CV_POM_WRITE_BYTE:
+									DIAG_Z21RWCV(F("[Z21] %d: CV POM WRITE BYTE"), this->clientid);
+									cvWriteBytePom(DB[2], DB[3], DB[4], DB[5], DB[6]);
+									break;
+								case LAN_X_DB3_CV_POM_WRITE_BIT:
+									DIAG_Z21RWCV(F("[Z21] %d: CV POM WRITE BIT"), this->clientid);
+									cvWriteBitPom(DB[2], DB[3], DB[4], DB[5], DB[6]);
+									break;
+							}
+							done = true;
+							break;
+						}
+
+						case LAN_X_DB0_CV_POM_ACCESSORY_WRITE:
+							DIAG_Z21RWCV(F("[Z21] %d: CV ACCESSORY WRITE POM"), this->clientid);
+							break;
+					}
 					break;
 				case LAN_X_HEADER_CV_WRITE:
-					DIAG_Z21VERBOSE(F("[Z21] %d: CV WRITE "), this->clientid);
+					DIAG_Z21RWCV(F("[Z21] %d: CV WRITE "), this->clientid);
 					cvWriteProg(DB[2], DB[3], DB[4]);
 					done = true;
 					break;

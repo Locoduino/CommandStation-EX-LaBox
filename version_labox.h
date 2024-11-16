@@ -1,7 +1,15 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.8.0"
+#define VERSION_LABOX "2.9.0"
+// 2.9.0	- Add POM programming in Z21 interface.
+//				- Update of used libraries :
+//						mathertel/OneButton@^2.6.1
+//						adafruit/Adafruit GFX Library@^1.11.11	
+//						adafruit/Adafruit SSD1306@^2.5.12
+//				- Code has been added for DC mode, but is not functionnal for the moment.
+//				- Documentation of various protocols implemented (or not yet) in LaBox 
+//					has been added in Release_Notes folder.
 // 2.8.0	- Add command to identify the Decoder using CV7/CV8.
 //				- CAN : the version of CAN interface is added to CAN information.
 //				- Add command 'Shuttle test' with a -very- small shuttle automation program.

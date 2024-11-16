@@ -47,6 +47,8 @@ class menuObject
     virtual void resetMenu();
     virtual void start();
 
+		void displayOptionString(const char *str, bool selected, int x, int y);
+
   protected:
     //----- Members
     Adafruit_SSD1306*        display;

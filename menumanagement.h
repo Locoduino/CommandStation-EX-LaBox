@@ -40,6 +40,7 @@ class MenuManagement
     menuObject* trainCVWrite;
     menuObject* trainIdent;
     menuObject* shuttle;
+    menuObject* dcMode;
 
   protected:
     //----- Members

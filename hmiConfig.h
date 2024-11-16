@@ -74,6 +74,7 @@
 #define MENUTRAINCVWRITE				306
 #define MENUTRAINIDENT					307
 #define MENUSHUTTLESAMPLE				308
+#define MENUDCDCCMODE						309
 
 #define MENUINFORMATION_ABOUT		400
 #define MENUINFORMATION_WIFI		401
@@ -122,6 +123,7 @@
 #define TXT_MenuCVWrite        	"Ecriture CV"
 #define TXT_MenuIdent	        	"Ident. decodeur"
 #define TXT_MenuShuttle	       	"Va&Vient EXRail"
+#define TXT_DcDccMode		       	"DC/DCC"
 #define TXT_PhysicalMes         "Mesures U et I"
 #define TXT_TrainView           "Type de vue trains"
 #define TXT_V1Train             "1 train"
@@ -161,6 +163,16 @@
 #define TXT_SHUTTLE_LOGO				"LaBox EXRail shuttle"
 #define TXT_SHUTTLE_RUNNING			"Va&Vient EN ROUTE"
 #define TXT_SHUTTLE_STOP				"Stop"
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_DCDCC_LOGO					"LaBox   DC/DCC mode"
+#define TXT_DCDCC_DCRUNNING			"DC"
+#define TXT_DCDCC_DCCRUNNING		"DCC"
+#define TXT_DCDCC_TODC					"DCC => DC"
+#define TXT_DCDCC_TODCC					"DC => DCC"
+#define TXT_DCDCC_DC						"Dc"
+#define TXT_DCDCC_DCC						"Dcc"
+#define TXT_DCDCC_CONFIRM				"Confirm"
+#define TXT_DCDCC_ABORT					"Abort"
 
     // Message by language : English
 // maximum line size : 					 ++++++++++++++++++++

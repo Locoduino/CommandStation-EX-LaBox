@@ -232,6 +232,7 @@ int menuObject::eventSelect()
 			case MENUTRAINCVWRITE:           // User has selected a sub menu
 			case MENUTRAINIDENT:           // User has selected a sub menu
 			case MENUSHUTTLESAMPLE:           // User has selected a sub menu
+			case MENUDCDCCMODE:           // User has selected a sub menu
 				return selectedMenu->value;
 				break;
 			default:
@@ -253,4 +254,13 @@ void menuObject::start()
 {
 
 }
+
+void menuObject::displayOptionString(const char *str, bool selected, int x, int y)
+{
+	char message[40];
+	sprintf(message,"%c%s%c",selected?'>':' ', str, selected?'<':' ');
+	display->setCursor(x, y);
+	display->println(message);
+}
+
 #endif

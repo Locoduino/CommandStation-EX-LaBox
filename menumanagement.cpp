@@ -21,6 +21,7 @@
 #include "menuTrainCvWrite.h"
 #include "menuDecoderIdentification.h"
 #include "menuShuttleSample.h"
+#include "menuDcDccMode.h"
 
 extern enumHMIState  _HMIState ;
 extern enumHMIState  _HMIState_prev;
@@ -45,6 +46,7 @@ MenuManagement::MenuManagement(hmi*  screen)
   trainCVWrite 	= new menuTrainCvWrite(display, baseMenu, TXT_MenuCVWrite,  MENUTRAINCVWRITE);
   trainIdent	 	= new menuDecoderIdentification(display, baseMenu, TXT_MenuIdent,  MENUTRAINIDENT);
   shuttle	 			= new menuShuttleSample(display, baseMenu, TXT_MenuShuttle,  MENUSHUTTLESAMPLE);
+  //dcMode	 			= new menuDcDccMode(display, baseMenu, TXT_DcDccMode,  MENUDCDCCMODE);
   TrainView     = new menuObject(display, baseMenu, TXT_TrainView, MENUTYPELIST);
     V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
     V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
@@ -166,6 +168,7 @@ void MenuManagement::BtnSelectPressed()
     case MENUTRAINCVWRITE:
     case MENUTRAINIDENT:
     case MENUSHUTTLESAMPLE:
+    case MENUDCDCCMODE:
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];

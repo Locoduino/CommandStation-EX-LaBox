@@ -94,6 +94,7 @@ class Z21Throttle {
 	  static bool DIAGBROADCAST;
 	  static bool DIAGVERBOSE;
 	  static bool DIAGDATA;
+	  static bool DIAGRWCV;
 
 private: 
 		Z21Throttle(int clientId);
@@ -147,7 +148,9 @@ private:
 		void cvReadProg(byte inDB1, byte inDB2);
 		void cvWriteProg(byte inDB1, byte inDB2, byte inDB3);
 		void cvReadMain(byte inDB1, byte inDB2);
-		void cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4);
+		int cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4);
+		void cvWriteBytePom(byte inDB1, byte inDB2, byte inDB3, byte inDB4, byte inDB5);
+		void cvWriteBitPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4, byte inDB5);
 };
 
 class Z21EXCommItem : public EXCommItem {
@@ -218,9 +221,9 @@ class Z21EXCommItem : public EXCommItem {
 #define LAN_X_DB0_CV_POM_WRITE 0x30
 #define LAN_X_DB0_CV_POM_ACCESSORY_WRITE 0x31
 
-#define LAN_X_OPTION_CV_POM_WRITE_BYTE 0xEC
-#define LAN_X_OPTION_CV_POM_WRITE_BIT 0xE8
-#define LAN_X_OPTION_CV_POM_READ_BYTE 0xE4
+#define LAN_X_DB3_CV_POM_WRITE_BYTE 0xEC
+#define LAN_X_DB3_CV_POM_WRITE_BIT 0xE8
+#define LAN_X_DB3_CV_POM_READ_BYTE 0xE4
 
 // Replies to the controllers
 #define HEADER_LAN_SYSTEMSTATE	0x84
