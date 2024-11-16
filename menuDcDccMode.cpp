@@ -145,8 +145,8 @@ int menuDcDccMode::eventSelect()
 			{
 				Serial.print("Move to ");
 				Serial.println(wantedPowerMode == TRACK_MODE_DC ? "DcMode":"DccMode");
-				TrackManager::setMainPower(POWERMODE::OFF);
-				TrackManager::setTrackMode(0, wantedPowerMode, DC_MODE_ADDRESS);
+				//TrackManager::setMainPower(POWERMODE::OFF);
+				//TrackManager::setTrackMode(0, wantedPowerMode, DC_MODE_ADDRESS);
 				dcDccState = wantedPowerMode == TRACK_MODE_DC ? DcMode:DccMode;
 			}
 			ret = MENUEXIT;
