@@ -7026,12 +7026,6 @@
 		(uuid "1fd624e7-f0c1-48e5-a0a2-44640990647e")
 	)
 	(junction
-		(at 335.28 241.3)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "21314fbe-e00a-490a-95ea-466d0f53f941")
-	)
-	(junction
 		(at 139.7 134.62)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7072,6 +7066,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3017ff5a-a688-458b-bc91-2b91ea1e010c")
+	)
+	(junction
+		(at 335.28 231.14)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "310181ac-7076-47c7-9932-13a4c9a8ac26")
 	)
 	(junction
 		(at 335.28 226.06)
@@ -7138,12 +7138,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "40b30d9a-4fb0-4992-8f57-b9024316f667")
-	)
-	(junction
-		(at 335.28 236.22)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "41a81fee-6b96-4da1-a08b-e819abdcf8b4")
 	)
 	(junction
 		(at 198.12 106.68)
@@ -7572,12 +7566,6 @@
 		(uuid "b2333f9a-b72e-4e9a-bc2d-75332f0a14dd")
 	)
 	(junction
-		(at 307.34 241.3)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "b27bb8f5-456f-4aba-8556-a2f3e3fb4705")
-	)
-	(junction
 		(at 119.38 154.94)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7680,12 +7668,6 @@
 		(uuid "d682aa65-e29a-46ce-8d4f-dd4934c5442a")
 	)
 	(junction
-		(at 307.34 236.22)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "d813d05a-8b3a-4556-9112-33eb0033192b")
-	)
-	(junction
 		(at 127 76.2)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7696,12 +7678,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "dcf9856d-8e58-482b-ac3e-ed7ca9899b4c")
-	)
-	(junction
-		(at 335.28 231.14)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e1f1381c-ff60-4429-81ff-974da6674cc8")
 	)
 	(junction
 		(at 165.1 264.16)
@@ -8003,16 +7979,6 @@
 	)
 	(wire
 		(pts
-			(xy 330.2 236.22) (xy 335.28 236.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0d95c80c-703c-418c-9837-bc18ba3ea1a0")
-	)
-	(wire
-		(pts
 			(xy 274.32 167.64) (xy 312.42 167.64)
 		)
 		(stroke
@@ -8060,16 +8026,6 @@
 			(type default)
 		)
 		(uuid "1309c53f-63a8-43c7-ba00-8fd2a4cb69a1")
-	)
-	(wire
-		(pts
-			(xy 335.28 231.14) (xy 330.2 231.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "134bfada-f0b0-4c8e-9e9c-3cd2bf3a1c1f")
 	)
 	(wire
 		(pts
@@ -8823,16 +8779,6 @@
 	)
 	(wire
 		(pts
-			(xy 335.28 231.14) (xy 335.28 236.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3d23cf47-7cc8-4c1d-b5fd-e2d35ca14dd8")
-	)
-	(wire
-		(pts
 			(xy 215.9 66.04) (xy 215.9 81.28)
 		)
 		(stroke
@@ -8960,16 +8906,6 @@
 			(type default)
 		)
 		(uuid "429c92a6-4d68-4597-8844-fc88f311c899")
-	)
-	(wire
-		(pts
-			(xy 307.34 241.3) (xy 307.34 236.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "42a12a4b-bd62-49d1-8f77-a6deaeeee8d8")
 	)
 	(wire
 		(pts
@@ -9263,7 +9199,7 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 246.38) (xy 307.34 246.38)
+			(xy 311.15 246.38) (xy 307.34 246.38)
 		)
 		(stroke
 			(width 0)
@@ -9863,7 +9799,7 @@
 	)
 	(wire
 		(pts
-			(xy 320.04 231.14) (xy 307.34 231.14)
+			(xy 311.15 231.14) (xy 307.34 231.14)
 		)
 		(stroke
 			(width 0)
@@ -9920,16 +9856,6 @@
 			(type default)
 		)
 		(uuid "72d6ed73-8d3e-437e-84b2-89005b784042")
-	)
-	(wire
-		(pts
-			(xy 307.34 246.38) (xy 307.34 241.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "74548fdb-58ac-43b5-9e58-a2234fad4524")
 	)
 	(wire
 		(pts
@@ -10113,16 +10039,6 @@
 	)
 	(wire
 		(pts
-			(xy 325.12 241.3) (xy 335.28 241.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7b4dd050-c1d9-49c8-9c0c-41e7a6459410")
-	)
-	(wire
-		(pts
 			(xy 302.26 60.96) (xy 312.42 60.96)
 		)
 		(stroke
@@ -10273,16 +10189,6 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 241.3) (xy 307.34 241.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "86d72c5b-14a8-4c07-9b1a-09ef5f552ac1")
-	)
-	(wire
-		(pts
 			(xy 30.48 152.4) (xy 78.74 152.4)
 		)
 		(stroke
@@ -10400,6 +10306,16 @@
 			(type default)
 		)
 		(uuid "8f68e951-9db8-4b52-b55a-6b757d606006")
+	)
+	(wire
+		(pts
+			(xy 321.31 231.14) (xy 335.28 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8f693932-06f1-4c4e-89af-68fe82f1116c")
 	)
 	(wire
 		(pts
@@ -10943,7 +10859,7 @@
 	)
 	(wire
 		(pts
-			(xy 330.2 246.38) (xy 325.12 246.38)
+			(xy 326.39 246.38) (xy 321.31 246.38)
 		)
 		(stroke
 			(width 0)
@@ -11210,16 +11126,6 @@
 			(type default)
 		)
 		(uuid "c0dc7f4e-cd3a-4ae1-9a0e-7101b40482fb")
-	)
-	(wire
-		(pts
-			(xy 309.88 236.22) (xy 307.34 236.22)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c225910f-30a2-47f1-9f42-6c317e553078")
 	)
 	(wire
 		(pts
@@ -11703,7 +11609,7 @@
 	)
 	(wire
 		(pts
-			(xy 307.34 236.22) (xy 307.34 231.14)
+			(xy 307.34 231.14) (xy 307.34 246.38)
 		)
 		(stroke
 			(width 0)
@@ -11733,13 +11639,23 @@
 	)
 	(wire
 		(pts
-			(xy 335.28 241.3) (xy 335.28 246.38)
+			(xy 335.28 231.14) (xy 335.28 246.38)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "e0cb0367-9bd8-410a-add4-4bd011accd3c")
+	)
+	(wire
+		(pts
+			(xy 335.28 246.38) (xy 331.47 246.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1d942cc-cd49-4ec8-8593-ef0354b53b00")
 	)
 	(wire
 		(pts
@@ -12080,16 +11996,6 @@
 			(type default)
 		)
 		(uuid "f49073cb-5776-41d0-b97c-29fb541456ea")
-	)
-	(wire
-		(pts
-			(xy 335.28 236.22) (xy 335.28 241.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f524bcdf-cc84-44e7-bc3d-004a1c94e3b1")
 	)
 	(wire
 		(pts
@@ -12469,84 +12375,6 @@
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
 					(reference "R16")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "CENTRALE02c3-eagle-import:SJ")
-		(at 289.56 200.66 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0862de5e-b5b6-45ca-bb25-3ec987e38f71")
-		(property "Reference" "SJ1"
-			(at 287.02 198.12 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Value" "SJ"
-			(at 287.02 204.47 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Footprint" "SJ"
-			(at 289.56 200.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 289.56 200.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 289.56 200.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LPSC PN" ""
-			(at 289.56 200.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "500b541e-33b8-4e62-8c74-fa2a33c57f54")
-		)
-		(pin "2"
-			(uuid "b5385a29-ce3a-4a4b-b6d9-615ab612116e")
-		)
-		(instances
-			(project "CENTRALE02c3"
-				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
-					(reference "SJ1")
 					(unit 1)
 				)
 			)
@@ -13092,7 +12920,7 @@
 	)
 	(symbol
 		(lib_id "CENTRALE02c3-eagle-import:R-EU_R0805")
-		(at 325.12 231.14 180)
+		(at 316.23 231.14 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -13100,7 +12928,7 @@
 		(dnp no)
 		(uuid "20e54c84-ed7d-4731-8a22-e25ae2877f59")
 		(property "Reference" "R3"
-			(at 328.93 232.6386 0)
+			(at 320.04 232.6386 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -13109,7 +12937,7 @@
 			)
 		)
 		(property "Value" "33K"
-			(at 328.93 227.838 0)
+			(at 320.04 227.838 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -13118,7 +12946,7 @@
 			)
 		)
 		(property "Footprint" "R0805"
-			(at 325.12 231.14 0)
+			(at 316.23 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13127,7 +12955,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 325.12 231.14 0)
+			(at 316.23 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13136,7 +12964,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 325.12 231.14 0)
+			(at 316.23 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13145,7 +12973,7 @@
 			)
 		)
 		(property "LPSC PN" ""
-			(at 325.12 231.14 0)
+			(at 316.23 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13333,84 +13161,6 @@
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
 					(reference "I2C1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "CENTRALE02c3-eagle-import:SJ")
-		(at 320.04 241.3 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "2d833f53-95af-4ea0-b94e-80bb8989b6f5")
-		(property "Reference" "SJ5"
-			(at 317.5 238.76 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Value" "SJ"
-			(at 317.5 245.11 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Footprint" "SJ"
-			(at 320.04 241.3 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 320.04 241.3 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 320.04 241.3 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LPSC PN" ""
-			(at 320.04 241.3 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d3defb82-5af7-4915-93f8-d0bb12fba6ce")
-		)
-		(pin "2"
-			(uuid "31ecfb50-7d0d-4f5d-9684-37105bb4c648")
-		)
-		(instances
-			(project "CENTRALE02c3"
-				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
-					(reference "SJ5")
 					(unit 1)
 				)
 			)
@@ -15138,7 +14888,7 @@
 	)
 	(symbol
 		(lib_id "CENTRALE02c3-eagle-import:1N4148DO35-7")
-		(at 332.74 246.38 180)
+		(at 328.93 246.38 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15146,7 +14896,7 @@
 		(dnp no)
 		(uuid "6946eb7d-932e-48ac-88cf-33eec8b29a6d")
 		(property "Reference" "D4"
-			(at 330.2 246.8626 0)
+			(at 329.438 248.666 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -15155,7 +14905,7 @@
 			)
 		)
 		(property "Value" "1N4148"
-			(at 330.2 244.0686 0)
+			(at 332.74 242.57 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -15164,7 +14914,7 @@
 			)
 		)
 		(property "Footprint" "DO35-7"
-			(at 332.74 246.38 0)
+			(at 328.93 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15173,7 +14923,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 332.74 246.38 0)
+			(at 328.93 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15182,7 +14932,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 332.74 246.38 0)
+			(at 328.93 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15191,7 +14941,7 @@
 			)
 		)
 		(property "LPSC PN" ""
-			(at 332.74 246.38 0)
+			(at 328.93 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15548,7 +15298,7 @@
 	)
 	(symbol
 		(lib_id "CENTRALE02c3-eagle-import:R-EU_R0805")
-		(at 320.04 246.38 180)
+		(at 316.23 246.38 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15556,7 +15306,7 @@
 		(dnp no)
 		(uuid "7746434b-c9c9-48c3-a08d-6e02730ecb43")
 		(property "Reference" "R18"
-			(at 323.85 247.8786 0)
+			(at 320.04 247.8786 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -15565,7 +15315,7 @@
 			)
 		)
 		(property "Value" "10K"
-			(at 323.85 243.078 0)
+			(at 320.04 243.078 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -15574,7 +15324,7 @@
 			)
 		)
 		(property "Footprint" "R0805"
-			(at 320.04 246.38 0)
+			(at 316.23 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15583,7 +15333,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 320.04 246.38 0)
+			(at 316.23 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15592,7 +15342,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 320.04 246.38 0)
+			(at 316.23 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15601,7 +15351,7 @@
 			)
 		)
 		(property "LPSC PN" ""
-			(at 320.04 246.38 0)
+			(at 316.23 246.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15619,162 +15369,6 @@
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
 					(reference "R18")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "CENTRALE02c3-eagle-import:SJ")
-		(at 325.12 236.22 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7a20eed4-0de7-4ded-ba09-88dcb5f209dd")
-		(property "Reference" "SJ4"
-			(at 322.58 233.68 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Value" "SJ"
-			(at 322.58 240.03 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Footprint" "SJ"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LPSC PN" ""
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c2ad3a49-c475-44a7-901e-50baef927973")
-		)
-		(pin "2"
-			(uuid "1048e1e0-9c7a-4ba5-bf98-97083e34db21")
-		)
-		(instances
-			(project "CENTRALE02c3"
-				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
-					(reference "SJ4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "CENTRALE02c3-eagle-import:R-EU_R0805")
-		(at 314.96 236.22 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7b06b5be-c805-41f9-8e2a-23b1ec287e16")
-		(property "Reference" "R19"
-			(at 318.77 237.7186 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Value" "15K"
-			(at 318.77 232.918 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Footprint" "R0805"
-			(at 314.96 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 314.96 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 314.96 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LPSC PN" ""
-			(at 314.96 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "951fcb11-99b5-4a0f-8c22-d6efd2815eae")
-		)
-		(pin "2"
-			(uuid "4051828d-70a1-4696-8596-3e888c60c4f1")
-		)
-		(instances
-			(project "CENTRALE02c3"
-				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
-					(reference "R19")
 					(unit 1)
 				)
 			)
@@ -17428,84 +17022,6 @@
 			(project "CENTRALE02c3"
 				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
 					(reference "L6203")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "CENTRALE02c3-eagle-import:SJ")
-		(at 289.56 205.74 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bc8b77e2-6747-4d7c-8958-8fc437abe63a")
-		(property "Reference" "SJ2"
-			(at 287.02 203.2 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Value" "SJ"
-			(at 287.02 209.55 0)
-			(effects
-				(font
-					(size 1.778 1.5113)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Footprint" "SJ"
-			(at 289.56 205.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 289.56 205.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 289.56 205.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LPSC PN" ""
-			(at 289.56 205.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "89711f39-6d00-4fee-9dff-6eb0d2bd8070")
-		)
-		(pin "2"
-			(uuid "2764df4e-6524-4e92-b3c2-377361d2725a")
-		)
-		(instances
-			(project "CENTRALE02c3"
-				(path "/c58960d9-4cac-4036-ad2e-1aef26946dae"
-					(reference "SJ2")
 					(unit 1)
 				)
 			)

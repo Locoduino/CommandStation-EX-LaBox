@@ -7,3 +7,6 @@
 - Add CAN TERM text.
 - Change lot of attributes of symbols and prints for correct BOM generation with 'Fabrication Toolkit' JLCPCB plugin for Kicad 8.
 - Add BOM files to PCB
+
+03c3 (24/11/2024)
+- Removing of unused soldering pads.
