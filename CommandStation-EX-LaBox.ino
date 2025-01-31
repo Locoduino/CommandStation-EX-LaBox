@@ -145,11 +145,12 @@ void setup() {
   else {
     DIAG(F("LaBox Main mode."));
     TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
-  }
 
 #ifdef ENABLE_RAILCOM
-	RailcomBegin();
+		// Only use Railcom in LaBox Main mode.
+		RailcomBegin();
 #endif
+  }
 
   // Responsibility 3: Start the DCC engine.
   DCC::begin();
