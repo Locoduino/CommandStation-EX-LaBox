@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.8128,
-          "height": 1.3208,
-          "width": 2.6416
+          "drill": 3.0,
+          "height": 2.1844,
+          "width": 4.3688
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -561,7 +561,7 @@
       "plot": "../Gerber/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "CENTRALE.step",
       "svg": "",
       "vrml": ""
     },

@@ -10,3 +10,6 @@
 
 03c3 (24/11/2024)
 - Removing of unused soldering pads.
+
+03c4 (31/01/2025)
+- Fix of alimentation pads
