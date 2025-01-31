@@ -52,14 +52,16 @@ void RailcomBegin() {
 		railcom_invpin = (gpio_num_t)p.invpin;
 		break;
   }
+
+	DIAG(F("Railcom pin:%d invpin:%d"), railcom_pin, railcom_invpin);
 }
 
-void StarTimerCutOut(rmt_channel_t channel) {                                                   // * Start Timer 
+void StarTimerCutOut(rmt_channel_t channel) {            // * Start Timer 
   if (!LaboxModes::progMode) {
-	  gpio_matrix_out(railcom_pin, 0x100, false, false);            // * Déconnecte la pin 33 du module RMT
- 		gpio_set_level(railcom_pin, 1);                               // * Pin 33 à l'état haut
- 		rmt_channel = channel;                                              // * Mémorise n° de canal
-  	timerAlarmWrite(TimerCutOut, 160, true);          // * En continu
+	  gpio_matrix_out(railcom_pin, 0x100, false, false);   // * Déconnecte la pin 33 du module RMT
+ 		gpio_set_level(railcom_pin, 1);                      // * Pin 33 à l'état haut
+ 		rmt_channel = channel;                               // * Mémorise n° de canal
+  	timerAlarmWrite(TimerCutOut, 160, true);             // * En continu
   	timerAlarmEnable(TimerCutOut);
   	p = 0;
 	}

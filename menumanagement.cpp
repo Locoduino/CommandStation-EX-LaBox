@@ -9,6 +9,7 @@
  */
 #include "defines.h"
 #include "DCC.h"
+#include "TrackManager.h"
 
 #ifdef USE_HMI
 #include "hmi.h"
@@ -200,6 +201,24 @@ void MenuManagement::BtnSelectPressed()
 				_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
 				_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
 				_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");        
+			}else
+			if(activeMenu == onOffLineOn)
+			{
+				_HMIDEBUG_LEVEL1_PRINT("Choice menu Line ON");
+				if (LaboxModes::progMode == true)
+					TrackManager::setProgPower(POWERMODE::ON);
+				else
+					TrackManager::setMainPower(POWERMODE::ON);
+				_HMIState = StateExitMenu;
+			}else
+			if(activeMenu == onOffLineOff)
+			{
+				_HMIDEBUG_LEVEL1_PRINT("Choice menu Line OFF");
+				if (LaboxModes::progMode == true)
+					TrackManager::setProgPower(POWERMODE::OFF);
+				else
+					TrackManager::setMainPower(POWERMODE::OFF);
+				_HMIState = StateExitMenu;
 			}else
 			{
 				if(activeMenu == resetConfirm)

@@ -1,5 +1,5 @@
 /*
- * La Box Project
+ * LaBox Project
  * Parameters
  * @Author : Cedric Bellec
  *	@Organization : Locoduino.org
@@ -97,11 +97,9 @@
 #define TXT_StopAll             "<ARRET DCC>"
 #define TXT_StartDCC            "<DCC On>"
 #define TXT_ShortCircuit        "COURT-CIRCUIT"
-#define TXT_MenuDCCOffLine      "Stop DCC" // Les ? ne passent pas
+#define TXT_MenuDCCOffLine      "DCC ON/OFF" // Les ? ne passent pas
 #define TXT_MenuOnLine          "En ligne"
 #define TXT_MenuOffLine         "Hors ligne"
-#define TXT_MenuActivWifi       "Activation Wifi"
-#define TXT_MenuDHCP            "DHCP"
 #define TXT_MenuResetConfirm    "Confirmation Reset"
 #define TXT_MenuYes             "Oui"
 #define TXT_MenuNo              "Non"
@@ -112,8 +110,6 @@
 #define TXT_MenuInfoButtons			"             <sortie>"
 #define TXT_MenuWifiInfo        "WiFi"
 #define TXT_MenuEXCOMMInfo			"EXCOMM"
-#define TXT_MenuOn              "On"
-#define TXT_MenuOff             "Off"
 #define TXT_MenuSoftReset       "Redemarrage"
 #define TXT_MenuBack            "< Retour >"
 #define TXT_MenuAddrRead        "Lecture adr Train"
@@ -171,8 +167,8 @@
 #define TXT_DCDCC_TODCC					"DC => DCC"
 #define TXT_DCDCC_DC						"Dc"
 #define TXT_DCDCC_DCC						"Dcc"
-#define TXT_DCDCC_CONFIRM				"Confirm"
-#define TXT_DCDCC_ABORT					"Abort"
+#define TXT_DCDCC_CONFIRM				"Confirmer"
+#define TXT_DCDCC_ABORT					"Stop"
 
     // Message by language : English
 // maximum line size : 					 ++++++++++++++++++++
@@ -185,10 +181,9 @@
 #define TXT_StopAll             "!STOP ALL!"
 #define TXT_StartDCC            "<DCC On>"
 #define TXT_ShortCircuit        "SHORT-CIRCUIT"
-#define TXT_MenuDCCOffLine      "Stop DCC"
+#define TXT_MenuDCCOffLine      "DCC ON/OFF"
 #define TXT_MenuOnLine          "On line"
 #define TXT_MenuOffLine         "Off line"
-#define TXT_MenuActivWifi       "Wifi Activation"
 #define TXT_MenuDHCP            "DHCP"
 #define TXT_MenuResetConfirm    "Reset confirmation ?"
 #define TXT_MenuYes             "Yes"
@@ -201,8 +196,6 @@
 #define TXT_MenuWifiInfo        "WiFi"
 #define TXT_MenuEXCOMMInfo			"EXCOMM"
 #define TXT_MenuCAN             "Networks CAN"
-#define TXT_MenuOn              "On"
-#define TXT_MenuOff             "Off"
 #define TXT_MenuSoftReset       "Reboot"
 #define TXT_MenuBack            "< Return >"
 #define TXT_MenuAddrRead        "Read Train Addr"
@@ -251,7 +244,16 @@
 #define TXT_SHUTTLE_LOGO				"LaBox EXRail shuttle"
 #define TXT_SHUTTLE_RUNNING			"Shuttle RUNNING"
 #define TXT_SHUTTLE_STOP				"Stop"
-*/
+// maximum line size : 					 ++++++++++++++++++++
+#define TXT_DCDCC_LOGO					"LaBox   DC/DCC mode"
+#define TXT_DCDCC_DCRUNNING			"DC"
+#define TXT_DCDCC_DCCRUNNING		"DCC"
+#define TXT_DCDCC_TODC					"DCC => DC"
+#define TXT_DCDCC_TODCC					"DC => DCC"
+#define TXT_DCDCC_DC						"Dc"
+#define TXT_DCDCC_DCC						"Dcc"
+#define TXT_DCDCC_CONFIRM				"Confirm"
+#define TXT_DCDCC_ABORT					"Abort"*/
 
 //---------------------- Global section ---------------------------------
 #define Labox_StateDCCOFF        101

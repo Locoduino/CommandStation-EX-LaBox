@@ -1,7 +1,10 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.9.0"
+#define VERSION_LABOX "2.9.1"
+// 2.9.1	- Menu option DCC ON/OFF is available.
+//				- Some unused textes has been removed in French and English in hmiconfig.h
+//				- Railcom is no more started in prog mode.
 // 2.9.0	- Add POM programming in Z21 interface.
 //				- Update of used libraries :
 //						mathertel/OneButton@^2.6.1
