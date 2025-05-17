@@ -13,3 +13,12 @@
 
 03c4 (31/01/2025)
 - Fix of alimentation pads
+
+1.0a1 (15/05/2025)
+- Fix pin number serigraphy for extension port (left of ESP32...) .
+- Set empty pins of extension to GND.
+- Exchange 36 and 14 pins on this connector to have two groups of a GND pin, an analog pin and three digital pins, named EXT1 (bottom) and EXT2 (top).
+- Add BoosterInput connector under not used RJ11 connectors to use overnumbered Labox cards as boosters, with only alimentation and DCC connectors, Leds, 470 mf condensator and L6203.
+- Add VIN graphic symbol near alimentation connector.
+- Remove unused Locoduino copyright drawed with Top copper lines (top left of the board) !
+- Move Locoduino and Open Source Hardware logos to the center of the board.

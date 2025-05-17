@@ -55,15 +55,15 @@ void CanMarklin::getInfos(String *pMess1, String *pMess2, String *pMess3, byte m
 	char mess[maxSize*2];
 
   if (DESIRED_BIT_RATE < 1000000UL)
-		sprintf(mess, "[CANM] id:%d / %dK", CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL);
+		sprintf(mess, "[CANM] id:%d / %ldK", CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL);
 	else
-		sprintf(mess, "[CANM] id:%d / %dM", CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL);
+		sprintf(mess, "[CANM] id:%d / %ldM", CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL);
 	*pMess1 = mess;
 
 	sprintf(mess, "[CANM] Tx:%d Rx:%d", TxPin, RxPin);
 	*pMess2 = mess;
 
-	sprintf(mess, "[CANM] ", VERSION_LABOX_CAN);
+	sprintf(mess, "[CANM] %s", VERSION_LABOX_CAN);
 	*pMess3 = mess;
 }
 
@@ -114,6 +114,7 @@ void CanMarklin::loopItem()
   CANMessage frameIn;
   if (ACAN_ESP32::can.receive(frameIn))
   {
+		#pragma GCC diagnostic ignored "-Wunused-variable"
     const uint8_t prio = (frameIn.id & 0x1E000000) >> 25; // Priorité
     const uint8_t cmde = (frameIn.id & 0x1FE0000) >> 17;  // Commande
     const uint8_t resp = (frameIn.id & 0x10000) >> 16;    // Reponse

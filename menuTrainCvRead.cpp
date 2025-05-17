@@ -19,7 +19,7 @@
 int CVValue = -1;
 int CVAddress = 0;
 bool displayInProgress;
-char messageRead[21];
+char messageRead[30];
 
 enum StateReadingCv
 {
@@ -239,7 +239,7 @@ void menuTrainCvRead::update()
 			break;
 	}
 
-  char add[10];
+  char add[20];
   if(CVAddress > 0)
     sprintf(add,"%03d:",CVAddress);
   else

@@ -29,7 +29,8 @@
 /*
  *  © 2021 Neil McKechnie
  *  © 2020-2021 Chris Harlow, Harald Barth, David Cutting,
- *  			Fred Decker, Gregor Baues, Anthony W - Dayton
+ *  Fred Decker, Gregor Baues, Anthony W - Dayton
+ *  © 2023 Nathan Kellenicki
  *  © 2023-2024 Thierry Paris for Locoduino.
  *  All rights reserved.
  *
@@ -69,6 +70,9 @@
 #ifdef EXRAIL_WARNING
 #warning You have myAutomation.h but your hardware has not enough memory to do that, so EX-RAIL DISABLED
 #endif
+// compile time check, passwords 1 to 7 chars do not work, so do not try to compile with them at all
+// remember trailing '\0', sizeof("") == 1.
+#define PASSWDCHECK(S) static_assert(sizeof(S) == 1 || sizeof(S) > 8, "Password shorter than 8 chars")
 
 //--------------------------- HMI client -------------------------------------
 #ifdef USE_HMI
@@ -84,7 +88,15 @@ void setup() {
   // This is normally Serial but uses SerialUSB on a SAMD processor
   SerialManager::init();
 
-  // Initialise HAL layer before reading EEprom or setting up MotorDrivers
+  DIAG(F("License GPLv3 fsf.org (c) dcc-ex.com"));
+
+// If user has defined a startup delay, delay here before starting IO
+#if defined(STARTUP_DELAY)
+  DIAG(F("Delaying startup for %dms"), STARTUP_DELAY);
+  delay(STARTUP_DELAY);
+#endif
+
+// Initialise HAL layer before reading EEprom or setting up MotorDrivers 
   IODevice::begin();
 
   // As the setup of a motor shield may require a read of the current sense input from the ADC,
@@ -109,17 +121,19 @@ void setup() {
   boxHMI.begin();
 #endif
 
-// Responsibility 2: Start all the communications before the DCC engine
-// Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
-// Start Ethernet if it exists
+  // Responsibility 2: Start all the communications before the DCC engine
+  // Start the WiFi interface on a MEGA, Uno cannot currently handle WiFi
+  // Start Ethernet if it exists
 #ifndef ARDUINO_ARCH_ESP32
 #if WIFI_ON
+  PASSWDCHECK(WIFI_PASSWORD); // compile time check
   WifiInterface::setup(WIFI_SERIAL_LINK_SPEED, F(WIFI_SSID), F(WIFI_PASSWORD), F(WIFI_HOSTNAME), IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
 #endif // WIFI_ON
 #else
   // ESP32 needs wifi on always
 	// But with LaBox, you can completly stop the Wifi !
 	#if ENABLE_WIFI
+	  PASSWDCHECK(WIFI_PASSWORD); // compile time check
 		WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
 	#endif
 #endif // ARDUINO_ARCH_ESP32
@@ -144,7 +158,10 @@ void setup() {
   }
   else {
     DIAG(F("LaBox Main mode."));
-    TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
+    TrackManager::Setup(LABOX_MAIN_PROG_MOTOR_SHIELD);
+
+		// For the first booster. No problem if there is no booster.
+		TrackManager::setTrackMode(2, TRACK_MODE_MAIN_INV);
 
 #ifdef ENABLE_RAILCOM
 		// Only use Railcom in LaBox Main mode.
@@ -164,21 +181,22 @@ void setup() {
 	EXComm::begin();
 #endif
 
-// Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
-//  This can be used to create turnouts, outputs, sensors etc. through the normal text commands.
-#if __has_include("mySetup.h")
-#define SETUP(cmd) DCCEXParser::parse(F(cmd))
-#include "mySetup.h"
-#undef SETUP
-#endif
+  // Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
+  //  This can be used to create turnouts, outputs, sensors etc. through the normal text commands.
+  #if __has_include ( "mySetup.h")
+    #define SETUP(cmd) DCCEXParser::parse(F(cmd))
+    #include "mySetup.h"
+    #undef SETUP
+  #endif
 
-#if defined(LCN_SERIAL)
+  #if defined(LCN_SERIAL)
   LCN_SERIAL.begin(115200);
   LCN::init(LCN_SERIAL);
-#endif
+  #endif
   LCD(3, F("Ready"));
+#ifdef CD_HANDLE_RING
   CommandDistributor::broadcastPower();
-
+#endif
 #ifdef USE_HMI
   if (LaboxModes::progMode) {
     // must be done after all other setups.
@@ -191,7 +209,25 @@ void setup() {
 #endif
 }
 
-void loop() {
+/**************** for future reference
+void looptimer(unsigned long timeout, const FSH* message)
+{
+  static unsigned long lasttimestamp = 0;
+  unsigned long now = micros();
+  if (timeout != 0) {
+    unsigned long diff = now - lasttimestamp;
+    if (diff > timeout) {
+      DIAG(message);
+      DIAG(F("DeltaT=%L"), diff);
+      lasttimestamp = micros();
+      return;
+    }
+  }
+  lasttimestamp = now;
+}
+*********************************************/
+void loop()
+{
   // The main sketch has responsibilities during loop()
 
   // Responsibility 1: Handle DCC background processes

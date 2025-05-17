@@ -24,6 +24,7 @@
 #include <Arduino.h>
 #include "FSH.h"
 #include "RingStream.h"
+#include "defines.h"
 
 typedef void (*FILTER_CALLBACK)(Print * stream, byte & opcode, byte & paramCount, int16_t p[]);
 typedef void (*AT_COMMAND_CALLBACK)(HardwareSerial * stream,const byte * command);
@@ -38,21 +39,29 @@ struct DCCEXParser
    static void setRMFTFilter(FILTER_CALLBACK filter);
    static void setAtCommandCallback(AT_COMMAND_CALLBACK filter);
    static const int MAX_COMMAND_PARAMS=10;  // Must not exceed this
-	 // Set public for Labox .
-   static int16_t splitValues( int16_t result[MAX_COMMAND_PARAMS], const byte * command, bool usehex);
+#ifdef LABOX
+	 static int16_t splitValues( int16_t result[MAX_COMMAND_PARAMS], byte * command, bool usehex);
  
    private:
+#else
+	 private:
+	 static int16_t splitValues( int16_t result[MAX_COMMAND_PARAMS], byte * command, bool usehex);
+#endif
   
     static const int16_t MAX_BUFFER=50;  // longest command sent in
      
     static bool parseT(Print * stream, int16_t params, int16_t p[]);
-     static bool parseZ(Print * stream, int16_t params, int16_t p[]);
-     static bool parseS(Print * stream,  int16_t params, int16_t p[]);
-     static bool parsef(Print * stream,  int16_t params, int16_t p[]);
-     static bool parseD(Print * stream,  int16_t params, int16_t p[]);
+    static bool parseZ(Print * stream, int16_t params, int16_t p[]);
+    static bool parseS(Print * stream, int16_t params, int16_t p[]);
+    static bool parsef(Print * stream, int16_t params, int16_t p[]);
+    static bool parseC(Print * stream, int16_t params, int16_t p[]);
+    static bool parseD(Print * stream, int16_t params, int16_t p[]);
+#ifndef IO_NO_HAL
+    static bool parseI(Print * stream, int16_t params, int16_t p[]);
+#endif
 
-     static Print * getAsyncReplyStream();
-     static void commitAsyncReplyStream();
+    static Print * getAsyncReplyStream();
+    static void commitAsyncReplyStream();
 
     static bool stashBusy;
     static byte stashTarget;
@@ -67,6 +76,7 @@ struct DCCEXParser
     static void callback_R(int16_t result);
     static void callback_Rloco(int16_t result);
     static void callback_Wloco(int16_t result);
+    static void callback_Wconsist(int16_t result);
     static void callback_Vbit(int16_t result);
     static void callback_Vbyte(int16_t result);
     static FILTER_CALLBACK  filterCallback;

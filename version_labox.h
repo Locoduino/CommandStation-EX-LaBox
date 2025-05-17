@@ -1,7 +1,18 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.9.1"
+#define VERSION_LABOX "2.10.0"
+// 2.10.0	- CommandStation-EX code base passed from 5.0.9 to 5.4.10 !
+//				- Fix two trains dashboard graphics.
+//				- Fix toggle between DCCon and DCCoff for graphic.
+//				- Fix the way multi trains will be affected to graphic view.
+//				- Add HMI_DASHBOARD_TRAIN_NB in config.h for initial driving view style.
+//				- Add HMI_SCREEN_ROTATION to be able to orientate the screen as needed.
+//				- If a main AND a prog track are declared, avoid to reboot ESP when using CV handling commands.
+//				- Fix a lot of warnings/potential errors.
+//				- Update of used libraries :
+//						adafruit/Adafruit GFX Library@^1.12.0	
+//						adafruit/Adafruit SSD1306@^2.5.14
 // 2.9.1	- Menu option DCC ON/OFF is available.
 //				- Some unused textes has been removed in French and English in hmiconfig.h
 //				- Railcom is no more started in prog mode.

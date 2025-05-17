@@ -21,6 +21,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "DCC.h"
+#include "TrackManager.h"
 #include "LaboxModes.h"
 #include "hmi.h"
 #include "menuobject.h"
@@ -121,6 +122,11 @@ void LaboxModes::SetProgMode()
 void LaboxModes::Restart(ProgType inType)
 {
 	DIAG_LMODES(F("LaboxModes : Restart"));
+
+	std::vector<MotorDriver *> mains = TrackManager::getMainDrivers();
+	if (mains.size() > 0 && TrackManager::getProgDriver() != NULL)
+		return;
+
 	if (EEPROM.readByte(EEPROMModeProgAddress) != (char) inType) {
 		EEPROM.writeByte(EEPROMModeProgAddress, (char) inType);
 		EEPROM.commit();

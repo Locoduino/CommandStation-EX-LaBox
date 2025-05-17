@@ -1,3 +1,6 @@
 .pio
 .vscode
 config.h
+PCB/Kicad/fp-info-cache
+PCB/Kicad/production/netlist.ipc
+EngineDriver-Master

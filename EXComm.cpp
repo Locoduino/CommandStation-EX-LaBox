@@ -123,7 +123,7 @@ void EXComm::broadcast(byte *com)
 	{
 	case 'l':   // LOCO <l CAB SPEED DIRECTION>
 			DIAG_EXCOMM(F("[EXCOMM] broadcast loco"));
-			if (params >= 0) {
+			if (params >= 1) {
 				for (int i = 0; i <= lastItem; i++) {
 					if (commItems[i] != NULL) {
 						commItems[i]->broadcastLoco(p[0]);
@@ -165,7 +165,7 @@ void EXComm::broadcast(byte *com)
 
 	case 'Q':	// SENSOR ON
 			DIAG_EXCOMM(F("[EXCOMM] broadcast sensor ON"));
-			if (params >= 0) {
+			if (params >= 1) {
 				for (int i = 0; i <= lastItem; i++) {
 					if (commItems[i] != NULL) {
 						commItems[i]->broadcastSensor(p[0], 1);
@@ -176,7 +176,7 @@ void EXComm::broadcast(byte *com)
 
 	case 'q':	// SENSOR OFF
 			DIAG_EXCOMM(F("[EXCOMM] broadcast sensor OFF"));
-			if (params >= 0) {
+			if (params >= 1) {
 				for (int i = 0; i <= lastItem; i++) {
 					if (commItems[i] != NULL) {
 						commItems[i]->broadcastSensor(p[0], 0);

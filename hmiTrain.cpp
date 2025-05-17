@@ -180,7 +180,6 @@ void hmiTrain::dashboard(int pos_x1, int pos_y1, int pos_x2, int pos_y2)
 /*!
     @brief  dashboard1T
             Show train dashboard on display for only one train (full screen)
-    @param  coordonnates of window
     @return None (void).
     @note
 */

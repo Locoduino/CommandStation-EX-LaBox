@@ -36,6 +36,8 @@ int IRAM_ATTR local_adc1_get_raw(int channel);
 enumEvent     _HMIEvent;
 enumHMIState  _HMIState;
 
+extern hmi boxHMI;
+
 hmi::hmi(TwoWire *twi) : Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT) // ,twi, -1) !
 {
   memset(messageStack, 0, HMI_MessageSize * HMI_StackNbCarElt);
@@ -98,7 +100,7 @@ void hmi::begin()
   millisRefreshData     = millisEffect;
   millisRefreshDisplay  = millisEffect;
   millisWifiEffect      = millisEffect;
-  nbTrainToView = 1;
+  nbTrainToView = HMI_DASHBOARD_TRAIN_NB;
   wifiCircle = 0 ;
   // Make menu
   menu = new MenuManagement(this);
@@ -276,7 +278,8 @@ void hmi::stateMachine()
     break;
     default:;
   }
-  _HMIDEBUG_SM_PRINT("_HMIState : ");_HMIDEBUG_SM_PRINTLN(_HMIState);
+  _HMIDEBUG_SM_PRINT("_HMIState : ");
+	_HMIDEBUG_SM_PRINTLN(_HMIState);
   //----------- Action to be executed according to the state machine -----------------
   switch (_HMIState)
   {
@@ -286,15 +289,15 @@ void hmi::stateMachine()
     case StateDashboardTrainView :
         if(needToRefreshDisplay() )
         {
-          switch(nbTrainToView)   // A corriger selon les paramètres
+          switch(this->nbTrainToView)   // A corriger selon les paramètres
           {
-            case 1 : dashboard1TrainView();
+            case 1 : this->dashboard1TrainView();
             break;
-            case 2 : dashboard2TrainsView();
+            case 2 : this->dashboard2TrainsView();
             break;
-            case 3 : dashboard3TrainsView();
+            case 3 : this->dashboard3TrainsView();
             break;
-            default : dashboard3TrainsView();
+            default : this->dashboard3TrainsView();
           }
         }
     break;
@@ -480,7 +483,7 @@ void hmi::dashboard2TrainsView()
     {
       if(&tabTrains[i] && tabTrains[i].addr)
       {
-        tabTrains[i].dashboard((i*43)+2, 0, (i*43)+38, 64);    
+        tabTrains[i].dashboard((i*64)+5, 0, (i*64)+44, 64);    
       }
     }
     // Quand on utilisera les menu !!!!
@@ -668,12 +671,12 @@ void hmi::addNotification(int addr, uint8_t order, uint8_t value, bool functionS
 //        {
 //          tabTrains[i].setInfo(0,0,0);
 //        }
-      }else
+      }/*else
       { // bi-stable function
         sprintf(message, "%s", TXT_StartDCC);
         laBoxState = Labox_StateDCCON;
         pushMessageOnStack(message, (uint8_t) strlen(message));
-      }
+      }*/
       break;
     case HMI_StartDCC :
       if (laBoxState == Labox_StateDCCOFF) {
@@ -748,52 +751,55 @@ void hmi::setTrainState(int addr, uint8_t order, uint8_t value, bool state)
   _HMIDEBUG_FCT_PRINTLN("hmi::setTrainState().. Begin");
   _HMIDEBUG_PARAMS_PRINT("hmi::setTrainState, addr :  ");_HMIDEBUG_PARAMS_PRINT(addr); _HMIDEBUG_PARAMS_PRINT(", order : ");_HMIDEBUG_PARAMS_PRINT(order);_HMIDEBUG_PARAMS_PRINT(", value : ");_HMIDEBUG_PARAMS_PRINTLN(value);
   int i = 0;
+
   // Search train in train tab
   while(i < HMI_NbMemorisedTrain)
   {
-    if(&tabTrains[i])  // safety
+    if (&tabTrains[i])  // safety
     {
       if(tabTrains[i].addr == addr)
       { 
-        break; // Found !
+				if (i < boxHMI.nbTrainToView)
+				{
+					tabTrains[i].setInfo(addr, order, value, state);
+        	return; // Found !
+				}
+				break;
       }
     }
-    i++ ;
+    i++;
   }
-  // Has the object been found?
-  if(i == HMI_NbMemorisedTrain) i--; 
-  switch(i)
-  {
-    case 0 : // The train that we pilot is already the first at the top of the list
-      tabTrains[0].setInfo(addr, order, value, state);
-    break;
-    case HMI_NbMemorisedTrain : 
-      i--; // We remove one to place on the last index of the table
-	   [[fallthrough]];
-    default :
 
+  // If the train not found
+  if (i == HMI_NbMemorisedTrain) i--;
 #ifdef _HMIDEBUG_LEVEL3_PRINTLN
       for(int z=0; z < HMI_NbMemorisedTrain;z++)
-      { // Stack shift to update the updated object at the very top
-        _HMIDEBUG_LEVEL3_PRINT("Fonction setTrainState, Tableau de train : "); _HMIDEBUG_LEVEL3_PRINT(z);_HMIDEBUG_LEVEL3_PRINT(", Valeur addr : "); _HMIDEBUG_LEVEL3_PRINTLN(tabTrains[z].addr );
+      {
+        _HMIDEBUG_LEVEL3_PRINT("Fonction setTrainState, Tableau de train : "); 
+				_HMIDEBUG_LEVEL3_PRINT(z);
+				_HMIDEBUG_LEVEL3_PRINT(", Valeur addr : "); 
+				_HMIDEBUG_LEVEL3_PRINTLN(tabTrains[z].addr );
       }
 #endif  
       // Reorder train tab, this order became the first, the last is erased
-      for(int j=i; j>0;j--)
+      for(int j = i; j > 0; j--)
       { // Stack shift to update the updated object at the very top
-        tabTrains[j] = tabTrains[j-1] ;
+        tabTrains[j] = tabTrains[j-1];
       }
       // Update information
       tabTrains[0].setInfo(addr, order, value, state);
 #ifdef _HMIDEBUG_LEVEL3_PRINTLN
       for(int z=0; z < HMI_NbMemorisedTrain;z++)
       { // Stack shift to update the updated object at the very top
-        _HMIDEBUG_LEVEL3_PRINT("Fonction setTrainState, Nouveau Tableau de train : "); _HMIDEBUG_LEVEL3_PRINT(z);_HMIDEBUG_LEVEL3_PRINT(", Valeur addr : "); _HMIDEBUG_LEVEL3_PRINTLN(tabTrains[z].addr );
+        _HMIDEBUG_LEVEL3_PRINT("Fonction setTrainState, Nouveau Tableau de train : "); 
+				_HMIDEBUG_LEVEL3_PRINT(z);
+				_HMIDEBUG_LEVEL3_PRINT(", Valeur addr : "); 
+				_HMIDEBUG_LEVEL3_PRINTLN(tabTrains[z].addr );
       }
 #endif  
-  }
   _HMIDEBUG_FCT_PRINTLN("hmi::setTrainState().. End");  
 }
+
 /*!
     @brief  addMessage, add a message to the HMI stack.
             This function must be called each time that someone want to show any informations on display

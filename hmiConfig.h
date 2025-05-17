@@ -13,7 +13,7 @@
 #define HMI_I2C_ADDR            0x3C
 #define SCREEN_WIDTH            128         // OLED display width, in pixels
 #define SCREEN_HEIGHT           64          // OLED display height, in pixels
-#define HMI_Rotation            2           // 1 : 90°, 2 : 180°, 3 : 270°
+#define HMI_Rotation            HMI_SCREEN_ROTATION           // 1 : 90°, 2 : 180°, 3 : 270°
 
 // Pins
 #define PIN_LEDBUILTIN           2
@@ -154,7 +154,7 @@
 #define TXT_IDENT_ERRORCV8			"ERREUR CV8 cv7=%d"
 #define TXT_IDENT_UNKNOWNID			"Inconnu cv8=%d"
 #define TXT_IDENT_SEENMRA				"See NMRA 9.2.2.5 pdf"
-#define TXT_IDENT_VERSION				"Version: %d"
+#define TXT_IDENT_VERSION				"Version: %d/%d"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_SHUTTLE_LOGO				"LaBox EXRail shuttle"
 #define TXT_SHUTTLE_RUNNING			"Va&Vient EN ROUTE"
@@ -239,7 +239,7 @@
 #define TXT_IDENT_ERRORCV8			"ERROR CV8 cv7=%d"
 #define TXT_IDENT_UNKNOWNID			"Unknown cv8=%d"
 #define TXT_IDENT_SEENMRA				"See NMRA 9.2.2.5 pdf"
-#define TXT_IDENT_VERSION				"Version: %d"
+#define TXT_IDENT_VERSION				"Version: %d/%d"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_SHUTTLE_LOGO				"LaBox EXRail shuttle"
 #define TXT_SHUTTLE_RUNNING			"Shuttle RUNNING"

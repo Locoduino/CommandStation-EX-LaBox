@@ -797,9 +797,9 @@ void Z21Throttle::cvWriteProg(byte inDB1, byte inDB2, byte inDB3) {
 
 // Working as cvReadProg for the moment...
 int Z21Throttle::cvReadPom(byte inDB1, byte inDB2, byte inDB3, byte inDB4) {
-	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
 	int cvAddress = ((inDB3 & B00000011) << 8) + inDB4 + 1;
-/*
+/*	int locoAddress = ((inDB1 & 0x3F) << 8) + inDB2;
+
 	DIAG_Z21RWCV(F("[Z21] %d: cvRead Pom Loco %d cv %d"), clientid, locoAddress, cvAddress);
 
 	Z21Throttle::cvAddress = cvAddress - 1;

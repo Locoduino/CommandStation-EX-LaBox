@@ -30,7 +30,9 @@
 #define DCC_1_HALFPERIOD 58  //4640 // 1 / 80000000 * 4640 = 58us
 #define DCC_0_HALFPERIOD 100 //8000
 
+#ifdef LABOX
 void StarTimerCutOut(rmt_channel_t channel);
+#endif
 
 class RMTChannel {
  public:
@@ -45,6 +47,12 @@ class RMTChannel {
     if (dataRepeat > 0) // we have still old work to do
       return true;
     return dataReady;
+  };
+  inline void waitForDataCopy() {
+    while(1) { // do nothing and wait for interrupt clearing dataReady to happen
+      if (dataReady == false)
+	break;
+    }
   };
   inline uint32_t packetCount() { return packetCounter; };
   

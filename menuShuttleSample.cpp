@@ -218,7 +218,7 @@ void menuShuttleSample::update()
   	display->setTextSize(2);
 
 	display->setCursor(20, 26);
-  char add[10];
+  char add[20];
   if(locoAddress > 0)
     sprintf(add,"%04d",locoAddress);
   else

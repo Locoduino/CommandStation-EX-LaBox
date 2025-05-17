@@ -19,7 +19,7 @@
 int writeCVValue = -1;
 int writeCVAddress = 0;
 bool writeDisplayInProgress;
-char messageWrite[21];
+char messageWrite[40];
 
 enum StateWriting
 {
@@ -44,8 +44,8 @@ void cvWriteValueCallback(int16_t inValue)
 	writeDisplayInProgress = false;
 }
 
-#define DIAGWRITE(FCT)		//DIAG(F("%s :  %s  CV:%d  Val:%d"), FCT, writeState==Ready?"Ready":writeState == FixingAddress?"Fixing Address": \
-				//writeState==FixingValue?"Fixing value":"Writing", writeCVAddress, writeCVValue);
+#define DIAGWRITE(FCT)		
+//#define DIAGWRITE(FCT)		DIAG(F("%s :  %s  CV:%d  Val:%d"), FCT, writeState==Ready?"Ready":writeState == FixingAddress?"Fixing Address": writeState==FixingValue?"Fixing value":"Writing", writeCVAddress, writeCVValue);
 
 void menuTrainCvWrite::start()
 {
@@ -260,7 +260,7 @@ void menuTrainCvWrite::update()
 			break;
 	}
 
-	char mess1[10];
+	char mess1[20];
 	if (writeCVAddress > 0)
 		sprintf(mess1, "%03d:", writeCVAddress);
 	else
