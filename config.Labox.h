@@ -83,6 +83,8 @@ The configuration file for DCC-EX Command Station
 // | O 3v
 // | O 5v
 
+#define LABOX
+
 #define LABOX_MAIN_PINS		32, 33, 27, UNUSED_PIN, 36
 #define LABOX_EXT2_PINS		14, 25, 26, UNUSED_PIN, 39
 #define LABOX_EXT1_PINS		12, 13, 15, UNUSED_PIN, 35

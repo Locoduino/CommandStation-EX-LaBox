@@ -158,7 +158,7 @@ void setup() {
   }
   else {
     DIAG(F("LaBox Main mode."));
-    TrackManager::Setup(LABOX_MAIN_PROG_MOTOR_SHIELD);
+    TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
 
 		// For the first booster. No problem if there is no booster.
 		TrackManager::setTrackMode(2, TRACK_MODE_MAIN_INV);
