@@ -22,7 +22,7 @@
 #error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.Labox.h to config.h
 #endif
 #else
-#warning config.h not found. Using defaults from config.example.h
+#warning config.h not found. Using defaults from config.Labox.h
 #include "config.Labox.h"
 #endif
 

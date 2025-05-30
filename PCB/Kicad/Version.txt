@@ -34,5 +34,10 @@ Versions PCB
 - Move Locoduino and Open Source Hardware logos to the center of the board.
 - All modifications has been made to automatically build (with Fabrication Toolkit Plugin) correct bom and positions files.
 
+1.0a2 (23/05/2025)
+- Set the same font size and width on all texts of the PCB, except for ESP32 pin numbers.
+- Remove excessive texts and set text orientation as horizontal as possible.
+- Add signs on PCB to give information about CMS components orientation to the maker : D1, D2, D3, U1 and IC2.
+
 
 
