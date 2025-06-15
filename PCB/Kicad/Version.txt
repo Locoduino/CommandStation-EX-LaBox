@@ -39,5 +39,9 @@ Versions PCB
 - Remove excessive texts and set text orientation as horizontal as possible.
 - Add signs on PCB to give information about CMS components orientation to the maker : D1, D2, D3, U1 and IC2.
 
+1.0a3 (15/06/2025)
+- Exchange SOD128 footprint of D1/D2 to SOD123 footprint easier to find on the market.
+- +/- text for VIN symbol was not on the good layer.
+
 
 
