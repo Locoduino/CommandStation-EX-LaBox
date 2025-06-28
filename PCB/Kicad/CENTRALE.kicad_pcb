@@ -8467,7 +8467,7 @@
 		(descr "TO-220-11, Vertical, RM 1.7mm, Multiwatt-11, staggered type-1, see http://www.st.com/resource/en/datasheet/tda7391lv.pdf")
 		(tags "TO-220-11 Vertical RM 1.7mm Multiwatt-11 staggered type-1")
 		(property "Reference" "L6203"
-			(at 8.5 -10.7 0)
+			(at 8.465586 -6.966597 0)
 			(layer "F.SilkS")
 			(uuid "dcd300e0-d204-4895-b6b0-93bbc1558b9d")
 			(effects
@@ -16760,7 +16760,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "1N5819"
+		(property "Value" " K1N5819HW-7-F"
 			(at 0 -2.1 90)
 			(layer "B.Fab")
 			(uuid "6dfa921c-8a4f-4fcf-a0e7-8718b6271ea9")
@@ -20561,7 +20561,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "1N5819"
+		(property "Value" " K1N5819HW-7-F"
 			(at 0 -2.1 90)
 			(layer "B.Fab")
 			(uuid "7f4b7c2c-9af8-4317-9338-c2a6d8990ded")
@@ -21661,6 +21661,17 @@
 		(layer "B.SilkS")
 		(uuid "710ed86b-0ac3-4f65-9e30-a3e25cdd9c73")
 	)
+	(gr_rect
+		(start 177.632681 102.899)
+		(end 180.302825 107.571753)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.SilkS")
+		(uuid "862b8afe-cdca-43e7-8d8f-3aa7a3f06ab5")
+	)
 	(gr_line
 		(start 157.512532 89.193809)
 		(end 157.906604 89.197875)
@@ -21855,7 +21866,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "a3"
+	(gr_text "a4"
 		(at 127.899742 140.219907 0)
 		(layer "F.SilkS")
 		(uuid "2f3deced-880d-4075-a81b-95c62da5b94d")

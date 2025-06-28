@@ -42,6 +42,13 @@ Versions PCB
 1.0a3 (15/06/2025)
 - Exchange SOD128 footprint of D1/D2 to SOD123 footprint easier to find on the market.
 - +/- text for VIN symbol was not on the good layer.
+- Since 1.0a1, D1 and D2 were not connected to GND...
+
+1.0 a4 (28/06/2025)
+- Add a rectangle under IC2 circuit.
+- Move L6203 text to be able to see it on the final PCB
+- Change reference of D1 and D2 to match with JLCPCB desiderata.
+
 
 
 
