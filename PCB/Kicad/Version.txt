@@ -46,8 +46,13 @@ Versions PCB
 
 1.0 a4 (28/06/2025)
 - Add a rectangle under IC2 circuit.
-- Move L6203 text to be able to see it on the final PCB
+- Move L6203 texbt to be able to see it on the final PCB
 - Change reference of D1 and D2 to match with JLCPCB desiderata.
+
+1.0 a5
+- Add '+' for leds.
+- Fix some integrity errors, only for PCB design software !
+- Fix D_INV serigraphy.
 
 
 
