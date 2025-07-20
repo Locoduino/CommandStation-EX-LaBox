@@ -1,23 +1,10 @@
 {
   "board": {
-    "active_layer": 7,
-    "active_layer_preset": "Back Layers",
+    "active_layer": 0,
+    "active_layer_preset": "",
     "auto_track_width": false,
     "hidden_netclasses": [],
-    "hidden_nets": [
-      "N$5",
-      "N$9",
-      "3V3",
-      "VS",
-      "N$13",
-      "N$8",
-      "N$46",
-      "N$48",
-      "N$49",
-      "N$52",
-      "N$6",
-      "N$12"
-    ],
+    "hidden_nets": [],
     "high_contrast_mode": 0,
     "net_color_mode": 1,
     "opacity": {
