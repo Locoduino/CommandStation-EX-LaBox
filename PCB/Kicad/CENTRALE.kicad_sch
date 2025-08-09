@@ -14488,7 +14488,7 @@
 		(dnp no)
 		(uuid "4e2cde59-810a-4dea-8810-52da90c1106e")
 		(property "Reference" "U$1"
-			(at 254 50.8 0)
+			(at 264.16 34.544 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -14497,7 +14497,7 @@
 			)
 		)
 		(property "Value" "DC-DC-STEP-DOWN"
-			(at 254 48.26 0)
+			(at 255.016 42.926 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -14897,7 +14897,7 @@
 		(dnp no)
 		(uuid "5f23ccf3-ec1a-4dd1-8f0a-0430bcbee28b")
 		(property "Reference" "U$4"
-			(at 248.92 76.2 0)
+			(at 259.842 60.706 0)
 			(effects
 				(font
 					(size 1.778 1.5113)
@@ -14906,7 +14906,7 @@
 			)
 		)
 		(property "Value" "MP1584"
-			(at 256.54 72.39 0)
+			(at 257.302 68.326 0)
 			(effects
 				(font
 					(size 1.778 1.5113)

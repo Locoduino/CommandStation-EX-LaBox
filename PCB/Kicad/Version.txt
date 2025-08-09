@@ -54,6 +54,8 @@ Versions PCB
 - Fix some integrity errors, only for PCB design software !
 - Fix D_INV serigraphy.
 
-
-
-
+1.0 b0
+- Change serigraphy direction of D1 and D2 !
+- Move slightly Leds to avoid collision with RJ11 connector
+- Move slightly R20 and R21 to facilitate the solder of ESP32 headers
+- Move slightly LM7805 imprint to be able to add a radiator.
