@@ -16802,7 +16802,7 @@
 				(justify mirror)
 			)
 		)
-		(property "FT Rotation Offset" "180"
+		(property "FT Rotation Offset" "0"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -20604,7 +20604,7 @@
 				(justify mirror)
 			)
 		)
-		(property "FT Rotation Offset" "180"
+		(property "FT Rotation Offset" "0"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "B.Fab")
