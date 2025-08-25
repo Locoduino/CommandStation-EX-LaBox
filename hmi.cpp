@@ -15,7 +15,7 @@
 
 #include "hmi.h"
 #include "LaboxModes.h"
-#include "icons.h"
+#include "hmiIcons.h"
 #include "menumanagement.h"
 #include "hmiGlobals.h"
 #include "menuobject.h"
@@ -102,6 +102,17 @@ void hmi::begin()
   millisWifiEffect      = millisEffect;
   nbTrainToView = HMI_DASHBOARD_TRAIN_NB;
   wifiCircle = 0 ;
+
+	this->isCVAddressEditing = true;
+
+	this->currentCVAddress = 0;
+	this->currentBaseCVAddress = 0;
+	this->currentCVAddressMoved = false;
+
+	this->currentCVData = 0;
+	this->currentBaseCVData = 0;
+	this->currentCVDataMoved = false;
+	
   // Make menu
   menu = new MenuManagement(this);
   menu->begin();

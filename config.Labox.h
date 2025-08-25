@@ -89,12 +89,11 @@ The configuration file for DCC-EX Command Station
 #define LABOX_EXT2_PINS		14, 25, 26, UNUSED_PIN, 39
 #define LABOX_EXT1_PINS		12, 13, 15, UNUSED_PIN, 35
 
-#define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
- new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN) /* MAIN ONLY */
-
-#define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
+#define LABOX_BASE_MOTOR_SHIELD F("LABOXBASE"), \
  NULL, \
- new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG ONLY */
+ new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG ONLY, also used as MAIN via Joining... */
+
+#define LABOX_PROG_MOTOR_SHIELD LABOX_BASE_MOTOR_SHIELD
 
  #define LABOX_MAIN_BOOSTER_MOTOR_SHIELD F("LABOXMAINBOOSTER"), \
  new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* MAIN */ \
@@ -193,10 +192,11 @@ The configuration file for DCC-EX Command Station
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
-// DEFINE STATIC IP ADDRESS *OR* COMMENT OUT TO USE DHCP
+// DEFINE STATIC WIFI IP/GATEWAY ADDRESS *OR* COMMENT OUT TO USE DHCP
 //
-//#define IP_ADDRESS { 192, 168, 1, 200 }
-
+#define IP_ADDRESS 192, 168, 0, 150
+#define GATEWAY 192, 168, 0, 1
+#define SUBNET 255, 255, 255, 0
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -242,7 +242,7 @@ The configuration file for DCC-EX Command Station
 #define HMI_SCREEN_ROTATION     2           // 0 : 0°, 1 : 90°, 2 : 180°, 3 : 270°
 
 // Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
-#define ENABLE_RAILCOM
+//#define ENABLE_RAILCOM
 
 #if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
 #undef ENABLE_RAILCOM
@@ -254,7 +254,7 @@ The configuration file for DCC-EX Command Station
 #ifdef ENABLE_EXCOMM
 
 	// Use EXComm CAN bus using Marklin protocol
-	#define ENABLE_CANMARKLIN
+	//#define ENABLE_CANMARKLIN
 
 	#ifdef ENABLE_CANMARKLIN
 	#define CANMARKLINCOMM		new CanMarklin(253, GPIO_NUM_4, GPIO_NUM_5, 250UL * 1000UL, false)
@@ -275,6 +275,9 @@ The configuration file for DCC-EX Command Station
 	//#define ENABLE_SPROG
 
 	#ifdef ENABLE_SPROG
+	#define SPROG_SERIAL	Serial1
+	#define SPROG_SERIAL_TEXT	"Serial1"
+
 	#define SPROGCOMM		new SProg(16, 17)
 	#else
 	#define SPROGCOMM		NULL

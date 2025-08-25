@@ -39,6 +39,7 @@ class EXComm {
 
   	static void Setup();
 		static void begin();
+		static void end();
 		static void loop();
 		static void print();
 

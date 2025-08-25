@@ -633,4 +633,3 @@ bool ArduinoPins::fastReadDigital(uint8_t pin) {
 #endif
   return result;
 }
-

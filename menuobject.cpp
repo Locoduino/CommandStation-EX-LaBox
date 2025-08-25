@@ -215,7 +215,7 @@ void menuObject::eventDown()
 */
 int menuObject::eventSelect()
 {
-	_HMIDEBUG_CRITICAL_PRINTLN("menuObject::eventSelect.. Begin"); 
+	_HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. Begin"); 
 
 	if (selectedMenu != NULL)
 	{
@@ -240,7 +240,7 @@ int menuObject::eventSelect()
 		}
 	}
 
-	_HMIDEBUG_CRITICAL_PRINTLN("menuObject::eventSelect.. End"); 
+	_HMIDEBUG_FCT_PRINTLN("menuObject::eventSelect.. End"); 
 	return 0;
 }
 

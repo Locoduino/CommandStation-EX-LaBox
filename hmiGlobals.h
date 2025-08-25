@@ -35,7 +35,7 @@ enum enumWifiMode :byte {wifiAp, wifiClient};
 //#define _HMIDEBUG_LEVEL3             // Level 3 Log
 //#define _HMIDEBUG_SIMUL              // simulates physical measurements
 //#define _HMIDEBUG_STATE_MACHINE      // State Machine Log
-//***********************************************************************
+//#define _HMIDEBUG_MENU              	// Menu Log
 
 //*********************************************************************************
 //------------------ Traces functions only if _HMIDEBUG is active --------------------
@@ -148,6 +148,18 @@ enum enumWifiMode :byte {wifiAp, wifiClient};
   #define _HMIDEBUG_ERROR_PRINTLN2(x,y)
   #define _HMIDEBUG_ERROR_PRINT(x)
   #define _HMIDEBUG_ERROR_PRINT2(x,y)
+#endif
+
+#ifdef _HMIDEBUG_MENU
+  #define _HMIDEBUG_MENU_PRINTLN(x) Serial.println(x)
+  #define _HMIDEBUG_MENU_PRINTLN2(x,y) Serial.println(x,y)
+  #define _HMIDEBUG_MENU_PRINT(x) Serial.print(x)
+  #define _HMIDEBUG_MENU_PRINT2(x,y) Serial.print(x,y)
+#else
+  #define _HMIDEBUG_MENU_PRINTLN(x)
+  #define _HMIDEBUG_MENU_PRINTLN2(x,y)
+  #define _HMIDEBUG_MENU_PRINT(x)
+  #define _HMIDEBUG_MENU_PRINT2(x,y)
 #endif
 
 #endif

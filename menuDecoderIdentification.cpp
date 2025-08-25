@@ -346,7 +346,7 @@ void menuDecoderIdentification::start()
 	_HMIDEBUG_FCT_PRINTLN("menuDecoderIdentification::start.. Begin"); 
 
   if (!LaboxModes::progMode) {
-		LaboxModes::Restart(IDENTIFY);
+		LaboxModes::ChangeMode(true, IDENTIFY);
   }
   
   identState = StateIdent::Reading7;
@@ -452,7 +452,7 @@ int menuDecoderIdentification::eventSelect()
 	else
 		if (identState == MenuQuit)
 		{
-			LaboxModes::Restart(SILENTRETURNTOMAIN);
+		LaboxModes::ChangeMode(false, SILENTRETURNTOMAIN);
 		}
 
 	DIAGIDENT("select end");

@@ -1,7 +1,15 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.10.0"
+#define VERSION_LABOX "2.11.0"
+// 2.11.0 - Fixing IP Address for Wifi is now possible.
+//				- Railcom last modifications from lebelge2 integrated.
+//				- Big changes in LaboxModes to manage correctly the different configurations.
+//				- Add defines for Sprog to fix the used serial interface inside config.h .
+//				- The CV address and its value can be set by using WiThrottle or Z21 loco speed/dir interfaces. Thank to lebelge2 for the idea !
+//				- Fix the pin 27 added to RMT not only for Railcom.
+//				- Fix power notification on serial command input, as WebThrottle does it.
+//
 // 2.10.0	- CommandStation-EX code base passed from 5.0.9 to 5.4.10 !
 //				- Fix two trains dashboard graphics.
 //				- Fix toggle between DCCon and DCCoff for graphic.

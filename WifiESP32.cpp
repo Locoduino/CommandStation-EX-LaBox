@@ -30,6 +30,7 @@
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
 #include "hmi.h"
+#include "MotorDriver.h"
 #include "LaboxModes.h"
 #include "DCC.h"
 /*
@@ -71,6 +72,12 @@ void disableCoreWDT(byte core){
     }
 }
 */
+
+#ifdef IP_ADDRESS
+IPAddress local_IP(IP_ADDRESS);
+IPAddress gateway(GATEWAY);
+IPAddress subnet(SUBNET);
+#endif
 
 class NetworkClient {
 public:
@@ -220,6 +227,12 @@ bool WifiESP::setup(const char *SSid,
 	  }
 #endif
 
+#ifdef IP_ADDRESS
+  	if (!WiFi.config(local_IP, gateway, subnet)) {
+    	Serial.println("STA Failed to configure");
+  	}
+#endif
+
     WiFi.begin(SSid, password);
     while (WiFi.status() != WL_CONNECTED && tries) {
       Serial.print('.');
@@ -297,6 +310,11 @@ bool WifiESP::setup(const char *SSid,
 		    havePassword ? password : strPass.c_str(),
 		    channel, false, 8)) {
       // DIAG(F("Wifi AP SSID %s PASS %s"),strSSID.c_str(),havePassword ? password : strPass.c_str());
+#ifdef IP_ADDRESS
+	  	if (!WiFi.softAPConfig(local_IP, gateway, subnet)) {
+  	  	Serial.println("AP Failed to configure");
+			}
+#endif
       DIAG(F("Wifi in AP mode"));
       LCD(5, F("Wifi: %s"), strSSID.c_str());
       if (!havePassword)

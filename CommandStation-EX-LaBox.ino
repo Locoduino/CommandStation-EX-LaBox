@@ -18,8 +18,8 @@
 
 #if __has_include("config.h")
 #include "config.h"
-#ifndef LABOX_MAIN_MOTOR_SHIELD
-#error Your config.h must include a LABOX_MAIN_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.Labox.h to config.h
+#ifndef LABOX_BASE_MOTOR_SHIELD
+#error Your config.h must include a LABOX_BASE_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.Labox.h to config.h
 #endif
 #else
 #warning config.h not found. Using defaults from config.Labox.h
@@ -103,7 +103,7 @@ void setup() {
   // let's make sure to initialise the ADCee class!
   ADCee::begin();
 
-  DIAG(F("License GPLv3 fsf.org (c) Locoduino.org"));
+  DIAG(F("License GPLv3 fsf.org (c) Locoduino.org ****************************************************"));
   DIAG(F("LaBox             : %s"), VERSION_LABOX);
   DIAG(F("CommandStation-EX : %s"), VERSION);
 
@@ -113,10 +113,10 @@ void setup() {
       LCD(1, F("Lic GPLv3"));
 	);
 
-	LaboxModes::GetCurrentMode();
-	LaboxModes::SetNextMode(MAIN);
-
 #ifdef USE_HMI
+	// Must be done BEFORE the HMI begin() call
+	LaboxModes::GetStartingMode();
+
   // must be done before Wifi setup
   boxHMI.begin();
 #endif
@@ -154,19 +154,15 @@ void setup() {
   // Set up MotorDrivers early to initialize all pins
   if (LaboxModes::progMode) {
     DIAG(F("LaBox Prog mode."));
+		// DO NOT MODIFY THE NEXT LINE ! This must always be the PROG motor shield
     TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
   }
   else {
     DIAG(F("LaBox Main mode."));
-    TrackManager::Setup(LABOX_MAIN_MOTOR_SHIELD);
+    TrackManager::Setup(LABOX_BASE_MOTOR_SHIELD);
 
 		// For the first booster. No problem if there is no booster.
 		TrackManager::setTrackMode(2, TRACK_MODE_MAIN_INV);
-
-#ifdef ENABLE_RAILCOM
-		// Only use Railcom in LaBox Main mode.
-		RailcomBegin();
-#endif
   }
 
   // Responsibility 3: Start the DCC engine.
@@ -198,14 +194,11 @@ void setup() {
   CommandDistributor::broadcastPower();
 #endif
 #ifdef USE_HMI
-  if (LaboxModes::progMode) {
-    // must be done after all other setups.
-    LaboxModes::SetProgMode();
-  }
-  if (LaboxModes::silentBootMode) {
-    // Reset to Main mode for next reboot.
-		LaboxModes::SetNextMode(MAIN);
-  }
+	LaboxModes::begin();
+#endif
+#ifdef ENABLE_RAILCOM
+		// Only use Railcom in LaBox Main mode.
+		RailcomBegin();
 #endif
 }
 

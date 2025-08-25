@@ -25,6 +25,7 @@
 
 #ifdef ENABLE_EXCOMM
 
+#include "MotorDriver.h"
 #include "LaboxModes.h"
 #include "EXComm.h"
 #include "EXCommItems.h"
@@ -87,6 +88,16 @@ void EXComm::begin() {
     if (commItems[i] != NULL) {
 			//DIAG(F("%d %s"), i, commItems[i]->name);
 	    commItems[i]->begin();
+		}
+	}
+}
+
+void EXComm::end() {
+	//printItems();
+	for (int i = 0; i <= lastItem; i++) {
+    if (commItems[i] != NULL) {
+			//DIAG(F("%d %s"), i, commItems[i]->name);
+	    commItems[i]->end();
 		}
 	}
 }

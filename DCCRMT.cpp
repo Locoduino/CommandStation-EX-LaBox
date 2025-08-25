@@ -1,5 +1,5 @@
 /*
- *  © 2021-2022, Harald Barth.
+ *  © 2021-2024, Harald Barth.
  *  
  *  This file is part of DCC-EX
  *
@@ -106,7 +106,8 @@ RMTChannel *channelHandle[8] = { 0 };
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 #ifdef LABOX
 #ifdef ENABLE_RAILCOM
-	StarTimerCutOut(channel);        
+	if (channel == 0)
+		StarTimerCutOut(channel);        
 #endif
 #endif
   RMTChannel *tt = channelHandle[channel];
@@ -118,7 +119,6 @@ void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   byte ch;
   byte plen;
-	//byte dp_rc;	// labox
 	
   // Below we check if the DCC packet actually fits into the RMT hardware
   // Currently MAX_PACKET_SIZE = 5 so with checksum there are
@@ -148,13 +148,16 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   // preamble
   preambleLen = plen+2; // plen 1 bits, one 0 bit and one EOF marker
   preamble = (rmt_item32_t*)malloc(preambleLen*sizeof(rmt_item32_t));
-	//dp_rc = 0;
+	byte n = 0;
 #ifdef LABOX
 #ifdef ENABLE_RAILCOM
-	/*dp_rc = */setDCCBitCutOut(preamble);                                    // * Symbole CutOut
+ if (isMain){
+    setDCCBitCutOut(preamble);                               
+    n = 1;
+ }	
 #endif
 #endif
-  for (byte n=0; n<plen; n++)                  
+  for (; n < plen; n++)                  
     setDCCBit1(preamble + n);      // preamble bits
 #ifdef SCOPE
   setDCCBit0Long(preamble + plen); // start of packet 0 bit long version
@@ -194,11 +197,11 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   config.mem_block_num = RMT_CHAN_PER_DCC_CHAN;
   // use config
   ESP_ERROR_CHECK(rmt_config(&config));
-	#ifdef ENABLE_RAILCOM
+
+	// Since Labox PCB 1.0 and probably earlier, the invPin is used and must be add to RMT
   addPin(pins.invpin, true);
-	#else
-  addPin(UNUSED_PIN, true);
-	#endif
+	// For older PCB with the invPin ensured by a transistor, only add UNUSED_PIN to RMT !
+  //addPin(UNUSED_PIN, true);
   
   // NOTE: ESP_INTR_FLAG_IRAM is *NOT* included in this bitmask
   ESP_ERROR_CHECK(rmt_driver_install(config.channel, 0, ESP_INTR_FLAG_LOWMED|ESP_INTR_FLAG_SHARED));

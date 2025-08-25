@@ -68,6 +68,7 @@ public:
 
 	bool begin() override { setup(); return true; }
 	bool loop() override { loopInternal(); return true; }
+	void end() { SPROG_SERIAL.end(); }
 
 	void getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) override;
 

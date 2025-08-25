@@ -39,6 +39,7 @@ struct DCCEXParser
    static void setRMFTFilter(FILTER_CALLBACK filter);
    static void setAtCommandCallback(AT_COMMAND_CALLBACK filter);
    static const int MAX_COMMAND_PARAMS=10;  // Must not exceed this
+   static bool funcmap(int16_t cab, byte value, byte fstart, byte fstop);
 #ifdef LABOX
 	 static int16_t splitValues( int16_t result[MAX_COMMAND_PARAMS], byte * command, bool usehex);
  
@@ -82,7 +83,6 @@ struct DCCEXParser
     static FILTER_CALLBACK  filterCallback;
     static FILTER_CALLBACK  filterRMFTCallback;
     static AT_COMMAND_CALLBACK  atCommandCallback;
-    static bool funcmap(int16_t cab, byte value, byte fstart, byte fstop);
     static void sendFlashList(Print * stream,const int16_t flashList[]);
 
 };

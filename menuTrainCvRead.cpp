@@ -17,9 +17,9 @@
 #include <Adafruit_SSD1306.h>
 
 int CVValue = -1;
-int CVAddress = 0;
 bool displayInProgress;
 char messageRead[30];
+extern hmi boxHMI;		// from .ino !
 
 enum StateReadingCv
 {
@@ -41,25 +41,25 @@ void cvValueCallback(int16_t inValue)
 		readState = Reading_FAIL;
 
   CVValue = inValue;
-  DIAG(F("cvValueCallback called cv%d = %d !"), CVAddress, CVValue);
+  DIAG(F("cvValueCallback called cv%d = %d !"), boxHMI.currentCVAddress, CVValue);
   displayInProgress = false;
 }
 
-#define DIAGREAD(FCT)		//DIAG(F("%s :  %s  CV:%d  Val:%d"), FCT, readState==Ready?"Ready":readState == FixingAddress?"Fixing":"Reading", CVAddress, CVValue);
+#define DIAGREAD(FCT)		//DIAG(F("%s :  %s  CV:%d  Val:%d"), FCT, readState==Ready?"Ready":readState == FixingAddress?"Fixing":"Reading", boxHMI.currentCVAddress, CVValue);
 
 void menuTrainCvRead::start()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvRead::start.. Begin"); 
 
-  if (!LaboxModes::progMode) {
-		LaboxModes::Restart(CVREAD);
-  }
+	LaboxModes::ChangeMode(true, CVREAD);
   
-  if (CVAddress > 0)
+  if (boxHMI.currentCVAddress > 0)
 		readState = FixingAddress;
 	else
 		readState = Ready;
+		
 	displayInProgress = false;
+	boxHMI.isCVAddressEditing = true;
 
 	DIAGREAD("start");
 
@@ -97,9 +97,9 @@ void menuTrainCvRead::eventUp()
 	{
 		readState = FixingAddress;
 		CVValue = -1;
-		CVAddress++;
-		if (CVAddress > 255)
-			CVAddress = 255;
+		boxHMI.currentCVAddress++;
+		if (boxHMI.currentCVAddress > 255)
+			boxHMI.currentCVAddress = 255;
 		else
 		  displayInProgress = false;
 	}
@@ -108,7 +108,7 @@ void menuTrainCvRead::eventUp()
 	{
 		CVValue = -1;
 		void (*ptr)(int16_t) = &cvValueCallback;
-		DCC::readCV(CVAddress, ptr);
+		DCC::readCV(boxHMI.currentCVAddress, ptr);
 		readState = Reading;
 		displayInProgress = false;
 	}
@@ -139,12 +139,12 @@ void menuTrainCvRead::eventDown()
 	{
 		readState = FixingAddress;
 		CVValue = -1;
-		if (CVAddress > 0) {
-			CVAddress--;
+		if (boxHMI.currentCVAddress > 0) {
+			boxHMI.currentCVAddress--;
 			displayInProgress = false;
 		}
 
-		if (CVAddress == 0) {
+		if (boxHMI.currentCVAddress == 0) {
 			readState = Ready;
 			displayInProgress = false;
 		}
@@ -174,7 +174,7 @@ int menuTrainCvRead::eventSelect()
 	{
 		CVValue = -1;
 		void (*ptr)(int16_t) = &cvValueCallback;
-		DCC::readCV(CVAddress, ptr);
+		DCC::readCV(boxHMI.currentCVAddress, ptr);
 		readState = Reading;
 		displayInProgress = false;
 		_HMIDEBUG_FCT_PRINTLN("menuTrainCvRead::eventSelect.. End");  
@@ -183,7 +183,7 @@ int menuTrainCvRead::eventSelect()
 
 	if (readState == Ready || readState == Reading_OK || readState == Reading_FAIL)
 	{
-		LaboxModes::Restart(SILENTRETURNTOMAIN);
+		LaboxModes::ChangeMode(false, SILENTRETURNTOMAIN);
   }
 
 	DIAGREAD("select end");
@@ -213,14 +213,25 @@ void menuTrainCvRead::begin()
 */
 void menuTrainCvRead::update()
 {
-  _HMIDEBUG_FCT_PRINTLN(F("menuTrainCvRead::update.. Begin")); 
-
-  if(!displayInProgress)
-  {
-    display->clearDisplay();
-    displayInProgress = true;
+  if(displayInProgress && !boxHMI.currentCVAddressMoved)
+	{
+			return;
   }
 
+  if(boxHMI.currentCVAddressMoved)
+	{
+		if (readState == Ready || readState == FixingAddress)
+		{
+			readState = FixingAddress;
+		}
+	}
+
+  _HMIDEBUG_FCT_PRINTLN(F("menuTrainCvRead::update.. Begin")); 
+
+  displayInProgress = true;
+	boxHMI.currentCVAddressMoved = false;
+	
+  display->clearDisplay();
   display->setTextSize(1);
   display->setCursor(5, 6);
   display->println(TXT_CVREAD_LOGO);
@@ -240,8 +251,8 @@ void menuTrainCvRead::update()
 	}
 
   char add[20];
-  if(CVAddress > 0)
-    sprintf(add,"%03d:",CVAddress);
+  if(boxHMI.currentCVAddress > 0)
+    sprintf(add,"%03d:", boxHMI.currentCVAddress);
   else
     sprintf(add,"---:");
   if(CVValue >= 0)

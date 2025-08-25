@@ -572,7 +572,7 @@ void Z21Throttle::notifyLocoInfo(int inClientID, byte inMSB, byte inLSB) {
 	Z21Throttle::replyBuffer[3] = DCC::getThrottleSpeed(locoAddress); // RVVVVVVV  R = forward    VVVVVVV = speed
 	if (DCC::getThrottleDirection(locoAddress)) bitSet(Z21Throttle::replyBuffer[3], 7);
 
-  int reg = DCC::lookupSpeedTable(locoAddress);
+  int reg = DCC::lookupSpeedTable(locoAddress, true);
 
 	Z21Throttle::replyBuffer[4] = B00000000; // 0DSLFGHJ  D = double traction    S = Smartsearch   L = F0   F = F4   G = F3   H = F2   J = F1
 	if (getFn(reg, 0)) bitSet(Z21Throttle::replyBuffer[4], 4);

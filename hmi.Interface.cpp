@@ -3,6 +3,7 @@
 #include "hmi.h"
 #include "hmiConfig.h"
 #include "HmiInterface.hpp"
+#include "LaboxModes.h"
 
 #ifdef USE_HMI
 bool hmi::HmiInterfaceLoop()
@@ -63,11 +64,35 @@ bool hmi::HmiInterfaceLoop()
     speed = DCC::getThrottleSpeed(msg.data.dcc.addr);
     dir = DCC::getThrottleDirection(msg.data.dcc.addr);
     addNotification(msg.data.dcc.addr, dir ? HMI_OrderForward : HMI_OrderBack, speed);
+
+		if (LaboxModes::progMode) {
+			if (this->isCVAddressEditing)
+			{
+				this->currentCVAddress = this->currentBaseCVAddress + speed;
+				this->currentCVAddressMoved = true;
+			}
+			else
+			{
+				this->currentCVData = this->currentBaseCVData + speed;
+				this->currentCVDataMoved = true;
+			}
+		}
+
     break;
 
   case HmiInterfaceEvent_ChangeDirection:
     _HMIDEBUG_LEVEL1_PRINTLN("HmiInterface :: ChangeDirection");
     dir = DCC::getThrottleDirection(msg.data.dcc.addr);
+		if (this->isCVAddressEditing)
+		{
+			if (!dir) { this->currentBaseCVAddress = 0; if (this->currentCVAddress>128) this->currentCVAddress = 127; }
+			else 		{ this->currentBaseCVAddress = 128; if (this->currentCVAddress<128) this->currentCVAddress = 128; }
+		}
+		else
+		{
+			if (!dir) { this->currentBaseCVData = 0; if (this->currentCVData>128) this->currentCVData = 127; }
+			else 		{ this->currentBaseCVData = 128; if (this->currentCVData<128) this->currentCVData = 128; }
+		}
     addNotification(msg.data.dcc.addr, msg.data.dcc.forward ? HMI_OrderForward : HMI_OrderBack, dir);
     break;
 

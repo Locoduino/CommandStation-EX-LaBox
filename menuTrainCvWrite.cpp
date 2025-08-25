@@ -16,10 +16,10 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-int writeCVValue = -1;
 int writeCVAddress = 0;
 bool writeDisplayInProgress;
 char messageWrite[40];
+extern hmi boxHMI;		// from .ino !
 
 enum StateWriting
 {
@@ -51,16 +51,16 @@ void menuTrainCvWrite::start()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvWrite::start.. Begin"); 
 
-  if (!LaboxModes::progMode) {
-		LaboxModes::Restart(CVWRITE);
-  }
+	LaboxModes::ChangeMode(true, CVWRITE);
 
-	if (writeCVAddress > 0)
+	if (boxHMI.currentCVAddress > 0)
 		writeState = FixingAddress;
 	else
 		writeState = Ready;
-	writeDisplayInProgress = false;
 
+	writeDisplayInProgress = false;
+	boxHMI.isCVAddressEditing = true;
+	
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvWrite::start.. End"); 
 }
 
@@ -94,19 +94,18 @@ void menuTrainCvWrite::eventUp()
 	if (writeState == Ready || writeState == FixingAddress)
 	{
 		writeState = FixingAddress;
-		writeCVValue = -1;
-		writeCVAddress++;
-		if (writeCVAddress > 255)
-			writeCVAddress = 255;
+		boxHMI.currentCVAddress++;
+		if (boxHMI.currentCVAddress > 255)
+			boxHMI.currentCVAddress = 255;
 		else
 			writeDisplayInProgress = false;
 	}
 
 	if (writeState == FixingValue)
 	{
-		writeCVValue++;
-		if (writeCVValue > 255)
-			writeCVValue = 255;
+		boxHMI.currentCVData++;
+		if (boxHMI.currentCVData > 255)
+			boxHMI.currentCVData = 255;
 		else
 			writeDisplayInProgress = false;
 	}
@@ -114,8 +113,9 @@ void menuTrainCvWrite::eventUp()
 	if (writeState == Written_FAIL)
 	{
 		DIAGWRITE("up end value");
+		// retry...
 		void (*ptr)(int16_t) = &cvWriteValueCallback;
-		DCC::writeCVByte(writeCVAddress, writeCVValue, ptr);
+		DCC::writeCVByte(writeCVAddress, boxHMI.currentCVData, ptr);
 		writeState = Writing;
 		writeDisplayInProgress = false;
 	}
@@ -124,6 +124,7 @@ void menuTrainCvWrite::eventUp()
 	{
 		writeState = FixingAddress;
 		writeDisplayInProgress = false;
+		boxHMI.isCVAddressEditing = true;
 	}
 
 	DIAGWRITE("up end");
@@ -145,13 +146,12 @@ void menuTrainCvWrite::eventDown()
 	if (writeState == Ready || writeState == FixingAddress)
 	{
 		writeState = FixingAddress;
-		writeCVValue = -1;
-		if (writeCVAddress > 0) {
-			writeCVAddress--;
+		if (boxHMI.currentCVAddress > 0) {
+			boxHMI.currentCVAddress--;
 			writeDisplayInProgress = false;
 		}
 
-		if (writeCVAddress == 0) {
+		if (boxHMI.currentCVAddress == 0) {
 			writeState = Ready;
 			writeDisplayInProgress = false;
 		}
@@ -159,8 +159,8 @@ void menuTrainCvWrite::eventDown()
 
 	if (writeState == FixingValue)
 	{
-		if (writeCVValue > 0) {
-			writeCVValue--;
+		if (boxHMI.currentCVData > 0) {
+			boxHMI.currentCVData--;
 			writeDisplayInProgress = false;
 		}
 	}
@@ -169,6 +169,7 @@ void menuTrainCvWrite::eventDown()
 	{
 		writeState = FixingAddress;
 		writeDisplayInProgress = false;
+		boxHMI.isCVAddressEditing = true;
 	}
 
 	DIAGWRITE("down end");
@@ -187,7 +188,9 @@ int menuTrainCvWrite::eventSelect()
 
 	if (writeState == FixingAddress) {
 		DIAGWRITE("select end address");
+		writeCVAddress = boxHMI.currentCVAddress;
 		writeState = FixingValue;
+		boxHMI.isCVAddressEditing = false;
 		writeDisplayInProgress = false;
 		return 0;
 	}
@@ -195,15 +198,16 @@ int menuTrainCvWrite::eventSelect()
 	if (writeState == FixingValue) {
 		DIAGWRITE("select end value");
 		void (*ptr)(int16_t) = &cvWriteValueCallback;
-		DCC::writeCVByte(writeCVAddress, writeCVValue, ptr);
+		DCC::writeCVByte(writeCVAddress, boxHMI.currentCVData, ptr);
 		writeState = Writing;
 		writeDisplayInProgress = false;
+		boxHMI.isCVAddressEditing = true;
 		return 0;
 	}
 
 	if (writeState == Ready || writeState == Written_OK || writeState == Written_FAIL)
 	{
-		LaboxModes::Restart(SILENTRETURNTOMAIN);
+		LaboxModes::ChangeMode(false, SILENTRETURNTOMAIN);
   }
 
 	DIAGWRITE("select end");
@@ -233,14 +237,26 @@ void menuTrainCvWrite::begin()
 */
 void menuTrainCvWrite::update()
 {
-	_HMIDEBUG_FCT_PRINTLN(F("menuTrainCvWrite::update.. Begin")); 
-
-	if(!writeDisplayInProgress)
+  if(writeDisplayInProgress && !boxHMI.currentCVAddressMoved && !boxHMI.currentCVDataMoved)
 	{
-		display->clearDisplay();
-		writeDisplayInProgress = true;
+			return;
+  }
+
+  if(boxHMI.currentCVAddressMoved)
+	{
+		if (writeState == Ready)
+		{
+			writeState = FixingAddress;
+		}
 	}
 
+	_HMIDEBUG_FCT_PRINTLN(F("menuTrainCvWrite::update.. Begin")); 
+
+	writeDisplayInProgress = true;
+	boxHMI.currentCVAddressMoved = false;
+	boxHMI.currentCVDataMoved = false;
+
+	display->clearDisplay();
 	display->setTextSize(1);
 	display->setCursor(5, 6);
   display->println(TXT_CVWRITE_LOGO);
@@ -261,12 +277,23 @@ void menuTrainCvWrite::update()
 	}
 
 	char mess1[20];
-	if (writeCVAddress > 0)
-		sprintf(mess1, "%03d:", writeCVAddress);
+	if (writeState == FixingAddress)
+	{
+		if (boxHMI.currentCVAddress > 0)
+			sprintf(mess1, "%03d:", boxHMI.currentCVAddress);
+		else
+			sprintf(mess1, "---:");
+	}
 	else
-		sprintf(mess1, "---:");
-	if (writeCVValue >= 0)
-		sprintf(messageWrite, "%s%03d", mess1, writeCVValue);
+	{
+		if (writeCVAddress > 0)
+			sprintf(mess1, "%03d:", writeCVAddress);
+		else
+			sprintf(mess1, "---:");
+	}
+
+	if (writeState == FixingValue && boxHMI.currentCVData >= 0)
+		sprintf(messageWrite, "%s%03d", mess1, boxHMI.currentCVData);
 	else
 		sprintf(messageWrite, "%s---", mess1);
 

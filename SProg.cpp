@@ -91,7 +91,7 @@ int SPROGCvAddress = 0;
 SProg::SProg(int inRxPin, int inTxPin) : EXCommItem("SPROG") {
 	rxPin = inRxPin;
 	txPin = inTxPin;
-	Serial1.begin(9600, SERIAL_8N1, rxPin, txPin);
+	SPROG_SERIAL.begin(9600, SERIAL_8N1, rxPin, txPin);
 
 	this->MainTrackEnabled = false;
 	this->ProgTrackEnabled = true;
@@ -99,7 +99,7 @@ SProg::SProg(int inRxPin, int inTxPin) : EXCommItem("SPROG") {
 }
 
 void SProg::setup() {
- 	DIAG(F("[SPROG] Serial1 Txd:%d   Rxd:%d"), txPin, rxPin);
+ 	DIAG(F("[SPROG] %s Txd:%d   Rxd:%d"), SPROG_SERIAL_TEXT, txPin, rxPin);
 	test_cab = 3;
 	test_speed = 0;
 	test_dir = true;
@@ -176,7 +176,7 @@ void SProg::getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSiz
 {
 	char mess[maxSize*2];
 
-	sprintf(mess, "[SPROG] Serial1");
+	sprintf(mess, "[SPROG] %s", SPROG_SERIAL_TEXT);
 	*pMess1 = mess;
 
 	sprintf(mess, "[SPROG] Tx:%d Rx:%d", txPin, rxPin);
@@ -185,7 +185,7 @@ void SProg::getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSiz
 
 #include "StringFormatter.h"
 
-#define BROADCAST(args...)		StringFormatter::send(&Serial1, args)
+#define BROADCAST(args...)		StringFormatter::send(&SPROG_SERIAL, args)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Object method to directly change the input state, for sensors such as LCN which are updated
@@ -218,8 +218,8 @@ void SProg::loopInternal() {
 		stateCV = StateCV::Ready;
 	}
 
-	while (Serial1.available()) {
-			char ch = Serial1.read();
+	while (SPROG_SERIAL.available()) {
+			char ch = SPROG_SERIAL.read();
 			//Serial.println((int)ch);
 			if (ch < 0x20) {
 					buffer[bufferLength] = '\0';

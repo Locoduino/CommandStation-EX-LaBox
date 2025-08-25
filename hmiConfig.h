@@ -125,6 +125,7 @@
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
 #define TXT_V3Trains            "3 trains"
+#define TXT_DONOTRESTART				"Redémarrer LaBox !"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_LstEvent            "Liste evenements"
 #define TXT_WifiWaiting         "Connexion WiFi..."
@@ -210,6 +211,7 @@
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
 #define TXT_V3Trains            "3 trains"
+#define TXT_DONOTRESTART				"Restart LaBox !"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_LstEvent            "Event list"
 #define TXT_WifiWaiting         "Connection WiFi..."

@@ -203,9 +203,11 @@ void DCCTimer::DCCEXanalogWriteFrequencyInternal(uint8_t pin, uint32_t frequency
 }
 
 void DCCTimer::DCCEXledcDetachPin(uint8_t pin) {
-	if (pin == 255)
+if (pin == 255)
 		return;
-  DIAG(F("Clear pin %d channel"), pin);
+#ifdef DIAG_IO
+  DIAG(F("Clear pin %d from ledc channel"), pin);
+#endif
   pin_to_channel[pin] = 0;
   pinMatrixOutDetach(pin, false, false);
 }

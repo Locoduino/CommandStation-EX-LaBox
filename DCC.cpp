@@ -156,7 +156,7 @@ void DCC::setFunctionInternal(int cab, byte byte1, byte byte2, byte count) {
 // returns speed steps 0 to 127 (1 == emergency stop)
 // or -1 on "loco not found"
 int8_t DCC::getThrottleSpeed(int cab) {
-  int reg=lookupSpeedTable(cab);
+  int reg=lookupSpeedTable(cab, true);
   if (reg<0) return -1;
   return speedTable[reg].speedCode & 0x7F;
 }
@@ -164,7 +164,7 @@ int8_t DCC::getThrottleSpeed(int cab) {
 // returns speed code byte
 // or 128 (speed 0, dir forward) on "loco not found".
 uint8_t DCC::getThrottleSpeedByte(int cab) {
-  int reg=lookupSpeedTable(cab);
+  int reg=lookupSpeedTable(cab, true);
   if (reg<0)
     return 128;
   return speedTable[reg].speedCode;
@@ -176,7 +176,7 @@ uint8_t DCC::getThrottleFrequency(int cab) {
   (void)cab;
   return 0;
 #else
-  int reg=lookupSpeedTable(cab);
+  int reg=lookupSpeedTable(cab, true);
   if (reg<0)
     return 0; // use default frequency
   // shift out first 29 bits so we have the 3 "frequency bits" left
@@ -189,7 +189,7 @@ uint8_t DCC::getThrottleFrequency(int cab) {
 // returns direction on loco
 // or true/forward on "loco not found"
 bool DCC::getThrottleDirection(int cab) {
-  int reg=lookupSpeedTable(cab);
+  int reg=lookupSpeedTable(cab, true);
   if (reg<0) return true;
   return (speedTable[reg].speedCode & 0x80) !=0;
 }
@@ -237,7 +237,7 @@ bool DCC::setFn( int cab, int16_t functionNumber, bool on) {
   if (functionNumber > 31)
     return true;
   
-  int reg = lookupSpeedTable(cab);
+	  int reg = lookupSpeedTable(cab, true);
   if (reg<0) return false;
 
   // Take care of functions:
@@ -277,7 +277,7 @@ void DCC::changeFn( int cab, int16_t functionNumber) {
 int8_t DCC::getFn( int cab, int16_t functionNumber) {
   if (cab<=0 || functionNumber>31)
     return -1;  // unknown
-  int reg = lookupSpeedTable(cab);
+  int reg = lookupSpeedTable(cab, false);
   if (reg<0)
     return -1;
 
@@ -299,7 +299,7 @@ void DCC::updateGroupflags(byte & flags, int16_t functionNumber) {
 
 uint32_t DCC::getFunctionMap(int cab) {
   if (cab<=0) return 0;  // unknown pretend all functions off
-  int reg = lookupSpeedTable(cab);
+  int reg = lookupSpeedTable(cab, false);
   return (reg<0)?0:speedTable[reg].functions;
 }
 
@@ -307,6 +307,7 @@ uint32_t DCC::getFunctionMap(int cab) {
 void DCC::setDCFreq(int cab,byte freq) {
   if (cab==0 || freq>3) return;
   auto reg=lookupSpeedTable(cab,true);
+  if (reg < 0) return;
   // drop and replace F29,30,31 (top 3 bits) 
   auto newFunctions=speedTable[reg].functions & 0x1FFFFFFFUL;
   if (freq==1)      newFunctions |= (1UL<<29); // F29
@@ -327,7 +328,7 @@ void DCC::setAccessory(int address, byte port, bool gate, byte onoff /*= 2*/) {
   // the initial decoders were orgnized and that influenced how the DCC
   // standard was made.
   #ifdef DIAG_IO
-  DIAG(F("DCC::setAccessory(%d,%d,%d)"), address, port, gate);
+  DIAG(F("DCC::setAccessory(%d,%d,%d,%d)"), address, port, gate, onoff);
   #endif
   // use masks to detect wrong values and do nothing
   if(address != (address & 511))
@@ -889,13 +890,13 @@ int DCC::lookupSpeedTable(int locoId, bool autoCreate) {
   }
 
   // return -1 if not found and not auto creating
-  if (reg== MAX_LOCOS && !autoCreate) return -1; 
-  if (reg == MAX_LOCOS) reg = firstEmpty;
-  if (reg >= MAX_LOCOS) {
+  if (reg == MAX_LOCOS) {
+    if (!autoCreate) return -1;    // nothing found and not auto creating
+    if (firstEmpty == MAX_LOCOS) { // through and no empty slot
     DIAG(F("Too many locos"));
     return -1;
   }
-  if (reg==firstEmpty){
+    reg = firstEmpty;
         speedTable[reg].loco = locoId;
         speedTable[reg].speedCode=128;  // default direction forward
         speedTable[reg].groupFlags=0;
@@ -931,7 +932,7 @@ void  DCC::updateLocoReminder(int loco, byte speedCode) {
   }
 
   // determine speed reg for this loco
-  int reg=lookupSpeedTable(loco);
+  int reg=lookupSpeedTable(loco, true);
   if (reg>=0 && speedTable[reg].speedCode!=speedCode) {
     speedTable[reg].speedCode = speedCode;
     CommandDistributor::broadcastLoco(reg);

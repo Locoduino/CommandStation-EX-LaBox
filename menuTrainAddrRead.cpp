@@ -56,11 +56,9 @@ void locoIdCallback(int16_t inId)
 
 void menuTrainAddrRead::start()
 {
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::start.. Begin"); 
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::start.. Begin"); 
 
-  if (!LaboxModes::progMode) {
-		LaboxModes::Restart(CV1ADDR);
-  }
+	LaboxModes::ChangeMode(true, CV1ADDR);
 
   state = StateReading::Reading;
   locoID = 0;
@@ -68,7 +66,7 @@ void menuTrainAddrRead::start()
   void (*ptr)(int16_t) = &locoIdCallback;
   DCC::getLocoId(ptr);
   updatedDisplay = false;
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::start.. End"); 
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::start.. End"); 
 }
 
 /*!
@@ -93,7 +91,7 @@ menuTrainAddrRead::menuTrainAddrRead(Adafruit_SSD1306* screen, menuObject* p, co
 */
 void menuTrainAddrRead::eventUp()
 {
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventUp.. Begin"); 
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventUp.. Begin"); 
   menuObject::eventUp();
 
 	if (state == StateReading::MenuQuit)
@@ -102,7 +100,7 @@ void menuTrainAddrRead::eventUp()
 	  updatedDisplay = false;
 	}
 
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventUp.. End");   
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventUp.. End");   
 }
 /*!
     @brief  eventDown, Notification of a button event
@@ -112,7 +110,7 @@ void menuTrainAddrRead::eventUp()
 */
 void menuTrainAddrRead::eventDown()
 {
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventDown.. Begin"); 
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventDown.. Begin"); 
   menuObject::eventDown();
 
 	if (state == StateReading::MenuRetry)
@@ -120,7 +118,7 @@ void menuTrainAddrRead::eventDown()
 		state = StateReading::MenuQuit;
     updatedDisplay = false;
 	}
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventDown.. End");   
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventDown.. End");   
 }
 /*!
     @brief  eventSelect, Notification of a button event
@@ -130,11 +128,11 @@ void menuTrainAddrRead::eventDown()
 */
 int menuTrainAddrRead::eventSelect()
 {
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. Begin"); 
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventSelect.. Begin"); 
 
 	if (state == StateReading::MenuQuit)
 	{
-		LaboxModes::Restart(SILENTRETURNTOMAIN);
+		LaboxModes::ChangeMode(false, SILENTRETURNTOMAIN);
   }
 
 	if (state == StateReading::MenuRetry)
@@ -142,7 +140,7 @@ int menuTrainAddrRead::eventSelect()
 		this->start();
 	}
 
-  _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::eventSelect.. End");  
+  _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventSelect.. End");  
   return MENUEXIT;
 }
 
@@ -168,14 +166,16 @@ void menuTrainAddrRead::begin()
 */
 void menuTrainAddrRead::update()
 {
-  _HMIDEBUG_FCT_PRINTLN(F("menuTrainAddrRead::update.. Begin")); 
-
-  if(!updatedDisplay)
+	if(updatedDisplay)
   {
-    display->clearDisplay();
-    updatedDisplay = true;
+		return;
   }
 
+  _HMIDEBUG_MENU_PRINTLN(F("menuTrainAddrRead::update.. Begin")); 
+
+  updatedDisplay = true;
+
+  display->clearDisplay();
   display->setTextSize(1);
 	display->setTextColor(WHITE);
 
@@ -200,7 +200,6 @@ void menuTrainAddrRead::update()
     sprintf(message,">%s<",TXT_MenuAddrQuit);
 	  display->println(message);
 	}
-  display->display(); 
 
   if(locoID > 0)
   {
@@ -223,7 +222,7 @@ void menuTrainAddrRead::update()
   display->println(message);  
 
   display->display();   
-  _HMIDEBUG_FCT_PRINTLN(F("menuTrainAddrRead::update.. End")); 
+  _HMIDEBUG_MENU_PRINTLN(F("menuTrainAddrRead::update.. End")); 
 }
 /*!
     @brief  resetMenu, 
@@ -239,6 +238,5 @@ void menuTrainAddrRead::resetMenu()
   updatedDisplay = false;
 
   _HMIDEBUG_FCT_PRINTLN("menuTrainAddrRead::resetMenu.. End"); 
-  
 }
 #endif

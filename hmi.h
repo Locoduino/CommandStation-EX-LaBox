@@ -36,6 +36,16 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
     int   nbTrainToView;
 		bool stopStateMachine;
 
+		bool isCVAddressEditing;
+
+		int currentCVAddress;
+		int currentBaseCVAddress;
+		bool currentCVAddressMoved;
+
+		int currentCVData;
+		int currentBaseCVData;
+		bool currentCVDataMoved;
+
     //int executionCore;
     
     //----- functions
