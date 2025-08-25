@@ -9,6 +9,7 @@
 //				- The CV address and its value can be set by using WiThrottle or Z21 loco speed/dir interfaces. Thank to lebelge2 for the idea !
 //				- Fix the pin 27 added to RMT not only for Railcom.
 //				- Fix power notification on serial command input, as WebThrottle does it.
+// 				- CommandStation-EX code base passed 5.4.15 !
 //
 // 2.10.0	- CommandStation-EX code base passed from 5.0.9 to 5.4.10 !
 //				- Fix two trains dashboard graphics.
