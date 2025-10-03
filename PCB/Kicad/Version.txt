@@ -59,3 +59,9 @@ Versions PCB
 - Move slightly Leds to avoid collision with RJ11 connector
 - Move slightly R20 and R21 to facilitate the solder of ESP32 headers
 - Move slightly LM7805 imprint to be able to add a radiator.
+
+1.0 b1 (01/10/2025)
+- Add booster area serigraphy.
+- RJ12 sockets has been separated as much as possible.
+- Move slightly LM7805 to avoid contact with underlying tracks.
+- Remove some small tracks without any connections...
