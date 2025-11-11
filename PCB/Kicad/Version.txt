@@ -65,3 +65,4 @@ Versions PCB
 - RJ12 sockets has been separated as much as possible.
 - Move slightly LM7805 to avoid contact with underlying tracks.
 - Remove some small tracks without any connections...
+- Rotate 7805 socket.
