@@ -7,7 +7,7 @@
  *  © 2023 Nathan Kellenicki
  *  © 2024 Thierry Paris for Locoduino
  *  
- *  This file is part of CommandStation-EX
+ *  This file is part of CommandStation-EX and Labox
  *
  *  This is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -245,6 +245,12 @@ The configuration file for DCC-EX Command Station
 
 // Change the screen reading orientation : should be 0 or 2.
 #define HMI_SCREEN_ROTATION     2           // 0 : 0°, 1 : 90°, 2 : 180°, 3 : 270°
+
+// Current value shift (in mA) applied only to the displayed current on the OLED screen; 
+// set to a positive or negative integer to calibrate the display if the shown value does not match the actual current 
+// (e.g., set to -20 if the screen shows 20mA when no current is present).
+// This value is only used for the screen, not for DCC and CV programming !
+#define HMI_CURRENTDELTA		0           // Current value shift with I=0
 
 // Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
 //#define ENABLE_RAILCOM
