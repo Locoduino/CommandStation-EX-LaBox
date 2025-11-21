@@ -30,9 +30,9 @@
 #include "menuobject.h"
 #include "menumanagement.h"
 
-#include "soc/rtc_wdt.h"
-#include "soc/timer_group_struct.h"
-#include "soc/timer_group_reg.h"
+//#include "soc/rtc_wdt.h"
+//#include "soc/timer_group_struct.h"
+//#include "soc/timer_group_reg.h"
 
 bool LaboxModes::progMode = false;
 ProgType LaboxModes::progModeType = ProgType::MAIN;
@@ -281,8 +281,9 @@ void centerIdentMessage(const char *Text, char *inBuffer, int inSize)
 void LaboxModes::DONOTRESTART()
 {
   DIAG_LMODES(F("LaboxModes::DONOTRESTART.. Begin"));
+	
+#ifdef USE_HMI
 	char buffer[21];
-
 	Adafruit_SSD1306* display = (Adafruit_SSD1306*) &boxHMI;
 
   display->clearDisplay();
@@ -302,6 +303,7 @@ void LaboxModes::DONOTRESTART()
   display->setCursor(5, 55);
 
   display->display();   
+#endif
 
   DIAG_LMODES(F("LaboxModes::DONOTRESTART.. End"));
 }

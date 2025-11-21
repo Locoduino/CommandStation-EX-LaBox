@@ -26,7 +26,7 @@
 // U/I correctors
 #define HMI_VoltageK            0.0068      // Voltage scaling coefficient
 #define HMI_CurrentK            0.9        	// Current scaling coefficient
-#define HMI_deltaCurrent				0			// Current value shift with I=0
+#define HMI_deltaCurrent				HMI_CURRENTDELTA			// Current value shift with I=0
 // Stack / string allocation sizes
 #define HMI_StackNbCarElt       20          // 20 elements into the stack
 #define HMI_EventMaxToDisplay   5           // We can display in full screnn 7 lines of event
@@ -75,6 +75,7 @@
 #define MENUTRAINIDENT					307
 #define MENUSHUTTLESAMPLE				308
 #define MENUDCDCCMODE						309
+#define MENUPHYSICALMES					310
 
 #define MENUINFORMATION_ABOUT		400
 #define MENUINFORMATION_WIFI		401
@@ -83,6 +84,7 @@
 #define MENUTYPECOMEBCK         0x8000
 #define MENUTYPELIST            0x7999
 #define MENUACTION              0x7998
+#define MENUOPENSCREEN          0x7997
 //#define MENUTYPEITEM            312
 
 

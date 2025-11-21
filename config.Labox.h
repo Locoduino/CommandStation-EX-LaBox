@@ -109,7 +109,12 @@ The configuration file for DCC-EX Command Station
  new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* PROG */ \
  new MotorDriver(LABOX_EXT2_PINS, 0.80, 2500, UNUSED_PIN) /* Booster */
 
-//
+// Choose your own motor shield configuration here
+#define YOUR_MOTOR_SHIELD_TYPE LABOX_BASE_MOTOR_SHIELD
+
+// If defined, the booster output is inverted (useful for some wiring configurations)
+//#define INVERT_BOOSTER_OUTPUT
+
 /////////////////////////////////////////////////////////////////////////////////////
 //
 // If you want to restrict the maximum current LOWER than what your

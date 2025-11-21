@@ -17,6 +17,7 @@
 #include "menumanagement.h"
 #include "menuobject.h"
 #include "menuinformation.h"
+#include "menuPhysicalMes.h"
 #include "menuTrainAddrRead.h"
 #include "menuTrainCvRead.h"
 #include "menuTrainCvWrite.h"
@@ -52,7 +53,7 @@ MenuManagement::MenuManagement(hmi*  screen)
     V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
     V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
     V3Trains    = new menuObject(display, TrainView, TXT_V3Trains, 3);
-  physicalMes   = new menuInformation(display, baseMenu, TXT_PhysicalMes, MENUACTION);    // Classe à définir
+  physicalMes   = new menuPhysicalMes(display, baseMenu, TXT_PhysicalMes, MENUPHYSICALMES);
   lstEvent      = new menuObject(display, baseMenu, TXT_LstEvent, MENUACTION);
   info					= new menuObject(display, baseMenu, TXT_MenuInfos, MENUTYPELIST);
   	about				= new menuInformation(display, info, TXT_MenuAbout, MENUINFORMATION_ABOUT);
@@ -170,6 +171,8 @@ void MenuManagement::BtnSelectPressed()
     case MENUTRAINIDENT:
     case MENUSHUTTLESAMPLE:
     case MENUDCDCCMODE:
+    case MENUPHYSICALMES:
+		case MENUOPENSCREEN:
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
       activeMenu = activeMenu->subMenu[activeMenu->SelectListIndex];

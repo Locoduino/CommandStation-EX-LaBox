@@ -45,6 +45,8 @@ hmi::hmi(TwoWire *twi) : Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT) // ,twi, 
   _HMIState        = StateDashboard;
   positioneventlst= 0;
 	stopStateMachine = false;
+	stopTimeOutRefresh = false;
+	stopTrainsViewRefresh = false;
 
   // Init train list
   for(int i=0; i < HMI_NbMemorisedTrain; i++)
@@ -213,7 +215,7 @@ void hmi::stateMachine()
 
   _HMIDEBUG_FCT_PRINTLN("hmi::stateMachine().. Begin");
   // Time out in menu, back to dashboard
-  if (!LaboxModes::progMode && _HMIState == StateParametersMenu && (millis() - millisParamsMenu > HMI_TimeOutMenu) )
+  if (!LaboxModes::progMode && !this->stopTimeOutRefresh && _HMIState == StateParametersMenu && (millis() - millisParamsMenu > HMI_TimeOutMenu) )
   {
     _HMIDEBUG_SM_PRINTLN("Timeout Parameters Menu");
     _HMIState = StateExitMenu;
@@ -298,7 +300,7 @@ void hmi::stateMachine()
         dashboard();
     break;
     case StateDashboardTrainView :
-        if(needToRefreshDisplay() )
+        if(!this->stopTrainsViewRefresh && this->needToRefreshDisplay() )
         {
           switch(this->nbTrainToView)   // A corriger selon les paramètres
           {
@@ -829,6 +831,9 @@ void hmi::addNotification(const char* msg)
   }
   _HMIDEBUG_FCT_PRINTLN("hmi::addNotification().. End");  
 }
+
+#define _HMIDEBUG_SIMUL 
+
 /*!
     @brief  readVoltage
             read the voltage value from analog pin
@@ -853,7 +858,7 @@ void hmi::readVoltage()
   voltage = local_adc1_get_raw(pinToADC1Channel(PIN_VOLTAGE_MES)) * HMI_VoltageK;
 
 #ifdef _HMIDEBUG_SIMUL
-  voltage = ((float)random(175, 185)) / 10;
+  voltage = (float)random(0, 30);
 #endif
   _HMIDEBUG_FCT_PRINTLN("hmi::readVoltage().. End");  
 }
@@ -888,7 +893,7 @@ void hmi::readCurrent()
 	}
 	current = (float) (((base / 50) * HMI_CurrentK) - HMI_deltaCurrent);
 #ifdef _HMIDEBUG_SIMUL
-  current = ((float)random(0, 410)) / 100;
+  current = ((float)random(0, 4000));
 #endif  
   _HMIDEBUG_FCT_PRINTLN("hmi::readCurrent().. End");  
 }

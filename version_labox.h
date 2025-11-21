@@ -1,7 +1,15 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.11.0"
+#define VERSION_LABOX "2.12.0"
+// 2.12.0 - Add HMI_DELTACURRENT in config.h to calibrate the current displayed on the OLED screen.
+// 				- Add YOUR_MOTOR_SHIELD_TYPE in config.h to choose the right motor shield without the need to change the .ino file.
+//				- Add INVERT_BOOSTER_OUTPUT in config.h to invert booster output if needed.
+//				- Platform.IO : Update of used libraries :
+//						adafruit/Adafruit GFX Library@^1.12.3
+//						adafruit/Adafruit SSD1306@^2.5.15
+//				- Platform.IO : Update of used Expressif platform 6.7.0 -> 6.12.0
+//				- The command 'Measures U and I' is now operational.
 // 2.11.0 - Fixing IP Address for Wifi is now possible.
 //				- Railcom last modifications from lebelge2 integrated.
 //				- Big changes in LaboxModes to manage correctly the different configurations.

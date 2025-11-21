@@ -75,8 +75,16 @@ void disableCoreWDT(byte core){
 
 #ifdef IP_ADDRESS
 IPAddress local_IP(IP_ADDRESS);
+#endif
+#ifdef GATEWAY
 IPAddress gateway(GATEWAY);
+#else
+IPAddress gateway(0,0,0,0);
+#endif
+#ifdef SUBNET
 IPAddress subnet(SUBNET);
+#else
+IPAddress subnet(255,255,255,0);
 #endif
 
 class NetworkClient {

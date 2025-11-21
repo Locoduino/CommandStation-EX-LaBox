@@ -159,10 +159,12 @@ void setup() {
   }
   else {
     DIAG(F("LaBox Main mode."));
-    TrackManager::Setup(LABOX_BASE_MOTOR_SHIELD);
+    TrackManager::Setup(YOUR_MOTOR_SHIELD_TYPE);
 
+#if defined(INVERT_BOOSTER_OUTPUT)
 		// For the first booster. No problem if there is no booster.
 		TrackManager::setTrackMode(2, TRACK_MODE_MAIN_INV);
+#endif
   }
 
   // Responsibility 3: Start the DCC engine.
@@ -197,8 +199,8 @@ void setup() {
 	LaboxModes::begin();
 #endif
 #ifdef ENABLE_RAILCOM
-		// Only use Railcom in LaBox Main mode.
-		RailcomBegin();
+	// Only use Railcom in LaBox Main mode.
+	RailcomBegin();
 #endif
 }
 

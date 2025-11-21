@@ -689,12 +689,12 @@ void DCCEXParser::parseOne(Print *stream, byte *com, RingStream * ringStream)
 #if defined(ARDUINO_ARCH_ESP32)
 // currently this only works on ESP32
       if (p[0] == "SNIFFER"_hk) { // <C SNIFFER ON|OFF>
+#ifndef LABOX
 	bool on = false;
 	if (params>1 && p[1] == "ON"_hk) {
 	  on = true;
 	}
 	
-#ifndef LABOX
 	DCCDecoder::onoff(on);
 #endif
 	return;

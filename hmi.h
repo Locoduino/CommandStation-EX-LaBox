@@ -35,6 +35,8 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
     float current;
     int   nbTrainToView;
 		bool stopStateMachine;
+		bool stopTimeOutRefresh;
+		bool stopTrainsViewRefresh;
 
 		bool isCVAddressEditing;
 

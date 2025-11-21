@@ -7,7 +7,7 @@
  *  © 2023 Nathan Kellenicki
  *  © 2024 Thierry Paris for Locoduino
  *  
- *  This file is part of CommandStation-EX
+ *  This file is part of CommandStation-EX and Labox
  *
  *  This is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -89,12 +89,11 @@ The configuration file for DCC-EX Command Station
 #define LABOX_EXT2_PINS		14, 25, 26, UNUSED_PIN, 39
 #define LABOX_EXT1_PINS		12, 13, 15, UNUSED_PIN, 35
 
-#define LABOX_MAIN_MOTOR_SHIELD F("LABOXMAIN"), \
- new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN) /* MAIN ONLY */
-
-#define LABOX_PROG_MOTOR_SHIELD F("LABOXPROG"), \
+#define LABOX_BASE_MOTOR_SHIELD F("LABOXBASE"), \
  NULL, \
- new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG ONLY */
+ new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG ONLY, also used as MAIN via Joining... */
+
+#define LABOX_PROG_MOTOR_SHIELD LABOX_BASE_MOTOR_SHIELD
 
  #define LABOX_MAIN_BOOSTER_MOTOR_SHIELD F("LABOXMAINBOOSTER"), \
  new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* MAIN */ \
@@ -110,7 +109,12 @@ The configuration file for DCC-EX Command Station
  new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* PROG */ \
  new MotorDriver(LABOX_EXT2_PINS, 0.80, 2500, UNUSED_PIN) /* Booster */
 
-//
+// Choose your own motor shield configuration here
+#define YOUR_MOTOR_SHIELD_TYPE LABOX_BASE_MOTOR_SHIELD
+
+// If defined, the booster output is inverted (useful for some wiring configurations)
+#define INVERT_BOOSTER_OUTPUT
+
 /////////////////////////////////////////////////////////////////////////////////////
 //
 // If you want to restrict the maximum current LOWER than what your
@@ -160,13 +164,13 @@ The configuration file for DCC-EX Command Station
 // The AP mode password must be at least 8 characters long.
 //
 // Your SSID may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_SSID "VIDEOFUTUR_ED5939_2.4G"
+#define WIFI_SSID "NETGEM-1DE008"
 //
 // WIFI_PASSWORD is the network password for your home network or if
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD "2932003454"
+#define WIFI_PASSWORD "jyjiqtje"
 //
 // WIFI_HOSTNAME: You can change this if you have more than one
 // CS to make them show up with different names on the network.
@@ -193,10 +197,11 @@ The configuration file for DCC-EX Command Station
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
-// DEFINE STATIC IP ADDRESS *OR* COMMENT OUT TO USE DHCP
+// DEFINE STATIC WIFI IP/GATEWAY ADDRESS *OR* COMMENT OUT TO USE DHCP
 //
-//#define IP_ADDRESS { 192, 168, 1, 200 }
-
+#define IP_ADDRESS 192, 168, 0, 150
+#define GATEWAY 192, 168, 0, 1
+#define SUBNET 255, 255, 255, 0
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -239,10 +244,16 @@ The configuration file for DCC-EX Command Station
 #define HMI_DASHBOARD_TRAIN_NB	3
 
 // Change the screen reading orientation : should be 0 or 2.
-#define HMI_SCREEN_ROTATION     2           // 0 : 0°, 1 : 90°, 2 : 180°, 3 : 270°
+#define HMI_SCREEN_ROTATION     2       // 0 : 0°, 1 : 90°, 2 : 180°, 3 : 270°
+
+// Current value shift (in mA) applied only to the displayed current on the OLED screen; 
+// set to a positive or negative integer to calibrate the display if the shown value does not match the actual current 
+// (e.g., set to -20 if the screen shows 20mA when no current is present).
+// This value is only used for the screen, not for DCC and CV programming !
+#define HMI_CURRENTDELTA		0           // Current value shift with I=0
 
 // Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
-//#define ENABLE_RAILCOM
+#define ENABLE_RAILCOM
 
 #if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
 #undef ENABLE_RAILCOM
@@ -254,7 +265,7 @@ The configuration file for DCC-EX Command Station
 #ifdef ENABLE_EXCOMM
 
 	// Use EXComm CAN bus using Marklin protocol
-	#define ENABLE_CANMARKLIN
+	//#define ENABLE_CANMARKLIN
 
 	#ifdef ENABLE_CANMARKLIN
 	#define CANMARKLINCOMM		new CanMarklin(253, GPIO_NUM_4, GPIO_NUM_5, 250UL * 1000UL, false)
@@ -272,9 +283,12 @@ The configuration file for DCC-EX Command Station
 	#endif
 
 	// Use EXComm SProg protocol via Serial2 in prog mode only
-	#define ENABLE_SPROG
+	//#define ENABLE_SPROG
 
 	#ifdef ENABLE_SPROG
+	#define SPROG_SERIAL	Serial1
+	#define SPROG_SERIAL_TEXT	"Serial1"
+
 	#define SPROGCOMM		new SProg(16, 17)
 	#else
 	#define SPROGCOMM		NULL
