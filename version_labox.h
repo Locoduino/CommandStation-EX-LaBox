@@ -1,7 +1,9 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.12.0"
+#define VERSION_LABOX "2.13.0"
+// 2.13.0 - Fix display of function symbol on train dashboard.
+//				- Undefine HMI_DEBUG_SIMUL to avoid U and I simulation values in hmi.cpp .
 // 2.12.0 - Add HMI_DELTACURRENT in config.h to calibrate the current displayed on the OLED screen.
 // 				- Add YOUR_MOTOR_SHIELD_TYPE in config.h to choose the right motor shield without the need to change the .ino file.
 //				- Add INVERT_BOOSTER_OUTPUT in config.h to invert booster output if needed.

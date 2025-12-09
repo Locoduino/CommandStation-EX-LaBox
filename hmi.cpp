@@ -832,7 +832,7 @@ void hmi::addNotification(const char* msg)
   _HMIDEBUG_FCT_PRINTLN("hmi::addNotification().. End");  
 }
 
-#define _HMIDEBUG_SIMUL 
+//#define _HMIDEBUG_SIMUL 
 
 /*!
     @brief  readVoltage

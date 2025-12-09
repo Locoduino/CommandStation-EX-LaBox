@@ -174,8 +174,14 @@ void hmiTrain::dashboard(int pos_x1, int pos_y1, int pos_x2, int pos_y2)
   {
     drawLightSymbol(center_x, center_y, 6);
   }
+	
+	if (function[lastFunction] == true)
+	{
+		drawFunctionSymbol(pos_x1, 5, lastFunction);
+	}
+
   //--------------------------------------------------------------
-  _HMIDEBUG_FCT_PRINTLN("hmiTrain::dashboard.. End"); 
+  _HMIDEBUG_FCT_PRINTLN("hmiTrain::dashboard.. End");
 }
 /*!
     @brief  dashboard1T
