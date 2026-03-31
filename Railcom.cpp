@@ -11,28 +11,31 @@
 hw_timer_t * TimerCutOut = NULL;
 int rmt_channel;                                                             // * Variable
 int p;                                                                        // * Variable
-gpio_num_t railcom_pin;
-gpio_num_t railcom_invpin;
+gpio_num_t railcom_pins[4]; // Max 3 main tracks including boosters. Empty slots are set to GPIO_NUM_NC
+gpio_num_t railcom_invpins[4]; // Max 3 main tracks including boosters. Empty slots are set to GPIO_NUM_NC
+bool pauseRailcom = false;
 
 void IRAM_ATTR timer_isr_CutOut() {
 	if (p < 1000) {
 		p++;
-		switch (p) {
-			case 1:
-				break;
-			case 2:
-				gpio_matrix_out(railcom_invpin, 0x100, false, false);                      // * Déconnecte la pin 27 du module RMT
-				gpio_set_level(railcom_invpin, 1);                                         // * Pin 27 à l'état haut
-				break;
-			case 3:
-				gpio_matrix_out(railcom_invpin, RMT_SIG_OUT0_IDX + rmt_channel, true, false);    // * Reconnecte la pin 27 au module RMT en inverse
-				gpio_matrix_out(railcom_pin, RMT_SIG_OUT0_IDX + rmt_channel, true, false);    // * Reconnecte la pin 33 au module RMT en inverse
-				break;
-			default:
-				gpio_set_level(railcom_pin, 1); 
-				gpio_matrix_out(railcom_pin, RMT_SIG_OUT0_IDX + rmt_channel, false, false);   // * Reconnecte la pin 33 au module RMT
-				timerAlarmWrite(TimerCutOut, 160, false);                               // * Arrêt Timer
-				break;
+		for (int i = 0; railcom_pins[i] != GPIO_NUM_NC; i++) {
+			switch (p) {
+				case 1:
+					break;
+				case 2:
+					gpio_matrix_out(railcom_invpins[i], 0x100, false, false);                      // * Déconnecte la pin 27 du module RMT
+					gpio_set_level(railcom_invpins[i], 1);                                         // * Pin 27 à l'état haut
+					break;
+				case 3:
+					gpio_matrix_out(railcom_invpins[i], RMT_SIG_OUT0_IDX + rmt_channel, true, false);    // * Reconnecte la pin 27 au module RMT en inverse
+					gpio_matrix_out(railcom_pins[i], RMT_SIG_OUT0_IDX + rmt_channel, true, false);    // * Reconnecte la pin 33 au module RMT en inverse
+					break;
+				default:
+					gpio_set_level(railcom_pins[i], 1); 
+					gpio_matrix_out(railcom_pins[i], RMT_SIG_OUT0_IDX + rmt_channel, false, false);   // * Reconnecte la pin 33 au module RMT
+					timerAlarmWrite(TimerCutOut, 160, false);                               // * Arrêt Timer
+					break;
+			}
 		}
 	}
 }
@@ -49,21 +52,38 @@ void RailcomBegin() {
 	// * Timer RailCom
 	timerAttachInterrupt(TimerCutOut, &timer_isr_CutOut, true);
 
+	for (int i = 0; i < 4; i++) {
+		railcom_pins[i] = GPIO_NUM_NC;
+		railcom_invpins[i] = GPIO_NUM_NC;
+	}
+
+	int pinCount = 0;
+
 	// Even in base mode, the Prog track is joined and should be recognized as main track.
-	for(const auto& md: TrackManager::getMainDrivers()) {
+	for(const auto& md: TrackManager::getDrivers((TRACK_MODE) 0xFF)) {
 
-		if (md == NULL)
+		if (md == NULL) {
+			DIAG("Main driver NULL found");
 			continue;
+		}
 
-    pinpair p = md->getSignalPin();
+		if (LaboxModes::progBehavior != ProgBehaviorJoining && md->getMode() & TRACK_MODE_PROG) {
+			DIAG("Prog driver found %d", md->getSignalPin().pin);
+			continue; // Prog track is not supported for Railcom.
+		}
 
-		// Railcom protocol will work only for the first driver...
-		railcom_pin = (gpio_num_t)p.pin;
-		railcom_invpin = (gpio_num_t)p.invpin;
-		break;
-  }
+		DIAG("Main driver found %d", md->getSignalPin().pin);
 
-	DIAG(F("Railcom activated pin:%d invpin:%d"), railcom_pin, railcom_invpin);
+		pinpair p = md->getSignalPin();
+
+		railcom_pins[pinCount] = (gpio_num_t)p.pin;
+		railcom_invpins[pinCount] = (gpio_num_t)p.invpin;
+		pinCount++;
+	}
+
+	for(int i = 0; railcom_pins[i] != GPIO_NUM_NC; i++) {
+		DIAG(F("Railcom activated %d : pin:%d invpin:%d"), i, railcom_pins[i], railcom_invpins[i]);
+	}
 }
 
 void RailcomEnd() {
@@ -75,15 +95,25 @@ void RailcomEnd() {
 		timerStop(TimerCutOut);
 		timerDetachInterrupt(TimerCutOut);
 		timerEnd(TimerCutOut);
+		TimerCutOut = NULL;
 
 		p = 1000;
 	}
+
+	DIAG(F("Railcom stopped."));
+}
+
+bool isRailcomEnabled() {
+	return (TimerCutOut != NULL);
 }
 
 void StarTimerCutOut(rmt_channel_t channel) {            // * Start Timer 
-  if (!LaboxModes::progMode && TimerCutOut != NULL) {
-	  gpio_matrix_out(railcom_pin, 0x100, false, false);   // * Déconnecte la pin 33 du module RMT
- 		gpio_set_level(railcom_pin, 1);                      // * Pin 33 à l'état haut
+  if (!pauseRailcom && !LaboxModes::progMode && TimerCutOut != NULL) {
+		for (int i = 0; railcom_pins[i] != GPIO_NUM_NC; i++) {
+		  gpio_matrix_out(railcom_pins[i], 0x100, false, false);   // * Déconnecte la pin du module RMT
+ 			gpio_set_level(railcom_pins[i], 1);                      // * Pin à l'état haut
+		}
+
  		rmt_channel = channel;                               // * Mémorise n° de canal
   	timerAlarmWrite(TimerCutOut, 160, true);             // * En continu
   	timerAlarmEnable(TimerCutOut);
@@ -92,7 +122,7 @@ void StarTimerCutOut(rmt_channel_t channel) {            // * Start Timer
 }
 
 int setDCCBitCutOut(rmt_item32_t* item) {                     // * Temps CutOut fixé à 488µs (TCE Max.)
-  if (!LaboxModes::progMode) {     
+  if (!pauseRailcom && !LaboxModes::progMode) {     
 		item->level0    = 1;
 		item->duration0 = 29;                                        // * 29µs CutOut Start (TCS)
 		item->level1    = 0;

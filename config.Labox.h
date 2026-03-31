@@ -5,7 +5,7 @@
  *  © 2020-2021 Fred Decker
  *  © 2020-2021 Chris Harlow
  *  © 2023 Nathan Kellenicki
- *  © 2024 Thierry Paris for Locoduino
+ *  © 2024-2026 Thierry Paris for Locoduino
  *  
  *  This file is part of CommandStation-EX and Labox
  *
@@ -68,7 +68,7 @@ The configuration file for DCC-EX Command Station
 //
 // +--------------------------------------------
 // |  Ver 1.0a1      []  O  O  O  O
-// |								GND 32 33 27 26
+// |								GND 36 32 33 27
 // | [] GND -+
 // | O 39    |
 // | O 14    | EXT #2
@@ -90,14 +90,16 @@ The configuration file for DCC-EX Command Station
 #define LABOX_EXT1_PINS		12, 13, 15, UNUSED_PIN, 35
 
 #define LABOX_BASE_MOTOR_SHIELD F("LABOXBASE"), \
- NULL, \
- new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG ONLY, also used as MAIN via Joining... */
+ NULL, /* Prog track is also the Main ! */ \
+ new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG, used as MAIN via Joining... */
 
-#define LABOX_PROG_MOTOR_SHIELD LABOX_BASE_MOTOR_SHIELD
+#define LABOX_PROG_MOTOR_SHIELD F("LABOXPROGONLY"), /* DO NOT CHANGE THIS NAME, it is used to detect the PROG only mode ! */ \
+ NULL, /* No main here, just a prog track. */ \
+ new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN)	/* PROG ONLY */
 
  #define LABOX_MAIN_BOOSTER_MOTOR_SHIELD F("LABOXMAINBOOSTER"), \
- new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* MAIN */ \
- NULL, /* NO prog track */ \
+ NULL, /* Prog track is also the Main ! */ \
+ new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* MAIN/PROG */ \
  new MotorDriver(LABOX_EXT1_PINS, 0.80, 2500, UNUSED_PIN) /* Booster */
 
  #define LABOX_MAIN_PROG_MOTOR_SHIELD F("LABOXMAINPROG"), \
@@ -108,6 +110,12 @@ The configuration file for DCC-EX Command Station
  new MotorDriver(LABOX_EXT1_PINS, 0.80, 2500, UNUSED_PIN), /* MAIN */ \
  new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* PROG */ \
  new MotorDriver(LABOX_EXT2_PINS, 0.80, 2500, UNUSED_PIN) /* Booster */
+
+#define LABOX_MAIN_BOOSTER_BOOSTER_MOTOR_SHIELD F("LABOXMAINBOOSTERBOOSTER"), \
+ NULL, /* Prog track is also the Main ! */\
+ new MotorDriver(LABOX_MAIN_PINS, 0.80, 2500, UNUSED_PIN), /* MAIN/PROG */ \
+ new MotorDriver(LABOX_EXT1_PINS, 0.80, 2500, UNUSED_PIN), /* Booster 1 */ \
+ new MotorDriver(LABOX_EXT2_PINS, 0.80, 2500, UNUSED_PIN)  /* Booster 2 */
 
 // Choose your own motor shield configuration here
 #define YOUR_MOTOR_SHIELD_TYPE LABOX_BASE_MOTOR_SHIELD
@@ -310,6 +318,13 @@ The configuration file for DCC-EX Command Station
 		XPRESSNETCOMM
 
 #endif
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Change LaBox state using CV programming on a specific address...
+/////////////////////////////////////////////////////////////////////////////////////
+
+// If the next line is disabled, no configuration CV is possible for LaBox specific features
+#define LABOX_CV_ADDRESS		1000	// Default address to program LaBox specific features
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM

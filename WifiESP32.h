@@ -36,8 +36,9 @@ public:
 		    const byte channel,
 			const bool forceAP);
   static void loop();
+  static void teardown();		// LaBox move to public
+	static bool isUp() { return wifiUp; };	// LaBox added
 private:
-  static void teardown();
   static bool wifiUp;
   static WiFiServer *server;
 };

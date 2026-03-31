@@ -84,6 +84,11 @@ public:
   static void verifyCVByte(int16_t cv, byte byteValue, ACK_CALLBACK callback);
   static void verifyCVBit(int16_t cv, byte bitNum, bool bitValue, ACK_CALLBACK callback);
 
+	#ifdef LABOX
+	static void startProgTrackProcessing(int16_t cv, byte byteValue, char opType); // starts processing of progtrack queue
+	static void endProgTrackProcessing(int16_t result);  // stops processing of progtrack queue
+	#endif
+
   static void getLocoId(ACK_CALLBACK callback);
   static void setLocoId(int id,ACK_CALLBACK callback);
   static void setConsistId(int id,bool reverse,ACK_CALLBACK callback);

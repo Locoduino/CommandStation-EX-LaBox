@@ -39,6 +39,9 @@
 #include "DCCTimer.h"
 #ifdef LABOX
 #include "hmi.h"
+#include "labox.h"
+#include "menuProgMode.h"
+#include "railcom.h"
 #include "EXComm.h"
 #endif
 
@@ -710,34 +713,60 @@ const ackOp FLASH LONG_LOCO_ID_PROG[] = {
 };
 
 void  DCC::writeCVByte(int16_t cv, byte byteValue, ACK_CALLBACK callback)  {
+#ifdef LABOX
+	startProgTrackProcessing(cv, byteValue, 'W');
+
+	if (Labox::ChangeCVs(cv, byteValue)) {
+		endProgTrackProcessing(1); // success
+		return;
+	}
+#endif
   DCCACK::Setup(cv, byteValue,  WRITE_BYTE_PROG, callback);
 }
 
 void DCC::writeCVBit(int16_t cv, byte bitNum, bool bitValue, ACK_CALLBACK callback)  {
+#ifdef LABOX
+	startProgTrackProcessing(cv, 1 << bitNum, 'W');
+#endif
   if (bitNum >= 8) callback(-1);
   else DCCACK::Setup(cv, bitNum, bitValue?WRITE_BIT1_PROG:WRITE_BIT0_PROG, callback);
 }
 
 void  DCC::verifyCVByte(int16_t cv, byte byteValue, ACK_CALLBACK callback)  {
+#ifdef LABOX
+	startProgTrackProcessing(cv, byteValue, 'V');
+#endif
   DCCACK::Setup(cv, byteValue,  VERIFY_BYTE_PROG, callback);
 }
 
 void DCC::verifyCVBit(int16_t cv, byte bitNum, bool bitValue, ACK_CALLBACK callback)  {
+#ifdef LABOX
+	startProgTrackProcessing(cv, 1 << bitNum, 'V');
+#endif
   if (bitNum >= 8) callback(-1);
   else DCCACK::Setup(cv, bitNum, bitValue?VERIFY_BIT1_PROG:VERIFY_BIT0_PROG, callback);
 }
 
 
 void DCC::readCVBit(int16_t cv, byte bitNum, ACK_CALLBACK callback)  {
+#ifdef LABOX
+	startProgTrackProcessing(cv, 1 << bitNum, 'R');
+#endif
   if (bitNum >= 8) callback(-1);
   else DCCACK::Setup(cv, bitNum,READ_BIT_PROG, callback);
 }
 
 void DCC::readCV(int16_t cv, ACK_CALLBACK callback)  {
+#ifdef LABOX
+	startProgTrackProcessing(cv, 0, 'R');
+#endif
   DCCACK::Setup(cv, 0,READ_CV_PROG, callback);
 }
 
 void DCC::getLocoId(ACK_CALLBACK callback) {
+#ifdef LABOX
+	startProgTrackProcessing(1, 0, 'R');
+#endif
   DCCACK::Setup(0,0, LOCO_ID_PROG, callback);
 }
 
@@ -746,6 +775,9 @@ void DCC::setLocoId(int id,ACK_CALLBACK callback) {
     callback(-1);
     return;
   }
+#ifdef LABOX
+	startProgTrackProcessing(1, 0, 'W');
+#endif
   if (id<=HIGHEST_SHORT_ADDR)
       DCCACK::Setup(id, SHORT_LOCO_ID_PROG, callback);
   else
@@ -769,8 +801,57 @@ void DCC::setConsistId(int id,bool reverse,ACK_CALLBACK callback) {
     cv19=id%100;
   }
   if (reverse) cv19|=0x80;
+#ifdef LABOX
+	startProgTrackProcessing(19, id, 'W');
+#endif
   DCCACK::Setup((cv20<<8)|cv19, CONSIST_ID_PROG, callback);
 }
+
+#ifdef LABOX
+void DCC::startProgTrackProcessing(int16_t cv, byte byteValue, char opType) {
+	Serial.println("DCC::startProgTrackProcessing");
+	#ifdef ENABLE_RAILCOM
+	pauseRailcom = true;
+	#endif
+	if (opType == 'R') {
+		sprintf(menuProgMode::externalMessageBuffer, "RD %03d    ", cv);
+	}
+	else if (opType == 'V') {
+		sprintf(menuProgMode::externalMessageBuffer, "VF %03d/%03d", cv, byteValue);
+	}
+	else if (opType == 'W') {
+		sprintf(menuProgMode::externalMessageBuffer, "WR %03d/%03d", cv, byteValue);
+	}
+}
+
+void DCC::endProgTrackProcessing(int16_t result) {
+	Serial.println("DCC::endProgTrackProcessing");
+	#ifdef ENABLE_RAILCOM
+	pauseRailcom = false;
+	#endif
+
+	// Replace the first character of the buffer with '<' to indicate completion
+	char buffer[40];
+	if (menuProgMode::externalMessageBuffer[0] != 'W') {
+		if (result >= 0) {
+			sprintf(buffer, "%s: %03d", menuProgMode::externalMessageBuffer, result);
+		}
+		else {
+			sprintf(buffer, "%s: FAIL", menuProgMode::externalMessageBuffer);
+		}
+	}
+	else{
+		if (result >= 0) {
+			sprintf(buffer, "%s: OK", menuProgMode::externalMessageBuffer);
+		}
+		else {
+			sprintf(buffer, "%s: FAIL", menuProgMode::externalMessageBuffer);
+		}
+	}
+
+	menuProgMode::addProgModeMessage(buffer);
+}
+#endif
 
 void DCC::forgetLoco(int cab) {  // removes any speed reminders for this loco
   setThrottle2(cab,1); // ESTOP this loco if still on track

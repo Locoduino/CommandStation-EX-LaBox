@@ -195,3 +195,6 @@ These are not meant to be software readable. They contain diagnostic information
 <X> 
 <*  ... *>
 
+LaBox commands:
+<LB W 1|0>		start/stop Wifi
+<LB R 1|0>		start/stop Railcom.

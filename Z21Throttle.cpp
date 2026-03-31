@@ -738,9 +738,13 @@ void Z21CvValueCallback(int16_t inValue)
 	Z21Throttle::cvValue = inValue;
 
 	if (inValue == -1)
+	{
 		Z21Throttle::readWriteThrottle->notifyCvNACK(Z21Throttle::cvAddress);
+	}
 	else
+	{
 		Z21Throttle::readWriteThrottle->notifyCvRead(Z21Throttle::cvAddress, inValue);
+	}
 
 	Z21Throttle::readWriteThrottle = NULL;
 }

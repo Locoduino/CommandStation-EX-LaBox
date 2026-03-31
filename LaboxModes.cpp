@@ -41,7 +41,7 @@ bool LaboxModes::silentBootMode = false;
 int LaboxModes::EEPROMModeProgAddress = 511;
 POWERMODE LaboxModes::memoPowerBeforeJoining = POWERMODE::OFF; // Power before joining the main track
 
-bool LaboxModes::DIAGLABOXMODES=false;
+bool LaboxModes::DIAGLABOXMODES=true;
 
 #define DIAG_LMODES				if (LaboxModes::DIAGLABOXMODES) DIAG
 
@@ -56,18 +56,47 @@ void LaboxModes::begin()
 
 	progBehavior = ProgBehaviorNormal;
 
-	if (progMode == true || TrackManager::getProgDriver() == NULL) {
-		progBehavior = ProgBehaviorReboot;
-		DIAG_LMODES(F("progBehavior = Reboot"));
+	char motorDriverName[20];
+	STRNCPY_P(motorDriverName, DCC::getMotorShieldName(),	19); // Ensure null termination
+
+	MotorDriver **drivers = TrackManager::getRawDrivers();
+
+	bool mainTrackExists = false;
+	bool progTrackExists = false;
+	bool boosterExists = false;
+	
+	if (drivers[0] != NULL) {
+		mainTrackExists = true;
+	}
+
+	if (drivers[1] != NULL) {
+		progTrackExists = true;
+	}
+
+	if (TrackManager::getLastTrack() > 1) {
+		boosterExists = true;
+	}
+
+	DIAG_LMODES(F("mainTrackExists=%d, progTrackExists=%d, boosterExists=%d"), mainTrackExists, progTrackExists, boosterExists);
+
+	if (strcmp(motorDriverName, "LABOXPROGONLY") == 0) {
+		progBehavior = ProgOnly;
+		progModeType = ProgType::PROGMODE;
+		DIAG_LMODES(F("progBehavior = ProgOnly"));
 	}
 	else {
-		std::vector<MotorDriver *> mains = TrackManager::getMainDrivers();
-		if (mains.size() == 0) {
-			progBehavior = ProgBehaviorJoining;
-			DIAG_LMODES(F("progBehavior = Joining"));
+		if (mainTrackExists && !progTrackExists) {
+			progBehavior = ProgBehaviorReboot;
+			DIAG_LMODES(F("progBehavior = Reboot"));
 		}
 		else {
-			DIAG_LMODES(F("progBehavior = Normal"));
+			if (!mainTrackExists && progTrackExists) {
+				progBehavior = ProgBehaviorJoining;
+				DIAG_LMODES(F("progBehavior = Joining"));
+			}
+			else {
+				DIAG_LMODES(F("progBehavior = Normal"));
+			}
 		}
 	}
 
@@ -75,7 +104,7 @@ void LaboxModes::begin()
 
 	SetNextMode(MAIN);
 
-  if (progMode) {
+  if (progBehavior == ProgOnly || progMode) {
     // must be done after all other setups.
     StartProgMode(true);
   }
@@ -115,6 +144,7 @@ void LaboxModes::GetStartingMode()
 	// CVREAD							Q							true				CVREAD				true
 	// CVWRITE						R							true				CVWRITE				true
 	// IDENTIFY						I							true				IDENTIFY			true
+	// PROGMODE						G							true				PROGMODE			false
 
 	progModeType = (ProgType) mode;
 
@@ -128,6 +158,11 @@ void LaboxModes::GetStartingMode()
 	if (mode == (char) ProgType::SILENTRETURNTOMAIN) {
 		progModeType = ProgType::MAIN;
 		progMode = false;
+	}
+
+	if (mode == (char) ProgType::PROGMODE) {
+		silentBootMode = false;
+		progModeType = ProgType::PROGMODE;
 	}
 }
 
@@ -179,8 +214,15 @@ void LaboxModes::StartProgMode(bool inForce)
 		}
 	}
 
+	if (LaboxModes::progModeType == ProgType::PROGMODE)
+	{
+		_HMIState = StateParametersMenu;
+		boxHMI.menu->setMenu(boxHMI.menu->progMode);
+		boxHMI.menu->progMode->start();
+	}
+	
   DIAG_LMODES("LaboxModes::setProgMode().. End");
-	#endif
+#endif
 }
 
 /*!
@@ -197,15 +239,17 @@ void LaboxModes::StartMainMode(bool inForce)
 	if (!inForce && LaboxModes::progMode == false)
 		return;
 	
-  LaboxModes::progMode = false;
+	if (LaboxModes::progModeType != ProgType::PROGMODE) {
+		LaboxModes::progMode = false;
 
-	if (progBehavior == ProgBehaviorJoining) {
-		TrackManager::setJoin(true);
-		TrackManager::setPower(memoPowerBeforeJoining);
+		if (progBehavior == ProgBehaviorJoining) {
+			TrackManager::setJoin(true);
+			TrackManager::setPower(memoPowerBeforeJoining);
+		}
 	}
 
   DIAG_LMODES("LaboxModes::setMainMode().. End");
-	#endif
+#endif
 }
 
 void LaboxModes::ChangeMode(bool inProgMode, ProgType inType)
@@ -216,11 +260,9 @@ void LaboxModes::ChangeMode(bool inProgMode, ProgType inType)
 			return;
 
 	if (progBehavior == ProgBehaviorReboot) {
-		DIAG("1");
 		SetNextMode(inType);
 		#ifdef ENABLE_RAILCOM
 		if (inType == ProgType::MAIN) {
-		DIAG("2");
 			DONOTRESTART();
 			while(true) {
 				delay(100);
@@ -228,12 +270,11 @@ void LaboxModes::ChangeMode(bool inProgMode, ProgType inType)
 			return;
 		}
 		#endif
-		DIAG("3");
 		LaboxModes::Restart(inType);
 		return;
 	}
 
-	if (inProgMode) {
+	if (inProgMode || LaboxModes::progModeType == ProgType::PROGMODE) {
 		LaboxModes::StartProgMode();
 	}
 	else {

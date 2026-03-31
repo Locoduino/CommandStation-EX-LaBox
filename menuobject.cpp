@@ -234,6 +234,8 @@ int menuObject::eventSelect()
 			case MENUSHUTTLESAMPLE:           // User has selected a sub menu
 			case MENUDCDCCMODE:           // User has selected a sub menu
 			case MENUPHYSICALMES:           // User has selected a sub menu
+			case MENUPROGMODE:           // User has selected a sub menu
+			case MENUSETTINGS:           // User has selected a sub menu
 				return selectedMenu->value;
 				break;
 			default:

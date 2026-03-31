@@ -53,7 +53,7 @@ void menuInformation::start()
 	switch(this->value)
 	{
 		case MENUINFORMATION_WIFI:
-			if (WiFi.status() != WL_CONNECTED) {
+			if (!WifiESP::isUp()) {
 				strncpy(messages[mess++], TXT_noWifi, HMIInfo_MessageMaxSize);
 				break;
 			}

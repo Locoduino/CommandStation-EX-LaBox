@@ -12,7 +12,8 @@ enum ProgType {
 	CVREAD = 'Q',
 	CVWRITE = 'R',
 	SILENTRETURNTOMAIN = 'B',
-	IDENTIFY = 'I'
+	IDENTIFY = 'I',
+	PROGMODE = 'G'
 };
 
 /*
@@ -37,7 +38,8 @@ enum ProgBehavior {
 	ProgBehaviorNone = 0,
 	ProgBehaviorNormal = 1,		// a main and a prog track exists
 	ProgBehaviorJoining = 2,	// only a prog track exists, joined for normal operations
-	ProgBehaviorReboot = 3    // only a main track, rebooting the system to change config. DONT WORK WITH RAILCOM !
+	ProgBehaviorReboot = 3,    // only a main track, rebooting the system to change config. DONT WORK WITH RAILCOM !
+	ProgOnly = 4							// only a prog track exists, never joined for normal operations
 };
 
 /** This is a class to handle external communications.

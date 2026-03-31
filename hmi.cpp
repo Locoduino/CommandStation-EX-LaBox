@@ -388,7 +388,7 @@ void hmi::dashboard()
   setTextSize(1);
   setTextColor(WHITE);
   setCursor(0, 0);
-  println("La Box  Locoduino.org");
+  println("LaBox   Locoduino.org");
   drawFastHLine(0,10,128, WHITE);
 
   setCursor(0, 48);
@@ -716,7 +716,11 @@ void hmi::addNotification(int addr, uint8_t order, uint8_t value, bool functionS
       pushMessageOnStack(message, (uint8_t) strlen(message));
     break; 
     case HMI_WifiOk :
-      sprintf(message, "%s", TXT_WifiOk);
+		#if WIFI_FORCE_AP
+      sprintf(message, "%s", TXT_WifiApOk);
+		#else
+      sprintf(message, "%s", TXT_WifiSTAOk);
+		#endif
       _HMIState = StateDashboard ;
       laBoxState = Labox_StateDCCOFF;
       pushMessageOnStack(message, (uint8_t) strlen(message));
@@ -877,7 +881,7 @@ void hmi::readCurrent()
     mainDriver=md;
   }
 
-  if (mainDriver == NULL || !mainDriver->canMeasureCurrent())
+  if (mainDriver == NULL || !mainDriver->canMeasureCurrent() || mainDriver->getPower() == POWERMODE::OFF)
   {
     current = 0;
     return;

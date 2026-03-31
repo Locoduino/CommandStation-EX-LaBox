@@ -16,4 +16,7 @@ void RailcomBegin();
 void RailcomEnd();
 void StarTimerCutOut(rmt_channel_t channel);
 int setDCCBitCutOut(rmt_item32_t* item);
+bool isRailcomEnabled();
+
+extern bool pauseRailcom;
 #endif

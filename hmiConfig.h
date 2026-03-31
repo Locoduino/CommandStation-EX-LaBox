@@ -76,6 +76,8 @@
 #define MENUSHUTTLESAMPLE				308
 #define MENUDCDCCMODE						309
 #define MENUPHYSICALMES					310
+#define MENUPROGMODE						311
+#define MENUSETTINGS						312
 
 #define MENUINFORMATION_ABOUT		400
 #define MENUINFORMATION_WIFI		401
@@ -110,6 +112,7 @@
 #define TXT_MenuAbout						"A propos de..."
 #define TXT_MenuAboutCSEX				"CS-EX %s     <sortie>"
 #define TXT_MenuInfoButtons			"             <sortie>"
+#define TXT_MenuProgButtons			" ^ v         <sortie>"
 #define TXT_MenuWifiInfo        "WiFi"
 #define TXT_MenuEXCOMMInfo			"EXCOMM"
 #define TXT_MenuSoftReset       "Redemarrage"
@@ -121,19 +124,27 @@
 #define TXT_MenuCVWrite        	"Ecriture CV"
 #define TXT_MenuIdent	        	"Ident. decodeur"
 #define TXT_MenuShuttle	       	"Va&Vient EXRail"
+#define TXT_MenuSettings       	"Reglages"
 #define TXT_DcDccMode		       	"DC/DCC"
 #define TXT_PhysicalMes         "Mesures U et I"
+#define TXT_ProgMode		        "Mode Programmation"
 #define TXT_TrainView           "Type de vue trains"
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
 #define TXT_V3Trains            "3 trains"
 #define TXT_DONOTRESTART				"Redémarrer LaBox !"
+#define TXT_ON									"ON"
+#define TXT_OFF									"OFF"
+#define TXT_CHANGE							"Changer"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_LstEvent            "Liste evenements"
 #define TXT_WifiWaiting         "Connexion WiFi..."
 #define TXT_noWifi              " !! Pas de WiFi !!"
-#define TXT_WifiOk              "...Wifi ok..."
+#define TXT_WifiApOk            "...Wifi AP ok..."
+#define TXT_WifiSTAOk           "...Wifi STA ok..."
 #define TXT_BoxAddr             "Adresse Box:"
+#define TXT_WIFI								"WiFi"
+#define TXT_RAILCOM							"Railcom"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_CVREAD_LOGO					"LaBox     CV Lecture"
 #define TXT_CVWRITE_LOGO				"LaBox    CV Ecriture"
@@ -196,6 +207,7 @@
 #define TXT_MenuAbout						"About..."
 #define TXT_MenuAboutCSEX				"CS-EX %s       <quit>"
 #define TXT_MenuInfoButtons			"               <quit>"
+#define TXT_MenuProgButtons			" ^ v           <quit>"
 #define TXT_MenuWifiInfo        "WiFi"
 #define TXT_MenuEXCOMMInfo			"EXCOMM"
 #define TXT_MenuCAN             "Networks CAN"
@@ -208,18 +220,26 @@
 #define TXT_MenuCVWrite        	"Write CV"
 #define TXT_MenuIdent	        	"Identify decoder"
 #define TXT_MenuShuttle	       	"Shuttle EXRail"
+#define TXT_MenuSettings       	"Settings"
 #define TXT_PhysicalMes         "Measures U and I"
+#define TXT_ProgMode		        "Programming Mode"
 #define TXT_TrainView           "Train view"
 #define TXT_V1Train             "1 train"
 #define TXT_V2Trains            "2 trains"
 #define TXT_V3Trains            "3 trains"
 #define TXT_DONOTRESTART				"Restart LaBox !"
+#define TXT_ON									"ON"
+#define TXT_OFF									"OFF"
+#define TXT_CHANGE							"Change"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_LstEvent            "Event list"
 #define TXT_WifiWaiting         "Connection WiFi..."
 #define TXT_noWifi              " !! No WiFi !!"
-#define TXT_WifiOk              "...Wifi ok..."
+#define TXT_WifiApOk            "...Wifi AP ok..."
+#define TXT_WifiSTAOk           "...Wifi STA ok..."
 #define TXT_BoxAddr             "Box address :"
+#define TXT_WIFI								"WiFi"
+#define TXT_RAILCOM							"Railcom"
 // maximum line size : 					 ++++++++++++++++++++
 #define TXT_CVREAD_LOGO					"LaBox        CV Read"
 #define TXT_CVWRITE_LOGO				"LaBox       CV Write"

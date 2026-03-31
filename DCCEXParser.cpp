@@ -119,6 +119,8 @@ Once a new OPCODE is decided upon, update this list.
 #include "KeywordHasher.h"
 #ifndef LABOX
 #include "CamParser.h"
+#else
+#include "Labox.h"
 #endif
 #ifdef ARDUINO_ARCH_ESP32
 #include "WifiESP32.h"
@@ -910,6 +912,15 @@ void DCCEXParser::parseOne(Print *stream, byte *com, RingStream * ringStream)
 #endif
     case '/': // implemented in EXRAIL parser
     case 'L': // LCC interface implemented in EXRAIL parser
+				if (params < 1) // <L>
+					break;
+
+#ifdef LABOX
+				// Labox handles these commands itself
+				if (params > 1 && p[0] == "B"_hk)
+					if (Labox::ParseLB(stream, params - 1, &p[1]))
+						return;
+#endif
         break; // Will <X> if not intercepted by EXRAIL 
 
 #ifndef DISABLE_VDPY

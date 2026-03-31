@@ -18,12 +18,14 @@
 #include "menuobject.h"
 #include "menuinformation.h"
 #include "menuPhysicalMes.h"
+#include "menuProgMode.h"
 #include "menuTrainAddrRead.h"
 #include "menuTrainCvRead.h"
 #include "menuTrainCvWrite.h"
 #include "menuDecoderIdentification.h"
 #include "menuShuttleSample.h"
 #include "menuDcDccMode.h"
+#include "menuSettings.h"
 
 extern enumHMIState  _HMIState ;
 extern enumHMIState  _HMIState_prev;
@@ -54,6 +56,8 @@ MenuManagement::MenuManagement(hmi*  screen)
     V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
     V3Trains    = new menuObject(display, TrainView, TXT_V3Trains, 3);
   physicalMes   = new menuPhysicalMes(display, baseMenu, TXT_PhysicalMes, MENUPHYSICALMES);
+  progMode			= new menuProgMode(display, baseMenu, TXT_ProgMode, MENUPROGMODE);
+  settings      = new menuSettings(display, baseMenu, TXT_MenuSettings, MENUSETTINGS);
   lstEvent      = new menuObject(display, baseMenu, TXT_LstEvent, MENUACTION);
   info					= new menuObject(display, baseMenu, TXT_MenuInfos, MENUTYPELIST);
   	about				= new menuInformation(display, info, TXT_MenuAbout, MENUINFORMATION_ABOUT);
@@ -172,6 +176,8 @@ void MenuManagement::BtnSelectPressed()
     case MENUSHUTTLESAMPLE:
     case MENUDCDCCMODE:
     case MENUPHYSICALMES:
+    case MENUPROGMODE:
+    case MENUSETTINGS:
 		case MENUOPENSCREEN:
       _HMIDEBUG_LEVEL1_PRINT("Change menu from ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
       _HMIDEBUG_LEVEL1_PRINT(" to ");_HMIDEBUG_LEVEL1_PRINTLN(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);

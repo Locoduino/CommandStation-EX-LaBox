@@ -85,11 +85,13 @@ void  DCCACK::Setup(int cv, byte byteValueOrBitnum, ackOp const program[], ACK_C
       DIAG(F("Joined but no Prog track"));
       TrackManager::setJoin(false);
     }
+		DCC::endProgTrackProcessing(-1);
     callback(-3); // we dont have a prog track!
     return;
   }
   if (!progDriver->canMeasureCurrent()) {
     TrackManager::setJoin(ackManagerRejoin);
+		DCC::endProgTrackProcessing(-1);
     callback(-2); // our prog track cant measure current
     return;
   }
@@ -450,6 +452,7 @@ void DCCACK::callback(int value) {
 
           ackManagerProg=NULL;  // no more steps to execute
           if (Diag::ACK) DIAG(F("Callback(%d)"),value);
+					DCC::endProgTrackProcessing(value);
           (ackManagerCallback)( value);
     }
 }

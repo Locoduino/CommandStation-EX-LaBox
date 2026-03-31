@@ -34,13 +34,15 @@ class MenuManagement
     void BtnSelectPressed();
     void resetMenu();
 
-    //----- menu for prog mode
+    //----- menus
     menuObject* trainAddrRead;
     menuObject* trainCVRead;
     menuObject* trainCVWrite;
     menuObject* trainIdent;
     menuObject* shuttle;
     menuObject* dcMode;
+    menuObject* progMode;
+    menuObject* settings;
 
   protected:
     //----- Members

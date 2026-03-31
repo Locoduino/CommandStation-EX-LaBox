@@ -30,6 +30,11 @@ SENDLOCO(3,1) // send loco 3 off along route 1
 SENDLOCO(10,2) // send loco 10 off along route 2
 DONE     // This just ends the startup thread, leaving 2 others running.
 */
+
+// Include optional user WiThrottle roster entries from myWiThrottleRoster.h
+// This file can contain any number of WiThrottle ROSTER() entries
+//#include "myWiThrottleRoster.h"
+
 /* SEQUENCE(1) is a simple shuttle between 2 sensors      
  *  S20 and S21 are sensors on arduino pins 20 and 21 
  *  S20                    S21                   

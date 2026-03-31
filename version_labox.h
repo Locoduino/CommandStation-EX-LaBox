@@ -1,7 +1,22 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.13.0"
+#define VERSION_LABOX "2.14.0"
+// 2.14.0 - Add new syntax for LaBox functions : <LB ...> commands in DCC++ EX parser.
+//				- Add LABOX_CV_ADDRESS in config.h to manage LaBox specific CVs.
+//				- Modify CV LABOX_CV_ADDRESS+1 to stop wifi and LABOX_CV_ADDRESS+7 to stop/start Railcom.
+//				- Add new command 'Settings' in LaBox menu to manage wifi and Railcom settings. Thank to lebelge2 for the idea !
+//				- Add new command Programmation Mode in LaBox menu to enter/exit prog mode and show every programmation activity.
+//				- LABOX_PROG_MOTOR_SHIELD redefined in config.h to have its own name.	
+//				- In prog mode, Railcom is paused to avoid interference.
+//				- Railcom is now propagated to boosters if they are declared in config.h.
+//				- Text for Wifi opening show now the Wifi mode (AP or STA) and not only 'Wifi opening'.
+//				- Command Information/WIFI now show the Wifi mode and works for AP mode.
+//				- Current measure gives now 0 when the DCC is off.
+//				- Platform.IO : Update of used libraries :
+//						mathertel/OneButton@^2.6.2
+//						adafruit/Adafruit GFX Library@^1.12.5
+//						adafruit/Adafruit SSD1306@^2.5.16
 // 2.13.0 - Fix display of function symbol on train dashboard.
 //				- Undefine HMI_DEBUG_SIMUL to avoid U and I simulation values in hmi.cpp .
 // 2.12.0 - Add HMI_DELTACURRENT in config.h to calibrate the current displayed on the OLED screen.

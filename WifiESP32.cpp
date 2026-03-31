@@ -150,9 +150,24 @@ char asciitolower(char in) {
   return in;
 }
 
+#ifdef USE_HMI
+extern hmi boxHMI;		// from .ino !
+#endif
+
 void WifiESP::teardown() {
+  if (!wifiUp) {
+		// nothing to do
+		return;
+	}
+  wifiUp = false;
+#ifdef USE_HMI
+	boxHMI.stopStateMachine = true;	// Stop HMI state machine to avoid any drawing during teardown
+#endif
   // stop all locos
   DCC::setThrottle(0,1,1); // this broadcasts speed 1(estop) and sets all reminders to speed 1.
+#ifdef USE_HMI
+	boxHMI.stopStateMachine = false;	// Stop HMI state machine to avoid any drawing during teardown
+#endif
   // terminate all clients connections
   while (!clients.empty()) {
     // pop_back() should invoke destructor which does stop()
@@ -171,7 +186,7 @@ void WifiESP::teardown() {
   mdns_free();
   // stop WiFi
   WiFi.disconnect(true);
-  wifiUp = false;
+	server = NULL;
 }
 
 bool WifiESP::setup(const char *SSid,
@@ -346,6 +361,8 @@ bool WifiESP::setup(const char *SSid,
 
   if (!wifiUp) {
     DIAG(F("Wifi setup all fail (STA and AP mode)"));
+		delay(5000);
+
     // no idea to go on
     return false;
   }
@@ -404,6 +421,11 @@ const char *wlerror[] = {
 
 void WifiESP::loop() {
   int clientId; //tmp loop var
+
+  if (!wifiUp) {
+		// nothing to do
+		return;
+	}
 
   // really no good way to check for LISTEN especially in AP mode?
   wl_status_t wlStatus;

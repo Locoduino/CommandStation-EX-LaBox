@@ -537,6 +537,13 @@ std::vector<MotorDriver *>TrackManager::getMainDrivers() {
     if (track[t]->getMode() & TRACK_MODE_MAIN) v.push_back(track[t]);
   return v;
 }
+
+std::vector<MotorDriver *>TrackManager::getDrivers(TRACK_MODE trackmodeFilter) {
+  std::vector<MotorDriver *>  v;
+  FOR_EACH_TRACK(t)
+    if (track[t]->getMode() & trackmodeFilter) v.push_back(track[t]);
+  return v;
+}
 #endif
 
 // Set track power for all tracks with this mode
