@@ -41,7 +41,7 @@
 #include "hmi.h"
 #include "Labox.h"
 #include "menuProgMode.h"
-#include "railcom.h"
+#include "Railcom.h"
 #include "EXComm.h"
 #endif
 

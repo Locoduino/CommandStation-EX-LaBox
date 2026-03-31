@@ -16,8 +16,8 @@
 #include "menuobject.h"
 #include "menuSettings.h"
 #include "hmi.h"
-#include "wifiEsp32.h"
-#include "railcom.h"
+#include "WifiESP32.h"
+#include "Railcom.h"
 
 bool updatedSettings;
 int positionSettings;
