@@ -16,7 +16,7 @@
 #include "menuobject.h"
 #include "menuProgMode.h"
 #include "hmi.h"
-#include "laboxModes.h"
+#include "LaboxModes.h"
 
 bool updatedProgMode;
 bool adaptFirstMessageProgMode;
