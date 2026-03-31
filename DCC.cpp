@@ -39,7 +39,7 @@
 #include "DCCTimer.h"
 #ifdef LABOX
 #include "hmi.h"
-#include "labox.h"
+#include "Labox.h"
 #include "menuProgMode.h"
 #include "railcom.h"
 #include "EXComm.h"

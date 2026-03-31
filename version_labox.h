@@ -3,7 +3,7 @@
 
 #define VERSION_LABOX "2.14.0"
 // 2.14.0 - Add new syntax for LaBox functions : <LB ...> commands in DCC++ EX parser.
-//				- Add LABOX_CV_ADDRESS in config.h to manage LaBox specific CVs.
+// 310326	- Add LABOX_CV_ADDRESS in config.h to manage LaBox specific CVs.
 //				- Modify CV LABOX_CV_ADDRESS+1 to stop wifi and LABOX_CV_ADDRESS+7 to stop/start Railcom.
 //				- Add new command 'Settings' in LaBox menu to manage wifi and Railcom settings. Thank to lebelge2 for the idea !
 //				- Add new command Programmation Mode in LaBox menu to enter/exit prog mode and show every programmation activity.
