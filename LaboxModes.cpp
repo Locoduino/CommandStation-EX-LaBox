@@ -77,7 +77,7 @@ void LaboxModes::begin()
 		boosterExists = true;
 	}
 
-	DIAG_LMODES(F("mainTrackExists=%d, progTrackExists=%d, boosterExists=%d"), mainTrackExists, progTrackExists, boosterExists);
+	DIAG_LMODES(F("motorDriverName:%s, mainTrackExists=%d, progTrackExists=%d, boosterExists=%d"), motorDriverName, mainTrackExists, progTrackExists, boosterExists);
 
 	if (strcmp(motorDriverName, "LABOXPROGONLY") == 0) {
 		progBehavior = ProgOnly;
@@ -91,8 +91,14 @@ void LaboxModes::begin()
 		}
 		else {
 			if (!mainTrackExists && progTrackExists) {
-				progBehavior = ProgBehaviorJoining;
-				DIAG_LMODES(F("progBehavior = Joining"));
+				if (strcmp(motorDriverName, "RebootProgMode") == 0) {
+					progBehavior = ProgBehaviorReboot;
+					DIAG_LMODES(F("progBehavior = Reboot (prog after reboot !)"));
+				}
+				else {
+					progBehavior = ProgBehaviorJoining;
+					DIAG_LMODES(F("progBehavior = Joining"));
+				}
 			}
 			else {
 				DIAG_LMODES(F("progBehavior = Normal"));
@@ -130,7 +136,7 @@ void LaboxModes::GetStartingMode()
 	EEPROM.begin(512);
 	byte mode = EEPROM.read(EEPROMModeProgAddress);
 
-	DIAG_LMODES(F("LaboxModes : GetCurrentMode %c"), (char) mode);
+	DIAG_LMODES(F("LaboxModes : GetStartingMode %c"), (char) mode);
 
 	// If the EEPROM is not initialized, we assume MAIN mode
 	if (mode == 0xFF || mode == 0)

@@ -58,6 +58,8 @@ class LaboxModes {
     static bool silentBootMode;
 		// Type of programmation mode : by booting, joining, or normal mode.
     static ProgBehavior progBehavior;
+		// Force next boot mode to prog or main, used for example when pressing the button at startup.
+		static void SetNextMode(ProgType inType = MAIN);
 
 	private:
 	  static bool DIAGLABOXMODES;
@@ -71,7 +73,6 @@ class LaboxModes {
 		
 		static void StartProgMode(bool inForce = false);
 		static void StartMainMode(bool inForce = false);
-		static void SetNextMode(ProgType inType = MAIN);
 		static void DONOTRESTART();
 };
 	

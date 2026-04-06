@@ -156,6 +156,7 @@ void setup() {
     DIAG(F("LaBox Prog mode."));
 		// DO NOT MODIFY THE NEXT LINE ! This must always be the PROG motor shield
     TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
+		DCC::setShieldName("RebootProgMode");
   }
   else {
     DIAG(F("LaBox Main mode."));

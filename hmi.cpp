@@ -76,6 +76,12 @@ void hmi::begin()
   BtnDown = new OneButton(PIN_BTN_BTNDWN, true);
   BtnSelect = new OneButton(PIN_BTN_SEL, true);
   
+	if (digitalRead(PIN_BTN_BTNUP) == LOW) {
+		DIAG(F("Main mode requested by button press at startup"));
+		delay(1000); // Wait to avoid that the button press is detected as a click after startup
+		LaboxModes::Restart(ProgType::MAIN);
+	}
+
   BtnUp->attachClick(this->BtnUpPressed);
   BtnDown->attachClick(this->BtnDownPressed);
   BtnSelect->attachClick(this->BtnSelectPressed);

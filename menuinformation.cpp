@@ -61,6 +61,10 @@ void menuInformation::start()
 			if (WIFI_FORCE_AP == false)
 			{
 				strncpy(messages[mess++], "WIfi STA Mode", HMIInfo_MessageMaxSize);
+				sprintf(messageInfo, "SSID %s", WIFI_SSID);
+				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
+				sprintf(messageInfo, "PW %s", WIFI_PASSWORD);
+				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 				sprintf(messageInfo, "IP %s", WiFi.localIP().toString().c_str());
 				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 				sprintf(messageInfo, "Port %d", IP_PORT);
@@ -69,6 +73,10 @@ void menuInformation::start()
 			else
 			{
 				strncpy(messages[mess++], "WIfi AP Mode", HMIInfo_MessageMaxSize);
+				sprintf(messageInfo, "SSID %s", WIFI_SSID);
+				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
+				sprintf(messageInfo, "PW %s", WIFI_PASSWORD);
+				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 				sprintf(messageInfo, "IP %s", WiFi.softAPIP().toString().c_str());
 				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 				sprintf(messageInfo, "Port %d", IP_PORT);

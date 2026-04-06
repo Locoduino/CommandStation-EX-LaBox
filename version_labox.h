@@ -1,7 +1,10 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.14.0"
+#define VERSION_LABOX "2.15.0"
+// 2.15.0 - If the button 'UP' is pressed at startup, the LaBox will start in Main mode instead of Prog mode. This is useful when the LaBox is used in a configuration with only a main track and no prog track, as it avoids to have to press the button at every startup to switch to main mode.
+// 060426	- Fix the reboot mode when only a main track is declared, as it was not working anymore with the latest changes in LaboxModes. Now, if the motor shield name is "RebootProgMode", the reboot mode will be used instead of the joining mode when only a prog track is declared. This allows to use the joining mode for configurations with only a prog track, and the reboot mode for configurations with only a main track, which is more logical.
+//				- In Wifi information menu, SSID and Password are now shown for both AP and STA modes.
 // 2.14.0 - Add new syntax for LaBox functions : <LB ...> commands in DCC++ EX parser.
 // 310326	- Add LABOX_CV_ADDRESS in config.h to manage LaBox specific CVs.
 //				- Modify CV LABOX_CV_ADDRESS+1 to stop wifi and LABOX_CV_ADDRESS+7 to stop/start Railcom.
