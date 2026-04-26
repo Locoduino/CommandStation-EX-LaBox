@@ -35,23 +35,31 @@ DONE     // This just ends the startup thread, leaving 2 others running.
 // This file can contain any number of WiThrottle ROSTER() entries
 //#include "myWiThrottleRoster.h"
 
-/* SEQUENCE(1) is a simple shuttle between 2 sensors      
- *  S20 and S21 are sensors on arduino pins 20 and 21 
- *  S20                    S21                   
- *  === START->================
- */
-   SEQUENCE(123) 
+/* SEQUENCE(123) is a simple DCC shuttle by timer
+ */   SEQUENCE(123) 
      FON(3)       // Set Loco Function 3, Horn on
      DELAY(1000)    // wait 1 second
      FOFF(3)      // Horn off
-     FWD(20)      // Move forward at speed 80
-     DELAY(1500)    // Wait 5 seconds
+     FWD(50)      // Move forward at speed 50
+     DELAY(3000)    // Wait 3 seconds
      STOP         // then stop
      FON(2)       // ring bell
-     REV(20)      // reverse at speed 60
-     DELAY(1500)    // Wait 5 seconds
+     REV(50)      // reverse at speed 50
+     DELAY(3000)    // Wait 3 seconds
      STOP         // then stop
      FOFF(2)      // Bell off 
 		 DELAY(2000)
      FOLLOW(123)    // and follow sequence 1 again
-   
+
+/* SEQUENCE(124) is a simple DC shuttle by timer
+ */   SEQUENCE(124) 
+ 			MOMENTUM(0)  // turn off momentum for more immediate response
+    	FWD(80)      // Move at speed 50
+    	DELAY(3000)    // Wait 3 seconds
+    	STOP         // then stop
+    	DELAY(1000)    // Wait 3 seconds
+    	REV(80)      // move at speed 50
+    	DELAY(3000)    // Wait 3 seconds
+    	STOP         // then stop
+			DELAY(1000)
+    	FOLLOW(124)    // and follow sequence 1 again

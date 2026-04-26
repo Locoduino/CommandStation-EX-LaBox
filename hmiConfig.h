@@ -8,6 +8,11 @@
 #ifndef HMICONFIG_H
 #define HMICONFIG_H
 
+// Pins
+#define PIN_LEDBUILTIN           2
+#define PIN_CURRENT_MES         36
+#define PIN_VOLTAGE_MES         34
+
 #ifdef USE_HMI
 //---------------------- HMI section ------------------------------------
 #define HMI_I2C_ADDR            0x3C
@@ -16,12 +21,9 @@
 #define HMI_Rotation            HMI_SCREEN_ROTATION           // 1 : 90°, 2 : 180°, 3 : 270°
 
 // Pins
-#define PIN_LEDBUILTIN           2
 #define PIN_BTN_SEL             18
 #define PIN_BTN_BTNUP           23
 #define PIN_BTN_BTNDWN          19
-#define PIN_CURRENT_MES         36
-#define PIN_VOLTAGE_MES         34
 
 // U/I correctors
 #define HMI_VoltageK            0.0068      // Voltage scaling coefficient
@@ -101,7 +103,7 @@
 #define TXT_StopAll             "<ARRET DCC>"
 #define TXT_StartDCC            "<DCC On>"
 #define TXT_ShortCircuit        "COURT-CIRCUIT"
-#define TXT_MenuDCCOffLine      "DCC ON/OFF" // Les ? ne passent pas
+#define TXT_MenuDCCOffLine      "Power ON/OFF"
 #define TXT_MenuOnLine          "En ligne"
 #define TXT_MenuOffLine         "Hors ligne"
 #define TXT_MenuResetConfirm    "Confirmation Reset"
@@ -110,7 +112,7 @@
 #define TXT_MenuParams          "Parametres"
 #define TXT_MenuInfos						"Informations"
 #define TXT_MenuAbout						"A propos de..."
-#define TXT_MenuAboutCSEX				"CS-EX %s     <sortie>"
+#define TXT_MenuAboutCSEX				"CS-EX %s <sortie>"
 #define TXT_MenuInfoButtons			"             <sortie>"
 #define TXT_MenuProgButtons			" ^ v         <sortie>"
 #define TXT_MenuWifiInfo        "WiFi"
@@ -177,12 +179,6 @@
 #define TXT_DCDCC_LOGO					"LaBox   DC/DCC mode"
 #define TXT_DCDCC_DCRUNNING			"DC"
 #define TXT_DCDCC_DCCRUNNING		"DCC"
-#define TXT_DCDCC_TODC					"DCC => DC"
-#define TXT_DCDCC_TODCC					"DC => DCC"
-#define TXT_DCDCC_DC						"Dc"
-#define TXT_DCDCC_DCC						"Dcc"
-#define TXT_DCDCC_CONFIRM				"Confirmer"
-#define TXT_DCDCC_ABORT					"Stop"
 
     // Message by language : English
 // maximum line size : 					 ++++++++++++++++++++
@@ -195,7 +191,7 @@
 #define TXT_StopAll             "!STOP ALL!"
 #define TXT_StartDCC            "<DCC On>"
 #define TXT_ShortCircuit        "SHORT-CIRCUIT"
-#define TXT_MenuDCCOffLine      "DCC ON/OFF"
+#define TXT_MenuDCCOffLine      "Power ON/OFF"
 #define TXT_MenuOnLine          "On line"
 #define TXT_MenuOffLine         "Off line"
 #define TXT_MenuDHCP            "DHCP"
@@ -205,7 +201,7 @@
 #define TXT_MenuParams          "Parameters"
 #define TXT_MenuInfos						"Informations"
 #define TXT_MenuAbout						"About..."
-#define TXT_MenuAboutCSEX				"CS-EX %s       <quit>"
+#define TXT_MenuAboutCSEX				"CS-EX %s   <quit>"
 #define TXT_MenuInfoButtons			"               <quit>"
 #define TXT_MenuProgButtons			" ^ v           <quit>"
 #define TXT_MenuWifiInfo        "WiFi"
@@ -272,12 +268,7 @@
 #define TXT_DCDCC_LOGO					"LaBox   DC/DCC mode"
 #define TXT_DCDCC_DCRUNNING			"DC"
 #define TXT_DCDCC_DCCRUNNING		"DCC"
-#define TXT_DCDCC_TODC					"DCC => DC"
-#define TXT_DCDCC_TODCC					"DC => DCC"
-#define TXT_DCDCC_DC						"Dc"
-#define TXT_DCDCC_DCC						"Dcc"
-#define TXT_DCDCC_CONFIRM				"Confirm"
-#define TXT_DCDCC_ABORT					"Abort"*/
+*/
 
 //---------------------- Global section ---------------------------------
 #define Labox_StateDCCOFF        101

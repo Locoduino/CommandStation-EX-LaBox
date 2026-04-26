@@ -1,5 +1,5 @@
 /*
- *  © 2021 Fred Decker
+ *  Â© 2021 Fred Decker
  *  All rights reserved.
  *  
  *  This file is part of CommandStation-EX

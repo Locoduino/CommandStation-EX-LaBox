@@ -19,7 +19,7 @@ class menuDcDccMode : public menuObject
 {
   public:
     //----- Members
-
+		bool modeChoosen;
 
     //----- functions
     menuDcDccMode(Adafruit_SSD1306* screen, menuObject* parent, const char* title, int value);

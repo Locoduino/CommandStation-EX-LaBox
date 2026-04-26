@@ -129,20 +129,26 @@ void menuObject::update()
   }
   //_HMIDEBUG_LEVEL1_PRINT("firstListIndex : ");_HMIDEBUG_LEVEL1_PRINT(firstListIndex);_HMIDEBUG_LEVEL1_PRINT(", ListIndexMaxVisible : ");_HMIDEBUG_LEVEL1_PRINT(ListIndexMaxVisible);
   //_HMIDEBUG_LEVEL1_PRINT(", SelectListIndex : ");_HMIDEBUG_LEVEL1_PRINT(SelectListIndex);_HMIDEBUG_LEVEL1_PRINT(", nbSubMenu : ");_HMIDEBUG_LEVEL1_PRINTLN(nbSubMenu);
+	int shift = 0;
   for(int i=firstListIndex; i < ListIndexMaxVisible; i++) 
   {
     if(subMenu[i])
     {
+			if (strlen(subMenu[i]->caption) == 0)	// only display menu with caption, this allows to have hidden menu like the DC/DCC mode selection at the beginning
+			{
+				shift++;
+				continue;
+			}
       if(subMenu[i] == selectedMenu) // selectedMenu
       {
-        display->fillRect(0, (i-firstListIndex) * 10, SCREEN_WIDTH, 9 , WHITE);
-        display->setCursor(5, 1 + (i-firstListIndex) * 10);
+        display->fillRect(0, (i-firstListIndex - shift) * 10, SCREEN_WIDTH, 9 , WHITE);
+        display->setCursor(5, 1 + (i-firstListIndex - shift) * 10);
         display->setTextColor(BLACK);
         display->println(subMenu[i]->caption);
         display->setTextColor(WHITE);
       }else
       {
-        display->setCursor(5, 0 + (i-firstListIndex) * 10);
+        display->setCursor(5, 0 + (i-firstListIndex - shift) * 10);
         display->println(subMenu[i]->caption);
       }
     }
@@ -189,6 +195,8 @@ void menuObject::eventUp()
 {
   _HMIDEBUG_FCT_PRINTLN("menuObject::eventUp.. Begin"); 
   if(SelectListIndex > 0) SelectListIndex--;
+	if (strlen(subMenu[SelectListIndex]->caption) == 0)
+		SelectListIndex--;
   selectedMenu = subMenu[SelectListIndex];
 
   _HMIDEBUG_FCT_PRINTLN("menuObject::eventUp.. End");   
@@ -203,7 +211,9 @@ void menuObject::eventDown()
 {
   _HMIDEBUG_FCT_PRINTLN("menuObject::eventDown.. Begin"); 
   if(SelectListIndex < nbSubMenu-1) SelectListIndex++;
-  selectedMenu = subMenu[SelectListIndex];
+	if (strlen(subMenu[SelectListIndex]->caption) == 0)
+		SelectListIndex++;
+	selectedMenu = subMenu[SelectListIndex];
 
   _HMIDEBUG_FCT_PRINTLN("menuObject::eventDown.. End");   
 }

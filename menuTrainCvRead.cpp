@@ -91,7 +91,7 @@ void menuTrainCvRead::eventUp()
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvRead::eventUp.. Begin");
 	DIAGREAD("up begin");
 
-	menuObject::eventUp();
+	//menuObject::eventUp();
 
 	if (readState == Ready || readState == FixingAddress)
 	{
@@ -133,7 +133,7 @@ void menuTrainCvRead::eventDown()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvRead::eventDown.. Begin"); 
 	DIAGREAD("down begin");
-	menuObject::eventDown();
+	//menuObject::eventDown();
 
 	if (readState == Ready || readState == FixingAddress)
 	{

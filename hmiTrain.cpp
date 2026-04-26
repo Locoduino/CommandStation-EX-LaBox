@@ -8,6 +8,7 @@
 
 #include "defines.h"
 #include "DCC.h"
+#include "LaboxModes.h"
 #include "hmi.h"
 #include "hmiTrain.h"
 #include "hmiIcons.h"
@@ -79,7 +80,10 @@ void hmiTrain::setInfo(int _addr, uint8_t _order, uint8_t _value, bool _function
     case HMI_OrderForward :
     case HMI_OrderBack :
       speed = _value;
-      mode = speed ? _order : HMI_OrderStop;
+			if (LaboxModes::mainMode == MainMode::DC)
+      	mode = _order;
+			else
+				mode = speed ? _order : HMI_OrderStop;
     break;
     case HMI_OrderStop :
       speed = 0 ;
@@ -138,7 +142,8 @@ void hmiTrain::dashboard(int pos_x1, int pos_y1, int pos_x2, int pos_y2)
   display->println(message);
   //--------------------- Speed value --------------------------
   display->setCursor( pos_x1, pos_y2-25);
-  if (speed <= 1)
+	
+  if (LaboxModes::mainMode == MainMode::DCC && speed <= 1)
 	{
 		sprintf(message, "ESTOP");
 	}
@@ -219,12 +224,23 @@ void hmiTrain::dashboard1T()
   _HMIDEBUG_LEVEL2_PRINT("hmiTrain::dashboard1T, speed :  ");_HMIDEBUG_LEVEL2_PRINT(speed);_HMIDEBUG_LEVEL2_PRINT(", ratioSpeed : ");_HMIDEBUG_LEVEL2_PRINTLN(ratioSpeed);_HMIDEBUG_LEVEL2_PRINT(", nbStep : ");_HMIDEBUG_LEVEL2_PRINTLN(nbStep);
   //-------------------- Train Address -------------------------
   display->setTextSize(2);
-  display->setCursor(43, 50);
-  sprintf(message, "%04d", addr);
+  if (LaboxModes::mainMode == MainMode::DCC)
+  {
+	  display->setCursor(43, 50);
+    sprintf(message, "%04d", addr);
+  }
+	else
+	{
+  	display->setCursor(30, 50);
+	  display->println("DC");
+  	display->setTextSize(1);
+  	display->setCursor(60, 57);
+		sprintf(message, "(%04d)", addr);
+	}
   display->println(message);
   //--------------------- Speed value --------------------------
   display->setTextSize(2);
-  if (speed <= 1)
+  if (LaboxModes::mainMode == MainMode::DCC && speed <= 1)
 	{
   	display->setCursor( 50, 3);
 		sprintf(message, "ESTOP");
@@ -246,17 +262,15 @@ void hmiTrain::dashboard1T()
         display->drawLine(102+j+k, 49, 109+j+k, 56, WHITE);
         display->drawLine(102+j+k, 63, 109+j+k, 56, WHITE);      
       }
-    }else
-    {
-      if(mode == HMI_OrderBack)
-      {
-        for(int j=0; j<5;j++)   //Drawing of the left arrow
-        {
-          display->drawLine(19+j-k, 56, 26+j-k, 49, WHITE);
-          display->drawLine(19+j-k, 56, 26+j-k, 63, WHITE);   
-        }
-      }
     }
+		if(mode == HMI_OrderBack)
+		{
+			for(int j=0; j<5;j++)   //Drawing of the left arrow
+			{
+				display->drawLine(14+j-k, 56, 21+j-k, 49, WHITE);
+				display->drawLine(14+j-k, 56, 21+j-k, 63, WHITE);   
+			}
+		}
     k++;
   }
   //------------------ Voltage and current -----------------------

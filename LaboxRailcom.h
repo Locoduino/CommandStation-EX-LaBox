@@ -8,7 +8,7 @@
 
 #pragma once
 
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 
 #include "DCCRMT.h"
 

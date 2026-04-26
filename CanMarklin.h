@@ -28,8 +28,10 @@
 #define CAN_LOCO_WRITECV_MAIN 0x08
 
 #define CAN_FIRST_NOTLOCO_COMMAND 0x09
+#define CAN_ACCESSORY         0x0B
 
-#define VERSION_LABOX_CAN "0.7.3"
+#define VERSION_LABOX_CAN "0.7.4"
+// 0.7.4	- 12/05/26 : Ajout du traitement des accessoires (merci lebelge2)
 // 0.7.3  - 12/09/24 : Modification du filtre ACAN_ESP32_Filter
 // 0.7.2  - 07/09/24 : Optimisatin de la recherche findLoco de la classe CanMarklinLoco
 // 0.7.1  - 05/09/24 : Modifications importantes pour les codes de commandes Respect précis du protocole Marklin

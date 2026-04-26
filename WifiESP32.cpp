@@ -2,6 +2,8 @@
     © 2023 Paul M. Antoine
     © 2021 Harald Barth
     © 2023 Nathan Kellenicki
+    © 2025 Chris Harlow
+    
 
     This file is part of CommandStation-EX
 
@@ -29,10 +31,13 @@
 #include "RingStream.h"
 #include "CommandDistributor.h"
 #include "WiThrottle.h"
+#ifdef LABOX
 #include "hmi.h"
 #include "MotorDriver.h"
 #include "LaboxModes.h"
+#endif
 #include "DCC.h"
+#include "Websockets.h"
 /*
 #include "soc/rtc_wdt.h"
 #include "esp_task_wdt.h"
@@ -187,6 +192,11 @@ void WifiESP::teardown() {
   // stop WiFi
   WiFi.disconnect(true);
 	server = NULL;
+
+#ifdef WIFI_LED
+  // Turn off Wifi LED
+  digitalWrite(WIFI_LED, 0);
+#endif
 }
 
 bool WifiESP::setup(const char *SSid,
@@ -201,7 +211,11 @@ bool WifiESP::setup(const char *SSid,
   uint8_t tries = 40;
   if (wifiUp)
     teardown();
-
+  if (strcmp("OFF", SSid) == 0) {
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
+    return false; // debatable if that is true (success) or false (no network)
+  }
   //#ifdef SERIAL_BT_COMMANDS
   //return false;
   //#endif
@@ -297,6 +311,7 @@ bool WifiESP::setup(const char *SSid,
 #endif
       } else {
 	DIAG(F("Wifi STA mode FAIL. Will revert to AP mode"));
+	wifiUp=false;
 	haveSSID=false;
 #ifdef USE_HMI
 	  if (!LaboxModes::progMode && hmi::CurrentInterface != NULL)
@@ -329,9 +344,16 @@ bool WifiESP::setup(const char *SSid,
 #else
     WiFi.setSleep(false);
 #endif
+
+#ifdef WIFI_HIDE_SSID
+ const bool hiddenAP = true;
+#else
+ const bool hiddenAP = false;
+#endif
+
     if (WiFi.softAP(strSSID.c_str(),
 		    havePassword ? password : strPass.c_str(),
-		    channel, false, 8)) {
+		    channel, hiddenAP, 8)) {
       // DIAG(F("Wifi AP SSID %s PASS %s"),strSSID.c_str(),havePassword ? password : strPass.c_str());
 #ifdef IP_ADDRESS
 	  	if (!WiFi.softAPConfig(local_IP, gateway, subnet)) {
@@ -469,6 +491,8 @@ void WifiESP::loop() {
 
     // something to write out?
     clientId=outboundRing->read();
+    bool useWebsocket=clientId & Websockets::WEBSOCK_CLIENT_MARKER;
+    clientId &= ~ Websockets::WEBSOCK_CLIENT_MARKER;
     if (clientId >= 0) {
       // We have data to send in outboundRing
       // and we have a valid clientId.
@@ -476,25 +500,33 @@ void WifiESP::loop() {
       // and then look if it can be sent because
       // we can not leave it in the ring for ever
       int count=outboundRing->count();
+      auto wsHeaderLen=useWebsocket? Websockets::getOutboundHeaderSize(count) : 0;
       {
-	char buffer[count+1]; // one extra for '\0'
+        byte buffer[wsHeaderLen + count + 1];  // one extra for '\0'
+        if (useWebsocket) Websockets::fillOutboundHeader(count, buffer);
 	for(int i=0;i<count;i++) {
 	  int c = outboundRing->read();
-	  if (c >= 0) // Panic check, should never be false
-	    buffer[i] = (char)c;
-	  else {
+          if (!c) {
 	    DIAG(F("Ringread fail at %d"),i);
 	    break;
 	  }
+          // websocket implementations at browser end can barf at \n
+          if (useWebsocket && (c == '\n')) c = '\r';
+          buffer[i + wsHeaderLen] = (char)c;
 	}
 	// buffer filled, end with '\0' so we can use it as C string
-	buffer[count]='\0';
-	if((unsigned int)clientId <= clients.size() && clients[clientId].active(clientId)) {
-	  if (Diag::CMD || Diag::WITHROTTLE)
-	    DIAG(F("SEND %d:%s"), clientId, buffer);
-	  clients[clientId].wifi.write(buffer,count);
+	buffer[wsHeaderLen+count]='\0';
+	if((unsigned int)clientId <= clients.size()) {
+	  if (clients[clientId].active(clientId)) {
+	    if (Diag::WIFI)
+	      DIAG(F("SEND%S %d:%s"), useWebsocket?F("ws"):F(""),clientId, buffer+wsHeaderLen);
+	    clients[clientId].wifi.write(buffer,count+wsHeaderLen);
 	} else {
-	  DIAG(F("Unsent(%d): %s"), clientId, buffer);
+	    // existed but not active
+	    DIAG(F("Unsent(%d): %s"), clientId, buffer+wsHeaderLen);
+	  }
+	} else {
+	  DIAG(F("Non existent client %d has message: %s"), clientId, buffer+wsHeaderLen);
 	}
       }
     }

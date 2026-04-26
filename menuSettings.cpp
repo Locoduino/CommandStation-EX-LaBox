@@ -17,7 +17,8 @@
 #include "menuSettings.h"
 #include "hmi.h"
 #include "WifiESP32.h"
-#include "Railcom.h"
+#include "LaboxRailcom.h"
+#include "LaboxModes.h"
 
 bool updatedSettings;
 int positionSettings;
@@ -68,13 +69,18 @@ void menuSettings::start()
 void menuSettings::eventUp()
 {
   _HMIDEBUG_FCT_PRINTLN("menuSettings::eventUp.. Begin"); 
-  menuObject::eventUp();
+  //menuObject::eventUp();
 	switch (positionSettings)
 	{
 		case SETTINGS_POSITION_EXIT:
-			positionSettings = SETTINGS_POSITION_RAILCOM;
+			if (LaboxModes::mainMode == MainMode::DCC) {
+				positionSettings = SETTINGS_POSITION_RAILCOM;
+			}
+			else {	
+				positionSettings = SETTINGS_POSITION_WIFI;
+			}
 			break;
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 		case SETTINGS_POSITION_RAILCOM:
 			positionSettings = SETTINGS_POSITION_WIFI;
 			break;
@@ -94,14 +100,19 @@ void menuSettings::eventUp()
 void menuSettings::eventDown()
 {
   _HMIDEBUG_FCT_PRINTLN("menuSettings::eventDown.. Begin"); 
-  menuObject::eventDown();
+  //menuObject::eventDown();
 	switch (positionSettings)	{
-#ifdef ENABLE_WIFI
+#ifdef WIFI_ON
 		case SETTINGS_POSITION_WIFI:
-			positionSettings = SETTINGS_POSITION_RAILCOM;
+			if (LaboxModes::mainMode == MainMode::DCC) {
+				positionSettings = SETTINGS_POSITION_RAILCOM;
+			}
+			else {	
+				positionSettings = SETTINGS_POSITION_EXIT;
+			}
 			break;
 #endif
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 		case SETTINGS_POSITION_RAILCOM:
 			positionSettings = SETTINGS_POSITION_EXIT;
 			break;
@@ -129,7 +140,7 @@ int menuSettings::eventSelect()
 			DIAG("menuSettings::eventSelect.. Exit");  
 			return MENUEXIT;
 
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 		case SETTINGS_POSITION_RAILCOM:
 			DIAG("menuSettings::eventSelect.. Toggle Railcom");	
 			if (isRailcomEnabled())
@@ -144,7 +155,7 @@ int menuSettings::eventSelect()
 			return 0;	// Do not exit menu, just update display
 #endif
 
-#ifdef ENABLE_WIFI
+#ifdef WIFI_ON
 		case SETTINGS_POSITION_WIFI:	
 			DIAG("menuSettings::eventSelect.. Toggle Wifi");	
 			if (WifiESP::isUp())
@@ -198,7 +209,7 @@ void menuSettings::update()
 	display->setTextColor(WHITE);
 
 	char mess[10];
-#ifdef ENABLE_WIFI
+#ifdef WIFI_ON
   display->setCursor(0, 0);
  	display->println(TXT_WIFI);
 	sprintf(mess, positionSettings == SETTINGS_POSITION_WIFI ? ">%s<" : "%s", WifiESP::isUp() ? TXT_ON : TXT_OFF);
@@ -206,12 +217,14 @@ void menuSettings::update()
  	display->println(mess);
 #endif
 
-#ifdef ENABLE_RAILCOM
-  display->setCursor(0, 9);
- 	display->println(TXT_RAILCOM);
-	sprintf(mess, positionSettings == SETTINGS_POSITION_RAILCOM ? ">%s<" : "%s", isRailcomEnabled() ? TXT_ON : TXT_OFF);
-	display->setCursor(90+(positionSettings != SETTINGS_POSITION_RAILCOM) * 6, 9);
- 	display->println(mess);
+#ifdef ENABLE_LABOX_RAILCOM
+	if (LaboxModes::mainMode == MainMode::DCC) {
+		display->setCursor(0, 9);
+		display->println(TXT_RAILCOM);
+		sprintf(mess, positionSettings == SETTINGS_POSITION_RAILCOM ? ">%s<" : "%s", isRailcomEnabled() ? TXT_ON : TXT_OFF);
+		display->setCursor(90+(positionSettings != SETTINGS_POSITION_RAILCOM) * 6, 9);
+		display->println(mess);
+	}
 #endif
 
 	/* exit option */

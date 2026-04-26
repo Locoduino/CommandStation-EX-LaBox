@@ -107,7 +107,7 @@ void menuInformation::start()
 void menuInformation::eventUp()
 {
   _HMIDEBUG_FCT_PRINTLN("menuInformation::eventUp.. Begin"); 
-  menuObject::eventUp();
+  //menuObject::eventUp();
 
 	if (this->firstMessage > 0) 
 	{
@@ -127,7 +127,7 @@ void menuInformation::eventUp()
 void menuInformation::eventDown()
 {
   _HMIDEBUG_FCT_PRINTLN("menuInformation::eventDown.. Begin"); 
-  menuObject::eventDown();
+  //menuObject::eventDown();
 
 	if (this->firstMessage < HMIInfo_MessageNumber-1) 
 	{

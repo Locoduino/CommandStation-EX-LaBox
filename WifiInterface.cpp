@@ -184,6 +184,7 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
 				      const FSH* hostname, int port, byte channel, bool forceAP) {
   bool ipOK = false;
   bool oldCmd = false;
+  bool apMode = false;
 
   char macAddress[17];  //  mac address extraction   
  
@@ -235,6 +236,22 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
   StringFormatter::send(wifiStream, F("AT+CWMODE%s=1\r\n"), oldCmd ? "" : "_CUR"); // configure as "station" = WiFi client
   checkForOK(1000, true);                       // Not always OK, sometimes "no change"
 
+#ifdef DHCPTEST
+  // sometimes the esp8266 will get stuck with DHCP off, so reset DHCP to on
+  // mode=1 which means DHCP for STA mode
+  StringFormatter::send(wifiStream, F("AT+CWDHCP%s=1,1\r\n"), oldCmd ? "" : "_CUR");
+  checkForOK(5000, true);
+#else
+  StringFormatter::send(wifiStream, F("AT+CWDHCP%s?\r\n"), oldCmd ? "" : "_CUR");
+  if (checkForOK(5000, F("+CWDHCP"), true,false)) {
+    if (!checkForOK(5000, F("3"), true,false))
+      DIAG(F("Warning: DHCP may be off"));
+  } else {
+    DIAG(F("Warning: Can not determine DHCP state"));
+  }
+  checkForOK(1000, true); // consume the OK
+#endif
+
   const char *yourNetwork = "Your network ";
   if (STRNCMP_P(yourNetwork, (const char*)SSid, 13) == 0 || STRNCMP_P("", (const char*)SSid, 13) == 0) {
     if (STRNCMP_P(yourNetwork, (const char*)password, 13) == 0) {
@@ -259,7 +276,7 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
       } else {
       // later version supports CWJAP_CUR
         StringFormatter::send(wifiStream, F("AT+CWHOSTNAME=\"%S\"\r\n"), hostname); // Set Host name for Wifi Client
-      	checkForOK(2000, true); // dont care if not supported
+      	checkForOK(5001, true); // dont care if not supported
       
         StringFormatter::send(wifiStream, F("AT+CWJAP_CUR=\"%S\",\"%S\"\r\n"), SSid, password);
         ipOK = checkForOK(WIFI_CONNECT_TIMEOUT, true);
@@ -270,7 +287,7 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
         // Let's check for IP (via DHCP)
         ipOK = false;
         StringFormatter::send(wifiStream, F("AT+CIFSR\r\n"));
-        if (checkForOK(5000, F("+CIFSR:STAIP"), true,false))
+        if (checkForOK(5004, F("+CIFSR:STAIP"), true,false))
         if (!checkForOK(1000, F("0.0.0.0"), true,false))
         ipOK = true;
       }
@@ -288,8 +305,16 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
       // last way out to get any Wifi connectivity. 
       StringFormatter::send(wifiStream, F("AT+CWMODE%s=2\r\n"), oldCmd ? "" : "_CUR"); 
     } while (!checkForOK(1000+i*500, true) && i++<10);
+    apMode = true;
 
     while (wifiStream->available()) StringFormatter::printEscape( wifiStream->read()); /// THIS IS A DIAG IN DISGUISE
+
+#ifdef DHCPTEST
+    // sometimes the esp8266 will get stuck with DHCP off, so reset DHCP to on
+    // mode=0 which means DHCP for softAP 
+    StringFormatter::send(wifiStream, F("AT+CWDHCP%s=0,1\r\n"), oldCmd ? "" : "_CUR");
+    checkForOK(5000, true);
+#endif
 
     // Figure out MAC addr
     StringFormatter::send(wifiStream, F("AT+CIFSR\r\n")); // not TOMATO
@@ -299,6 +324,11 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
       for (int i=0; i<17;i++) {
         while(!wifiStream->available());
 	macAddress[i]=wifiStream->read();
+	if (macAddress[i] < '0' || macAddress[i] > 'f' || (macAddress[i] > ':' && macAddress[i] < 'a')) {
+	  // this does not look like a MAC addr format, try to save the day
+	  // with some printable character
+	  macAddress[i] = 'x';
+	}
 	StringFormatter::printEscape(macAddress[i]);
       }
     } else {
@@ -309,20 +339,26 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
     checkForOK(1000, true, false);  // suck up remainder of AT+CIFSR
   
     i=0;
+#ifdef WIFI_HIDE_SSID
+ const byte hiddenAP = true;
+#else
+ const bool hiddenAP = false;
+#endif
+
     do {
       if (!forceAP) {
         if (STRNCMP_P(yourNetwork, (const char*)password, 13) == 0) {
     // unconfigured
-          StringFormatter::send(wifiStream, F("AT+CWSAP%s=\"DCCEX_%s\",\"PASS_%s\",%d,4\r\n"),
-                                            oldCmd ? "" : "_CUR", macTail, macTail, channel);
+          StringFormatter::send(wifiStream, F("AT+CWSAP%s=\"DCCEX_%s\",\"PASS_%s\",%d,4,4,%b\r\n"),
+                                            oldCmd ? "" : "_CUR", macTail, macTail, channel,hiddenAP);
         } else {
           // password configured by user
-          StringFormatter::send(wifiStream, F("AT+CWSAP%s=\"DCCEX_%s\",\"%S\",%d,4\r\n"), oldCmd ? "" : "_CUR",
-                                          macTail, password, channel);
+          StringFormatter::send(wifiStream, F("AT+CWSAP%s=\"DCCEX_%s\",\"%S\",%d,4,4,%b\r\n"), oldCmd ? "" : "_CUR",
+                                          macTail, password, channel,hiddenAP);
         }
       } else {
-        StringFormatter::send(wifiStream, F("AT+CWSAP%s=\"%S\",\"%S\",%d,4\r\n"),
-                                        oldCmd ? "" : "_CUR", SSid, password, channel);
+        StringFormatter::send(wifiStream, F("AT+CWSAP%s=\"%S\",\"%S\",%d,4,4,%b\r\n"),
+                                        oldCmd ? "" : "_CUR", SSid, password, channel,hiddenAP);
       }
     } while (!checkForOK(WIFI_CONNECT_TIMEOUT, true) && i++<2); // do twice if necessary but ignore failure as AP mode may still be ok
     if (i >= 2)
@@ -341,7 +377,7 @@ wifiSerialState WifiInterface::setup2(const FSH* SSid, const FSH* password,
   StringFormatter::send(wifiStream, F("AT+CIPMUX=1\r\n")); // configure for multiple connections
   if (!checkForOK(1000, true)) return WIFI_DISCONNECTED;
 
-  if(!oldCmd) {                                                                    // no idea to test this on old firmware
+  if(!oldCmd && !apMode) {  // no idea to test this on old firmware and it works only in STA mode anyway
     StringFormatter::send(wifiStream, F("AT+MDNS=1,\"%S\",\"withrottle\",%d\r\n"),
 			  hostname, port);                                         // mDNS responder
     checkForOK(1000, true);                                                        // dont care if not supported
@@ -444,7 +480,7 @@ bool WifiInterface::checkForOK( const unsigned int timeout, const FSH * waitfor,
       if (ch == GETFLASH(locator)) {
         locator++;
         if (!GETFLASH(locator)) {
-          DIAG(F("Found in %dms"), millis() - startTime);
+          DIAG(F("Found in %dms of %d"), (int)(millis() - startTime), timeout);
           return true;
         }
       }

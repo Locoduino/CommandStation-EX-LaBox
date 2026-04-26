@@ -18,8 +18,8 @@
 
 #if __has_include("config.h")
 #include "config.h"
-#ifndef LABOX_BASE_MOTOR_SHIELD
-#error Your config.h must include a LABOX_BASE_MOTOR_SHIELD and a LABOX_PROG_MOTOR_SHIELD definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.Labox.h to config.h
+#ifndef YOUR_MOTOR_SHIELD_TYPE
+#error Your config.h must include a YOUR_MOTOR_SHIELD_TYPE definition. If you see this warning in spite not having a config.h, you have a buggy preprocessor and must copy config.Labox.h to config.h
 #endif
 #else
 #warning config.h not found. Using defaults from config.Labox.h
@@ -28,10 +28,11 @@
 
 /*
  *  © 2021 Neil McKechnie
- *  © 2020-2021 Chris Harlow, Harald Barth, David Cutting,
+ *  © 2020-2025 Chris Harlow, Harald Barth, David Cutting,
  *  Fred Decker, Gregor Baues, Anthony W - Dayton
  *  © 2023 Nathan Kellenicki
- *  © 2023-2024 Thierry Paris for Locoduino.
+ *  © 2025 Herb Morton
+ *  © 2023-2026 Thierry Paris for Locoduino.
  *  All rights reserved.
  *
  *  This file is part of CommandStation-EX-Labox
@@ -52,10 +53,15 @@
 
 #include "DCCEX.h"
 
+#define QWRAP_(x) QWRAP__(x)
+#define QWRAP__(x) #x
+static_assert(MAX_LOCOS >1 && MAX_LOCOS<256, "#define MAX_LOCOS " QWRAP_(MAX_LOCOS) " must be >1 and <256");
+
 #include "version_labox.h"
 #include "EXComm.h"
-#include "Railcom.h"
+#include "LaboxRailcom.h"
 #include "LaboxModes.h"
+#include "Labox.h"
 
 #ifdef CPU_TYPE_ERROR
 #error CANNOT COMPILE - DCC++ EX ONLY WORKS WITH THE ARCHITECTURES LISTED IN defines.h
@@ -81,7 +87,8 @@ hmi boxHMI(&Wire);
 #endif
 //----------------------------------------------------------------------------
 
-void setup() {
+void setup()
+{
   // The main sketch has responsibilities during setup()
 
   // Responsibility 1: Start the usb connection for diagnostics
@@ -132,7 +139,7 @@ void setup() {
 #else
   // ESP32 needs wifi on always
 	// But with LaBox, you can completly stop the Wifi !
-	#if ENABLE_WIFI
+	#if WIFI_ON
 	  PASSWDCHECK(WIFI_PASSWORD); // compile time check
 		WifiESP::setup(WIFI_SSID, WIFI_PASSWORD, WIFI_HOSTNAME, IP_PORT, WIFI_CHANNEL, WIFI_FORCE_AP);
 	#endif
@@ -151,28 +158,44 @@ void setup() {
   //  detailed pin mappings and may also require modified subclasses of the MotorDriver to implement specialist logic.
   // STANDARD_MOTOR_SHIELD, POLOLU_MOTOR_SHIELD, FIREBOX_MK1, FIREBOX_MK1S are pre defined in MotorShields.hrr
 
-  // Set up MotorDrivers early to initialize all pins
-  if (LaboxModes::progMode) {
-    DIAG(F("LaBox Prog mode."));
-		// DO NOT MODIFY THE NEXT LINE ! This must always be the PROG motor shield
-    TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
-		DCC::setShieldName("RebootProgMode");
-  }
-  else {
-    DIAG(F("LaBox Main mode."));
-    TrackManager::Setup(YOUR_MOTOR_SHIELD_TYPE);
+	if (LaboxModes::mainMode == MainMode::DCC) {
+		// Set up MotorDrivers early to initialize all pins
+		if (LaboxModes::progMode) {
+			DIAG(F("LaBox Prog mode."));
+			// DO NOT MODIFY THE NEXT LINE ! This must always be the PROG motor shield
+			TrackManager::Setup(LABOX_PROG_MOTOR_SHIELD);
+			DCC::setShieldName("RebootProgMode");
+		}
+		else {
+			DIAG(F("LaBox Main mode."));
+			TrackManager::Setup(YOUR_MOTOR_SHIELD_TYPE);
 
-#if defined(INVERT_BOOSTER_OUTPUT)
-		// For the first booster. No problem if there is no booster.
-		TrackManager::setTrackMode(2, TRACK_MODE_MAIN_INV);
+	#if defined(INVERT_BOOSTER_OUTPUT)
+			// For the first booster. No problem if there is no booster.
+			TrackManager::setTrackMode(2, TRACK_MODE_MAIN_INV);
+	#endif
+		}
+
+		// Responsibility 3: Start the DCC engine.
+		DCC::begin();
+	}
+
+	// Start RMFT aka EX-RAIL (ignored if no automnation)
+	RMFT::begin();
+
+	if (LaboxModes::mainMode == MainMode::DCC) {
+		// Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
+		//  This can be used to create turnouts, outputs, sensors etc. through the normal text commands.
+#if __has_include ( "mySetup.h")
+			#define SETUP(cmd) DCCEXParser::parse(F(cmd))
+			#include "mySetup.h"
+			#undef SETUP
 #endif
-  }
+	}
 
-  // Responsibility 3: Start the DCC engine.
-  DCC::begin();
-
-  // Start RMFT aka EX-RAIL (ignored if no automnation)
-  RMFT::begin();
+#ifdef USE_HMI
+	LaboxModes::begin();
+#endif
 
   //--- Configure external comms
 #ifdef ENABLE_EXCOMM
@@ -180,55 +203,62 @@ void setup() {
 	EXComm::begin();
 #endif
 
-  // Invoke any DCC++EX commands in the form "SETUP("xxxx");"" found in optional file mySetup.h.
-  //  This can be used to create turnouts, outputs, sensors etc. through the normal text commands.
-  #if __has_include ( "mySetup.h")
-    #define SETUP(cmd) DCCEXParser::parse(F(cmd))
-    #include "mySetup.h"
-    #undef SETUP
-  #endif
-
-  #if defined(LCN_SERIAL)
-  LCN_SERIAL.begin(115200);
-  LCN::init(LCN_SERIAL);
-  #endif
-  LCD(3, F("Ready"));
+#if defined(LCN_SERIAL)
+	LCN_SERIAL.begin(115200);
+	LCN::init(LCN_SERIAL);
+#endif
+	LCD(3, F("Ready"));
 #ifdef CD_HANDLE_RING
-  CommandDistributor::broadcastPower();
+	CommandDistributor::broadcastPower();
 #endif
-#ifdef USE_HMI
-	LaboxModes::begin();
-#endif
-#ifdef ENABLE_RAILCOM
+
+	if (LaboxModes::mainMode == MainMode::DC) {
+		LaboxDC::begin();
+	}
+
+#ifdef ENABLE_LABOX_RAILCOM
 	// Only use Railcom in LaBox Main mode.
 	RailcomBegin();
 #endif
 }
 
-/**************** for future reference
-void looptimer(unsigned long timeout, const FSH* message)
-{
-  static unsigned long lasttimestamp = 0;
-  unsigned long now = micros();
-  if (timeout != 0) {
-    unsigned long diff = now - lasttimestamp;
-    if (diff > timeout) {
-      DIAG(message);
-      DIAG(F("DeltaT=%L"), diff);
-      lasttimestamp = micros();
-      return;
-    }
-  }
-  lasttimestamp = now;
-}
-*********************************************/
 void loop()
 {
+  #ifdef ENABLE_SERIAL_LOG
+    SerialLog.loop();
+  #endif
+
+	if (LaboxModes::mainMode == MainMode::DCC) {
+		#ifdef ARDUINO_ARCH_ESP32
+		
+		#ifdef BOOSTER_INPUT
+		  static bool oldactive = false;
+		  if (dccSniffer) {
+		    bool newactive = dccSniffer->inputActive();
+		    if (oldactive != newactive) {
+		      RMFT2::railsyncEvent(newactive);
+		      oldactive = newactive;
+		    }
+		    DCCPacket p = dccSniffer->fetchPacket();
+		    if (p.len() != 0) {
+		      if (DCCDecoder::parse(p)) {
+			if (Diag::SNIFFER)
+			  p.print();
+		      }
+		    }
+		  }
+		#endif // BOOSTER_INPUT
+		#endif // ARDUINO_ARCH_ESP32
+
   // The main sketch has responsibilities during loop()
 
-  // Responsibility 1: Handle DCC background processes
-  //                   (loco reminders and power checks)
-  DCC::loop();
+  	// Responsibility 1: Handle DCC background processes
+  	//                   (loco reminders and power checks)
+  	DCC::loop();
+	}
+	else if (LaboxModes::mainMode == MainMode::DC) {
+		DCC::issueReminders(); // for DC mode, we still want to issue loco reminders to handle momentum and speed changes over time;
+	}
 
   // Responsibility 2: handle any incoming commands on USB connection
   SerialManager::loop();
@@ -241,13 +271,14 @@ void loop()
 #ifndef ARDUINO_ARCH_ESP32
 #if WIFI_ON
   WifiInterface::loop();
+ 
 #endif // WIFI_ON
 #else  // ARDUINO_ARCH_ESP32
-#if ENABLE_WIFI
+#if WIFI_ON
 #ifndef WIFI_TASK_ON_CORE0
   WifiESP::loop();
 #endif
-#endif
+#endif //WIFI_ON
 #endif // ARDUINO_ARCH_ESP32
 #if ETHERNET_ON
   EthernetInterface::loop();
@@ -255,9 +286,12 @@ void loop()
 
   RMFT::loop(); // ignored if no automation
 
+	if (LaboxModes::mainMode == MainMode::DCC) {
+
 #if defined(LCN_SERIAL)
-  LCN::loop();
+  	LCN::loop();
 #endif
+	}
 
   // Display refresh
   DisplayInterface::loop();
@@ -270,12 +304,21 @@ void loop()
   // Report any decrease in memory (will automatically trigger on first call)
   static int ramLowWatermark = __INT_MAX__; // replaced on first loop
 
+  #ifdef ARDUINO_ARCH_AVR
+  // count every byte of free RAM on AVR
   int freeNow = DCCTimer::getMinimumFreeMemory();
   if (freeNow < ramLowWatermark) {
     ramLowWatermark = freeNow;
     LCD(3, F("Free RAM=%5db"), ramLowWatermark);
   }
-
+  #else
+  // on other platforms, just report every 4kb
+  int freeNow = DCCTimer::getMinimumFreeMemory() / 4096;
+  if (freeNow < ramLowWatermark) {
+    ramLowWatermark = freeNow;
+    LCD(3,F("Free RAM=%5dKb"), ramLowWatermark*4);
+  }
+	#endif
 #ifdef USE_HMI
   boxHMI.update();
 #endif

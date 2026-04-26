@@ -15,7 +15,7 @@
 
 
 enum enumHMIState :byte {StateDashboard, StateParametersMenu, StateDashboardTrainView, StateBrowseEventLst, StateExitMenu, StateWifiWaiting, StateNoWifi } ;
-enum enumEvent    :byte {noEvent, eventUp, eventDown, eventSel};
+enum enumEvent    :byte {noEvent, eventUp, eventDown, eventSel, eventDoubleSel};
 enum enumWifiMode :byte {wifiAp, wifiClient}; 
 
 // variables must be global due to static methods

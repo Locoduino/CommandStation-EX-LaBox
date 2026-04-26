@@ -3,7 +3,7 @@
  *  © 2021 Neil McKechnie
  *  © 2020-2025 Harald Barth
  *  © 2020-2021 Fred Decker
- *  © 2020-2021 Chris Harlow
+ *  © 2020-2025 Chris Harlow
  *  © 2023 Nathan Kellenicki
  *  © 2024-2026 Thierry Paris for Locoduino
  *  
@@ -50,14 +50,14 @@ The configuration file for DCC-EX Command Station
 //
 //  STANDARD_MOTOR_SHIELD : Arduino Motor shield Rev3 based on the L298 with 18V 2A per channel
 //  POLOLU_MOTOR_SHIELD   : Pololu MC33926 Motor Driver (not recommended for prog track)
-//  FUNDUMOTO_SHIELD      : Fundumoto Shield, no current sensing (not recommended, no short protection)
-//  FIREBOX_MK1           : The Firebox MK1                    
-//  FIREBOX_MK1S          : The Firebox MK1S
-//  IBT_2_WITH_ARDUINO    : Arduino Motor Shield for PROG and IBT-2 for MAIN
 //  EX8874_SHIELD         : DCC-EX TI DRV8874 based motor shield
+//  EXCSB1                : DCC-EX CSB-1 hardware
+//  EXCSB1_WITH_EX8874    : DCC-EX CSB-1 hardware with DCC-EX TI DRV8874 shield
+//  NO_SHIELD             : CS without any motor shield (as an accessory only CS)
 //   |
 //   +-----------------------v
 //
+//#define MOTOR_SHIELD_TYPE STANDARD_MOTOR_SHIELD
 
 // Labox only : 
 //
@@ -135,7 +135,7 @@ The configuration file for DCC-EX Command Station
 // PS has a higher rating than your motor shield you do not need this.
 // You can use this as well if you are cautious and your trains do not
 // need full current.
-#define MAX_CURRENT 2250
+// #define MAX_CURRENT 2250
 //
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -171,14 +171,28 @@ The configuration file for DCC-EX Command Station
 // is set (recommended), that password will be used for AP mode.
 // The AP mode password must be at least 8 characters long.
 //
+//
+// WIFI_FORCE_AP: If you'd like to specify your own WIFI_SSID in AP mode, set this
+// true. Otherwise it is assumed that you'd like to connect to an existing network
+// with that SSID.
+#define WIFI_FORCE_AP false
+
 // Your SSID may not contain ``"'' (double quote, ASCII 0x22).
+#if WIFI_FORCE_AP==false
+	#define WIFI_SSID "Your SSID here" 
+#else
 #define WIFI_SSID "LaBox"
+#endif
 //
 // WIFI_PASSWORD is the network password for your home network or if
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD "Your network passwd"
+#if WIFI_FORCE_AP==false
+	#define WIFI_PASSWORD "Your network password here"
+#else
+	#define WIFI_PASSWORD ""
+#endif
 //
 // WIFI_HOSTNAME: You can change this if you have more than one
 // CS to make them show up with different names on the network.
@@ -188,11 +202,6 @@ The configuration file for DCC-EX Command Station
 // WIFI_CHANNEL: The default channel is set to "1". If you need to use an
 // alternate channel (we recommend using only 1,6, or 11) you may change it here.
 #define WIFI_CHANNEL 1
-//
-// WIFI_FORCE_AP: If you'd like to specify your own WIFI_SSID in AP mode, set this
-// true. Otherwise it is assumed that you'd like to connect to an existing network
-// with that SSID.
-#define WIFI_FORCE_AP false
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -201,6 +210,16 @@ The configuration file for DCC-EX Command Station
 // This is not for Wifi. You will then need the Arduino Ethernet library as well.
 //
 //#define ENABLE_ETHERNET true
+
+/////////////////////////////////////////////////////////////////////////////////////
+//
+// MAX_NUM_TCP_CLIENTS: If you on STM32 Ethernet (and only there) want more than
+// 9 (*) TCP clients, change this number to for example 20 here **AND** in
+// STM32lwiopts.h and follow the instructions in STM32lwiopts.h
+//
+// (*) It would be 10 if there would not be a bug in LwIP by STM32duino.
+//
+//#define MAX_NUM_TCP_CLIENTS 20
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -261,10 +280,10 @@ The configuration file for DCC-EX Command Station
 #define HMI_CURRENTDELTA		0           // Current value shift with I=0
 
 // Enable Railcom Cutout frame during DCC signal generation. ONLY FOR ESP32 !
-//#define ENABLE_RAILCOM
+//#define ENABLE_LABOX_RAILCOM
 
-#if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_RAILCOM)
-#undef ENABLE_RAILCOM
+#if not defined(ARDUINO_ARCH_ESP32) && defined(ENABLE_LABOX_RAILCOM)
+#undef ENABLE_LABOX_RAILCOM
 #endif
 
 // Use EXComm items to get orders
@@ -326,6 +345,18 @@ The configuration file for DCC-EX Command Station
 // If the next line is disabled, no configuration CV is possible for LaBox specific features
 #define LABOX_CV_ADDRESS		1000	// Default address to program LaBox specific features
 
+// This pin will swap on/off every second during prog mode.
+//#define LABOX_PROG_LED			PIN_LEDBUILTIN
+
+// A special address to control the DC cab in DC mode via DCC apps, not used in DCC mode.
+#define LABOX_DC_CAB				9999 
+
+// Frequency of the PWM signal for DC control, in Hz. 20kHz is a good value for most motor drivers, but you can adjust it if you have a specific requirement or if your motor driver has a recommended frequency.
+#define LABOX_DC_FREQUENCY	30000
+
+// If defined, LaBox will use the DC mode by defaut, instead of DCC mode.
+//#define LABOX_DC_MAIN_MODE
+
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM
 //
@@ -385,6 +416,15 @@ The configuration file for DCC-EX Command Station
 //#define HIGHEST_SHORT_ADDR 0
 // We do not support to use the same address, for example 100(long) and 100(short)
 // at the same time, there must be a border.
+
+/////////////////////////////////////////////////////////////////////////////////////
+// REDEFINE locomotive state table size.
+// This is the maximum number of locos that can be controlled at the same time.
+// This defaults to 50 (8 on a UNO/NANO).
+// If you have enough free memory you can increase this to a maximum of 255.
+// If you are short of memory (typically a Mega with WiFi and lots of accessories)
+// you can decrease it (minimum 2)   
+//#define MAX_LOCOS 100
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Some newer 32bit microcontrollers boot very quickly, so powering on I2C and other

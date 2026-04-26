@@ -89,7 +89,7 @@ void menuTrainCvWrite::eventUp()
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvWrite::eventUp.. Begin");
 	DIAGWRITE("up begin");
 
-	menuObject::eventUp();
+	//menuObject::eventUp();
 
 	if (writeState == Ready || writeState == FixingAddress)
 	{
@@ -141,7 +141,7 @@ void menuTrainCvWrite::eventDown()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuTrainCvWrite::eventDown.. Begin"); 
 	DIAGWRITE("down begin");
-	menuObject::eventDown();
+	//menuObject::eventDown();
 
 	if (writeState == Ready || writeState == FixingAddress)
 	{

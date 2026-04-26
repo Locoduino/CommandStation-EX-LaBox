@@ -56,8 +56,6 @@ class MenuManagement
     menuObject* about;
     menuObject* wifiInfo;
     menuObject* exCommInfo;
-    menuObject* reset;
-    menuObject* resetConfirm;
     menuObject* physicalMes;
     menuObject* TrainView;
     menuObject* V1Train;

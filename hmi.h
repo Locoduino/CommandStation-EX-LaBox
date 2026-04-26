@@ -9,12 +9,13 @@
 #ifndef _HMI
 #define _HMI
 
+#include "hmiConfig.h"
+
 #ifdef USE_HMI
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
 #include "OneButton.h"
 #include "Wire.h"
-#include "hmiConfig.h"
 #include "HmiInterface.hpp"
 
 #include "hmiTrain.h"
@@ -48,6 +49,10 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
 		int currentBaseCVData;
 		bool currentCVDataMoved;
 
+    OneButton *BtnUp;
+    OneButton *BtnDown;
+    OneButton *BtnSelect;
+		
     //int executionCore;
     
     //----- functions
@@ -66,11 +71,10 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
     unsigned long millisParamsMenu; 
     unsigned long millisRefreshDisplay; 
     unsigned long millisWifiEffect;
+    unsigned long millisProgLedEffect;
+    unsigned long millisDcDccEffect;
     byte          positioneventlst;               // index in event list
     byte          wifiCircle ;                    // Juste for visual effect
-    OneButton *BtnUp;
-    OneButton *BtnDown;
-    OneButton *BtnSelect;
     hmiTrain  tabTrains[HMI_NbMemorisedTrain];
     bool  needToRefreshDisplay();
   
@@ -89,7 +93,8 @@ class hmi : public Adafruit_SSD1306, public HmiInterface
     static void BtnUpPressed();
     static void BtnDownPressed();
     static void BtnSelectPressed();
-    
+		static void BtnSelectDoubleClick();
+
     // HmiInterface
 
     bool HmiInterfaceLoop();

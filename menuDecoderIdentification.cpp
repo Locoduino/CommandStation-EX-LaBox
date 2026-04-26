@@ -401,7 +401,7 @@ void menuDecoderIdentification::eventUp()
 	_HMIDEBUG_FCT_PRINTLN("menuDecoderIdentification::eventUp.. Begin");
 	DIAGIDENT("up begin");
 
-	menuObject::eventUp();
+	//menuObject::eventUp();
 
 	if (identState == MenuQuit)
 	{
@@ -423,7 +423,7 @@ void menuDecoderIdentification::eventDown()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuDecoderIdentification::eventDown.. Begin"); 
 	DIAGIDENT("down begin");
-	menuObject::eventDown();
+	//menuObject::eventDown();
 
 	if (identState == MenuRetry)
 	{

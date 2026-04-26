@@ -43,10 +43,10 @@
 #include "DCCTimer.h"
 #include "DCCWaveform.h" // for MAX_PACKET_SIZE
 #ifdef LABOX
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 #include "hmi.h"
 #include "LaboxModes.h"
-#include "Railcom.h"
+#include "LaboxRailcom.h"
 #endif
 #endif
 #include "soc/gpio_sig_map.h"
@@ -105,7 +105,7 @@ RMTChannel *channelHandle[8] = { 0 };
 
 void IRAM_ATTR interrupt(rmt_channel_t channel, void *t) {
 #ifdef LABOX
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 	if (channel == 0)
 		StarTimerCutOut(channel);        
 #endif
@@ -150,7 +150,7 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   preamble = (rmt_item32_t*)malloc(preambleLen*sizeof(rmt_item32_t));
 	byte n = 0;
 #ifdef LABOX
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
  if (isMain){
     setDCCBitCutOut(preamble);                               
     n = 1;
@@ -213,7 +213,7 @@ RMTChannel::RMTChannel(pinpair pins, bool isMain) {
   rmt_register_tx_end_callback(interrupt, 0);
   rmt_set_tx_intr_en(channel, true);
 
-  DIAG(F("Channel %d DCC signal for %s start"), config.channel, isMain ? "MAIN" : "PROG");
+  DIAG(F("Channel %d DCC signal for %s start (%d/%d)"), config.channel, isMain ? "MAIN" : "PROG", pins.pin, pins.invpin);
 
   // send one bit to kickstart the signal, remaining data will come from the
   // packet queue. We intentionally do not wait for the RMT TX complete here.
@@ -236,8 +236,11 @@ int RMTChannel::RMTfillData(const byte buffer[], byte byteCount, byte repeatCoun
   // to the HW. dataRepeat on the other hand signals back to
   // the caller of this function if the data has been sent enough
   // times (0 to 3 means 1 to 4 times in total).
-  if (dataRepeat > 0) // we have still old work to do
-    return dataRepeat;
+  {
+    volatile byte dr = dataRepeat; // copy to test variable, not to be optimezed away
+    if (dr > 0) // we have still old work to do
+      return dr;
+  }
   if (dataReady == true) // the packet is not copied out yet
     return 1000;
   if (DATA_LEN(byteCount) > maxDataLen) {  // this would overun our allocated memory for data
@@ -293,9 +296,9 @@ bool RMTChannel::addPin(byte pin, bool inverted) {
   esp_err_t err;
   PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpioNum], PIN_FUNC_GPIO);
   err = gpio_set_direction(gpioNum, GPIO_MODE_OUTPUT);
-  if (err != ESP_OK) return false;
+  if (err != ESP_OK) { DIAG("Error !"); return false; }
   gpio_matrix_out(gpioNum, RMT_SIG_OUT0_IDX+channel, inverted, 0);
-  if (err != ESP_OK) return false;
+  if (err != ESP_OK) { DIAG("Error !"); return false; }
   return true;
 }
 bool RMTChannel::addPin(pinpair pins) {

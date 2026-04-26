@@ -133,7 +133,7 @@ void EXComm::broadcast(byte *com)
 	switch (opcode)
 	{
 	case 'l':   // LOCO <l CAB SPEED DIRECTION>
-			DIAG_EXCOMM(F("[EXCOMM] broadcast loco"));
+			DIAG_EXCOMM(F("[EXCOMM] broadcast loco %d"), p[0]);
 			if (params >= 1) {
 				for (int i = 0; i <= lastItem; i++) {
 					if (commItems[i] != NULL) {
@@ -144,7 +144,7 @@ void EXComm::broadcast(byte *com)
 			return;
 
 	case 'H': // TURNOUT <H ADDRESS ACTIVATE>
-			DIAG_EXCOMM(F("[EXCOMM] broadcast turnout"));
+			DIAG_EXCOMM(F("[EXCOMM] broadcast turnout %d"), p[0]);
 			if (params >= 1) {
 				for (int i = 0; i <= lastItem; i++) {
 					if (commItems[i] != NULL) {
@@ -154,7 +154,7 @@ void EXComm::broadcast(byte *com)
 			}
 			return;
 		
-	case 'j': // CLOACKTIME <jC TIME RATE>
+	case 'j': // CLOCKTIME <jC TIME RATE>
 			DIAG_EXCOMM(F("[EXCOMM] broadcast clock time"));
 			if (params >= 1) {
 				for (int i = 0; i <= lastItem; i++) {

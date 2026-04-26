@@ -131,7 +131,7 @@ void menuProgMode::start()
 void menuProgMode::eventUp()
 {
   _HMIDEBUG_FCT_PRINTLN("menuProgMode::eventUp.. Begin"); 
-  menuObject::eventUp();
+  //menuObject::eventUp();
 
 	if (this->firstMessage > 0) 
 	{
@@ -151,7 +151,7 @@ void menuProgMode::eventUp()
 void menuProgMode::eventDown()
 {
   _HMIDEBUG_FCT_PRINTLN("menuProgMode::eventDown.. Begin"); 
-  menuObject::eventDown();
+  //menuObject::eventDown();
 
 	if (this->firstMessage < HMIInfo_MessageNumber-1) 
 	{

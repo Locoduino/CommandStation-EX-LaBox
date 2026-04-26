@@ -42,6 +42,18 @@ enum ProgBehavior {
 	ProgOnly = 4							// only a prog track exists, never joined for normal operations
 };
 
+enum MainMode {
+	DCC = 0,
+	DC = 1
+};
+
+// Pins for DC mode, only used if the main mode is DC. These pins are fixed by LaBox Hardware design.
+#define LABOX_DC_POWER	32
+#define LABOX_DC_IN1	33
+#define LABOX_DC_IN2	27
+
+
+
 /** This is a class to handle external communications.
 An instance of this class receive message from external world and call DCCEX API functions.
 */
@@ -52,6 +64,8 @@ class LaboxModes {
 		static void ChangeMode(bool inProgMode, ProgType inType = ProgType::MAIN);
 		static void Restart(ProgType inType = SILENTRETURNTOMAIN);
 
+		// Type of the main track, DC or DCC.
+		static MainMode mainMode;
 		// True if the ESP is in programmation mode.
     static bool progMode;
 		// True if the boot should not show logos and startup messages on the screen.

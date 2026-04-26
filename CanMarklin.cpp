@@ -54,16 +54,16 @@ void CanMarklin::getInfos(String *pMess1, String *pMess2, String *pMess3, byte m
 {
 	char mess[maxSize*2];
 
-  if (DESIRED_BIT_RATE < 1000000UL)
-		sprintf(mess, "[CANM] id:%d / %ldK", CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL);
-	else
-		sprintf(mess, "[CANM] id:%d / %ldM", CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL);
+  sprintf(mess, "[CANM] %s", VERSION_LABOX_CAN);
 	*pMess1 = mess;
 
 	sprintf(mess, "[CANM] Tx:%d Rx:%d", TxPin, RxPin);
 	*pMess2 = mess;
 
-	sprintf(mess, "[CANM] %s", VERSION_LABOX_CAN);
+	if (DESIRED_BIT_RATE < 1000000UL)
+		sprintf(mess, "[CANM] id:%d / %ldK", CanMarklin::thisId, DESIRED_BIT_RATE / 1000UL);
+	else
+		sprintf(mess, "[CANM] id:%d / %ldM", CanMarklin::thisId, DESIRED_BIT_RATE / 1000000UL);
 	*pMess3 = mess;
 }
 
@@ -277,7 +277,14 @@ void CanMarklin::loopItem()
           break;
         }
         break;
-      }
+      case CAN_ACCESSORY:
+          int address = (frameIn.data[3]) / 4 + 1;
+          byte subaddress  = (frameIn.data[3])  % 4;
+          byte activep = frameIn.data[4];
+          byte onoff = 2;
+          DCC::setAccessory(address, subaddress, activep, onoff);
+          break;
+			}
     }
   }
 

@@ -38,6 +38,11 @@ bool LaboxModes::progMode = false;
 ProgType LaboxModes::progModeType = ProgType::MAIN;
 ProgBehavior LaboxModes::progBehavior = ProgBehaviorNone;
 bool LaboxModes::silentBootMode = false;
+#if defined(LABOX_DC_MAIN_MODE)
+	MainMode LaboxModes::mainMode = DC;
+#else
+	MainMode LaboxModes::mainMode = DCC;
+#endif
 int LaboxModes::EEPROMModeProgAddress = 511;
 POWERMODE LaboxModes::memoPowerBeforeJoining = POWERMODE::OFF; // Power before joining the main track
 
@@ -53,6 +58,10 @@ extern hmi boxHMI;
 void LaboxModes::begin()
 {
 	DIAG_LMODES(F("LaboxModes : begin()"));
+
+	if (mainMode == MainMode::DC) {
+		return;
+	}
 
 	progBehavior = ProgBehaviorNormal;
 
@@ -267,7 +276,7 @@ void LaboxModes::ChangeMode(bool inProgMode, ProgType inType)
 
 	if (progBehavior == ProgBehaviorReboot) {
 		SetNextMode(inType);
-		#ifdef ENABLE_RAILCOM
+		#ifdef ENABLE_LABOX_RAILCOM
 		if (inType == ProgType::MAIN) {
 			DONOTRESTART();
 			while(true) {

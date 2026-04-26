@@ -92,7 +92,7 @@ menuTrainAddrRead::menuTrainAddrRead(Adafruit_SSD1306* screen, menuObject* p, co
 void menuTrainAddrRead::eventUp()
 {
   _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventUp.. Begin"); 
-  menuObject::eventUp();
+  //menuObject::eventUp();
 
 	if (state == StateReading::MenuQuit)
 	{
@@ -111,7 +111,7 @@ void menuTrainAddrRead::eventUp()
 void menuTrainAddrRead::eventDown()
 {
   _HMIDEBUG_MENU_PRINTLN("menuTrainAddrRead::eventDown.. Begin"); 
-  menuObject::eventDown();
+  //menuObject::eventDown();
 
 	if (state == StateReading::MenuRetry)
 	{
@@ -204,17 +204,17 @@ void menuTrainAddrRead::update()
   if(locoID > 0)
   {
 		if (longAddress)
-    sprintf(message,"%04d",locoID);
+    	sprintf(message,"%04d",locoID);
 		else
     	sprintf(message,"%03d", locoID);
   }
   else
-  if(locoID < 0)
-  {
-    sprintf(message," ERR");
-  }
-  else
-    sprintf(message,"----");
+	{
+		if(locoID < 0)
+			sprintf(message," ERR");
+		else
+			sprintf(message,"----");
+	}
 
   display->setTextColor(WHITE);
   display->setTextSize(3);

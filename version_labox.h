@@ -1,7 +1,21 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.15.0"
+#define VERSION_LABOX "2.16.0"
+// 2.16.0	- Add a LABOX_PROG_LED define in config.h to manage a LED to show the prog mode activity. This is only useful for the configurations with only a prog track, as it allows to have a visual feedback of the prog mode activity, which is not the case when the prog track is also used as main track.
+// 120526	- Improve Z21Throttle to match the work of Harald Barth in the branch Devel-z21 of CS-EX.
+//				- Z21 now handles broadcasting also if LaBox restart and Z21 app does not, fixing a long delay of reactivity of the Z21 app when the LaBox is restarted while the Z21 app is running. This is done by setting the default value of broadcast flags to BROADCAST_BASE in the Z21Throttle constructor, which allows to broadcast loco and turnout infos to the app even if the app does not resend the LAN_SET_BROADCASTFLAGS after a restart of the LaBox.
+//				- Z21 now handles turnout information request and creates the turnout if it does not exist, which is useful for JMRI users as it allows to have the turnout information in JMRI without having to create the turnout in DCC++ EX first.
+//				- Z21 now handles sensor informations.
+//				- Z21 now handles Loco functions 29 to 31 .
+//				- Z21 now generates less notifications to the clients, which should improve performances. For example, when a loco speed or function is changed, only the concerned loco information is sent to the clients instead of sending all locos information. This is especially useful for users with a lot of locos, as it avoids to send a lot of unnecessary information to the clients when only one loco is concerned.
+//				- The project now use the library Adafruit GFX Library in version 1.12.6.
+//				- If WIFI_LED is defined in config.h , the defined pin will be turned off when the Wifi is stopped by the menu or a CV command.
+//				-	New version of XPressNet interface.
+//				- Add CAN_ACCESSORY command in CanMarklin interface to handle accessory commands from Marklin Central Station 3. Thank to lebelge2 for the idea and the code !
+//				- Command 'Restart' removed from menu.
+//				- New DC mode !
+//				- CommandStation-EX code base passed to version 5.6.0 : Railcom, consist, momentum, websockets, sound, and many other improvements and bug fixes from the main branch of CommandStation-EX have been integrated in the Labox branch. This is a big step for the Labox project, as it allows to benefit from all the latest improvements and bug fixes of CommandStation-EX, and to have a more stable and performant code base. A big thank to all the contributors of CommandStation-EX for their work !
 // 2.15.0 - If the button 'UP' is pressed at startup, the LaBox will start in Main mode instead of Prog mode. This is useful when the LaBox is used in a configuration with only a main track and no prog track, as it avoids to have to press the button at every startup to switch to main mode.
 // 060426	- Fix the reboot mode when only a main track is declared, as it was not working anymore with the latest changes in LaboxModes. Now, if the motor shield name is "RebootProgMode", the reboot mode will be used instead of the joining mode when only a prog track is declared. This allows to use the joining mode for configurations with only a prog track, and the reboot mode for configurations with only a main track, which is more logical.
 //				- In Wifi information menu, SSID and Password are now shown for both AP and STA modes.

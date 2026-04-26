@@ -68,6 +68,7 @@ decimal. The O command is an exception to this rule
 #include "EEStore.h"
 #include "TrackManager.h"
 #include "DCCWaveform.h"
+#include "LaboxModes.h"
 #include "EXComm.h"
 
 #ifdef ENABLE_SPROG
@@ -93,7 +94,7 @@ SProg::SProg(int inRxPin, int inTxPin) : EXCommItem("SPROG") {
 	txPin = inTxPin;
 	SPROG_SERIAL.begin(9600, SERIAL_8N1, rxPin, txPin);
 
-	this->MainTrackEnabled = false;
+	this->MainTrackEnabled = LaboxModes::progBehavior == ProgBehavior::ProgBehaviorJoining;
 	this->ProgTrackEnabled = true;
 	this->AlwaysLoop = true;
 }

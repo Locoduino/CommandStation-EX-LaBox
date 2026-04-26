@@ -1,5 +1,6 @@
 /*
  *  © 2023 Thierry Paris / Locoduino
+ *  © 2023 Harald Barth
  *  All rights reserved.
  *  
  *  This is free software: you can redistribute it and/or modify
@@ -27,7 +28,7 @@
 
 #ifdef ENABLE_Z21
 
-#define UDPBYTE_SIZE	1024
+#define UDPBYTE_SIZE	1500
 #define UDP_BUFFERSIZE	2048
 #define Z21_UDPPORT		21105
 
@@ -76,10 +77,10 @@ class Z21Throttle {
 		void notifyCvNACK(int inCvAddress);
 		void notifyCvRead(int inCvAddress, int inValue);
 		
-    static void notifyTrPw(int inClientID, byte TrPw);
-		static void notifyLocoInfo(int inClientID, byte inMSB, byte inLSB);
-		static void notifyTurnoutInfo(int inClientID, byte inMSB, byte inLSB);
-		static void notifyLocoMode(int inClientID, byte inMSB, byte inLSB);
+    void notifyTrPw(byte TrPw);
+		void notifyTurnoutInfo(byte inMSB, byte inLSB);
+		void notifyLocoInfo(byte inMSB, byte inLSB);
+		void notifySensor(uint16_t addr);
 
 		bool parse();
 		bool isBroadcastFlag() { return (this->broadcastFlags & BROADCAST_BASE) != 0; }
@@ -126,25 +127,29 @@ private:
 
 		// sizes : [       2        ][       2        ][inLengthData]
 		// bytes : [length1, length2][Header1, Header2][Data........]
-		static bool notify(int inClientID, unsigned int inHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
+		bool notify(unsigned int inHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
 
 		// sizes : [       2        ][       2        ][   1   ][inLengthData]
 		// bytes : [length1, length2][Header1, Header2][XHeader][Data........]
-		static bool notify(int inClientID, unsigned int inHeader, unsigned int inXHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
+		bool notify(unsigned int inHeader, unsigned int inXHeader, byte* inpData, unsigned int inLengthData, bool inXorInData);
 
 		// sizes : [       2        ][       2        ][   1   ][ 1 ][inLengthData]
 		// bytes : [length1, length2][Header1, Header2][XHeader][DB0][Data........]
-		static bool notify(int inClientID, unsigned int inHeader, unsigned int inXHeader, byte inDB0, byte* inpData, unsigned int inLengthData, bool inXorInData);
-
-		static void write(int inClientID, byte* inpData, int inLengthData);
+		bool notify(unsigned int inHeader, unsigned int inXHeader, byte inDB0, byte* inpData, unsigned int inLengthData, bool inXorInData);
 
 		void notifyStatus();
-		void notifyFirmwareVersion();
+		void notifyTurnoutInfo(uint16_t addr, bool isClosed);
+		void notifyTurnoutInfo(byte inMSB, byte inLSB, bool isClosed);
+		void notifySensor(uint16_t addr, bool state);
+		void notifyLocoMode(byte inMSB, byte inLSB);
 		void notifySerialNumber();
+		void notifyFirmwareVersion();
 		void notifyHWInfo();
+		void write(byte* inpData, int inLengthData);
 
 		void setSpeed(byte inNbSteps, byte inDB1, byte inDB2, byte inDB3);
 		void setFunction(byte inDB1, byte inDB2, byte inDB3);
+		void setTurnout(byte addrMSB, byte addrLSB, byte command);
 		void cvReadProg(byte inDB1, byte inDB2);
 		void cvWriteProg(byte inDB1, byte inDB2, byte inDB3);
 		void cvReadMain(byte inDB1, byte inDB2);
@@ -173,7 +178,7 @@ class Z21EXCommItem : public EXCommItem {
 		void getInfos(String *pMess1, String *pMess2, String *pMess3, byte maxSize) override;
 };
 
-#define Z21_TIMEOUT		20000		// if no activity during this delay, disconnect the throttle...
+#define Z21_TIMEOUT		60000		// if no activity during this delay, disconnect the throttle...
 #define Z21_MAXIMAL_UDP_MSG_SIZE	100		// All messages longer than this size will be ignored.
 
 #define HEADER_LAN_GET_SERIAL_NUMBER 0x10
@@ -195,9 +200,27 @@ class Z21EXCommItem : public EXCommItem {
 #define HEADER_LAN_LOCONET_DISPATCH_ADDR 0xA3
 #define HEADER_LAN_LOCONET_DETECTOR 0xA4
 
+const unsigned int DCHeaderLanAllowedCommands[] = {
+	HEADER_LAN_GET_SERIAL_NUMBER,	
+	HEADER_LAN_LOGOFF,
+	HEADER_LAN_XPRESS_NET,
+	HEADER_LAN_SET_BROADCASTFLAGS,
+	HEADER_LAN_GET_BROADCASTFLAGS,
+	HEADER_LAN_SYSTEMSTATE_GETDATA,
+	HEADER_LAN_GET_HWINFO,
+	HEADER_LAN_GET_LOCOMODE,
+	HEADER_LAN_GET_TURNOUTMODE,
+	0xFF
+};
+
 #define LAN_GET_CONFIG 0x12
 
+#define LAN_LOCONET_TYPE_DIGITRAX 0x80
+#define LAN_LOCONET_TYPE_UHL_REPORTER 0x81
+#define LAN_LOCONET_TYPE_UHL_LISSY 0x82
+
 #define LAN_X_HEADER_GENERAL 0x21
+#define LAN_X_HEADER_READ_REGISTER 0x22
 #define LAN_X_HEADER_SET_STOP 0x80
 #define LAN_X_HEADER_GET_FIRMWARE_VERSION 0xF1  //0x141 0x21 0x21 0x00 
 #define LAN_X_HEADER_GET_LOCO_INFO 0xE3
@@ -208,7 +231,16 @@ class Z21EXCommItem : public EXCommItem {
 #define LAN_X_HEADER_CV_WRITE 0x24
 #define LAN_X_HEADER_CV_POM 0xE6
 
-#define LAN_X_STATUS_CHANGED 0x062
+const unsigned int DCXHeaderAllowedCommands[] = {
+	LAN_X_HEADER_GENERAL,	
+	LAN_X_HEADER_READ_REGISTER,
+	LAN_X_HEADER_SET_STOP,
+	LAN_X_HEADER_GET_FIRMWARE_VERSION,
+	LAN_X_HEADER_GET_LOCO_INFO,
+	LAN_X_HEADER_SET_LOCO,
+	LAN_X_HEADER_GET_TURNOUT_INFO,
+	0xFF
+};
 
 #define LAN_X_DB0_GET_VERSION 0x21
 #define LAN_X_DB0_GET_STATUS 0x24
@@ -220,6 +252,15 @@ class Z21EXCommItem : public EXCommItem {
 #define LAN_X_DB0_SET_LOCO_FUNCTION 0xF8
 #define LAN_X_DB0_CV_POM_WRITE 0x30
 #define LAN_X_DB0_CV_POM_ACCESSORY_WRITE 0x31
+
+const unsigned int DCXDB0AllowedCommands[] = {
+	LAN_X_DB0_GET_VERSION,	
+	LAN_X_DB0_GET_STATUS,
+	LAN_X_DB0_SET_TRACK_POWER_OFF,
+	LAN_X_DB0_SET_TRACK_POWER_ON,
+	LAN_X_DB0_LOCO_DCC128,
+	0xFF
+};
 
 #define LAN_X_DB3_CV_POM_WRITE_BYTE 0xEC
 #define LAN_X_DB3_CV_POM_WRITE_BIT 0xE8
@@ -233,6 +274,8 @@ class Z21EXCommItem : public EXCommItem {
 #define LAN_X_HEADER_FIRMWARE_VERSION 0xF3
 #define LAN_X_HEADER_CV_NACK 0x61
 #define LAN_X_HEADER_CV_RESULT 0x64
+
+#define LAN_X_STATUS_CHANGED 0x062
 
 #define LAN_X_DB0_CV_NACK_SC 0x12
 #define LAN_X_DB0_CV_NACK 0x13

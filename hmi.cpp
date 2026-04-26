@@ -14,11 +14,13 @@
 #include "Wire.h"
 
 #include "hmi.h"
+#include "Labox.h"
 #include "LaboxModes.h"
 #include "hmiIcons.h"
 #include "menumanagement.h"
 #include "hmiGlobals.h"
 #include "menuobject.h"
+#include "menuDcDccMode.h"
 
 #if defined(ARDUINO_ARCH_ESP32)
 #include <driver/adc.h>
@@ -35,6 +37,8 @@ int IRAM_ATTR local_adc1_get_raw(int channel);
  // variables must be global due to static methods
 enumEvent     _HMIEvent;
 enumHMIState  _HMIState;
+
+const int HMI_ProgLedEffectRefresh = 1000; // in ms
 
 extern hmi boxHMI;
 
@@ -75,6 +79,8 @@ void hmi::begin()
   BtnUp = new OneButton(PIN_BTN_BTNUP, true);
   BtnDown = new OneButton(PIN_BTN_BTNDWN, true);
   BtnSelect = new OneButton(PIN_BTN_SEL, true);
+
+	bool chooseDcDcc = false;
   
 	if (digitalRead(PIN_BTN_BTNUP) == LOW) {
 		DIAG(F("Main mode requested by button press at startup"));
@@ -82,10 +88,18 @@ void hmi::begin()
 		LaboxModes::Restart(ProgType::MAIN);
 	}
 
+	if (digitalRead(PIN_BTN_SEL) == LOW) {
+		chooseDcDcc = true;
+	}
+
   BtnUp->attachClick(this->BtnUpPressed);
   BtnDown->attachClick(this->BtnDownPressed);
   BtnSelect->attachClick(this->BtnSelectPressed);
-  _HMIEvent = noEvent;
+
+	BtnSelect->attachDoubleClick(this->BtnSelectDoubleClick);
+
+	_HMIEvent = noEvent;
+
   // Init Display
   if (!Adafruit_SSD1306::begin(SSD1306_SWITCHCAPVCC, HMI_I2C_ADDR)) {
     _HMIDEBUG_FCT_PRINTLN("SSD1306 allocation failed");
@@ -124,6 +138,41 @@ void hmi::begin()
   // Make menu
   menu = new MenuManagement(this);
   menu->begin();
+
+	while(digitalRead(PIN_BTN_SEL) == LOW)	// wait for button release to avoid immediate selection of the current mode
+	{
+		chooseDcDcc = true;
+		delay(10);
+	}
+
+	if (chooseDcDcc) {
+		_HMIState = StateParametersMenu;
+		menu->setMenu(menu->dcMode);
+		menu->dcMode->start();
+
+		while(((menuDcDccMode *) (menu->dcMode))->modeChoosen == false)	// wait for mode selection
+		{
+			boxHMI.update();
+			delay(10);
+		}
+
+		/*if (LaboxModes::mainMode == MainMode::DC)*/ {
+			DIAG(F("DC mode choosen"));
+			delete menu; // delete current menu
+			menu = NULL;
+			// rebuild menu for DC mode
+		  menu = new MenuManagement(this);
+		  menu->begin();
+		}
+		/*else if (LaboxModes::mainMode == MainMode::DCC) {
+			DIAG(F("DCC mode choosen"));
+		}*/
+	}
+
+	#ifdef LABOX_PROG_LED
+	pinMode(LABOX_PROG_LED, OUTPUT);
+	#endif
+	millisProgLedEffect = 0;
 
   _HMIDEBUG_FCT_PRINTLN("hmi::begin().. End");
 }
@@ -198,6 +247,28 @@ void hmi::update()
   // Evolve the main state machine
   stateMachine();
 
+	#ifdef LABOX_PROG_LED
+	if (LaboxModes::progBehavior != ProgBehaviorNormal)
+	{
+		if (LaboxModes::progMode)
+		{
+			if (millis() - millisProgLedEffect > HMI_ProgLedEffectRefresh)
+			{
+					digitalWrite(LABOX_PROG_LED, !digitalRead(LABOX_PROG_LED));
+					millisProgLedEffect = millis();
+			}
+		}
+		else
+		{
+			if (millisProgLedEffect > 0) 
+			{
+					digitalWrite(LABOX_PROG_LED, LOW);
+					millisProgLedEffect = 0;
+			}
+		}
+	}
+	#endif
+
   _HMIDEBUG_FCT_PRINTLN("hmi::update().. End");
 }
 
@@ -249,14 +320,38 @@ void hmi::stateMachine()
   {
     // <<<<<<<<<<<< Up button pressed >>>>>>>>>>>>>>>>
     case eventUp :
+      if(_HMIState == StateDashboard)
+			{      
+				if (LaboxModes::mainMode == MainMode::DC && laBoxState == Labox_StateDCCON)
+				{
+					_HMIState = StateDashboardTrainView;
+					_HMIEvent = noEvent;
+					bool dir = DCC::getThrottleDirection(LABOX_DC_CAB);
+					setTrainState(LABOX_DC_CAB, dir ? HMI_OrderForward : HMI_OrderBack, 
+						DCC::getThrottleSpeed(LABOX_DC_CAB), false);
+				}
+				break;
+			}
     // <<<<<<<<<< Down button pressed >>>>>>>>>>>>>>>>
-    case eventDown :
+			// fall through
+    case eventDown:
       millisParamsMenu  = millis();
       switch(_HMIState)
       {
         case StateDashboard :      
+				if (LaboxModes::mainMode == MainMode::DCC)
+				{
           _HMIState = StateBrowseEventLst;
-          _HMIEvent = noEvent ;
+          _HMIEvent = noEvent;
+				}
+				if (LaboxModes::mainMode == MainMode::DC && laBoxState == Labox_StateDCCON)
+				{
+					_HMIState = StateDashboardTrainView;
+					_HMIEvent = noEvent;
+					bool dir = DCC::getThrottleDirection(LABOX_DC_CAB);
+					setTrainState(LABOX_DC_CAB, dir ? HMI_OrderForward : HMI_OrderBack, 
+						DCC::getThrottleSpeed(LABOX_DC_CAB), false);
+				}
         break;
         case StateParametersMenu :      // We let the menu management process the event
         break;
@@ -364,6 +459,7 @@ void hmi::dashboard()
 {
   _HMIDEBUG_FCT_PRINTLN("hmi::Dashboard().. Begin");
   static int toggleEffect = 0;
+  static int toggleDcDccEffect = 0;
   int effect = 0;
 
 /*#ifdef ARDUINO_ARCH_ESP32
@@ -377,7 +473,7 @@ void hmi::dashboard()
   {
     case Labox_StateDCCOFF  :       toggleEffect = 1; effect = 0;
       break;
-    case Labox_StateDCCON   :       effect = HMI_LowEffect;
+    case Labox_StateDCCON   :       toggleEffect = 1; effect = 0;
       break;
     case Labox_StateSHORTCIRCUIT :  effect = HMI_FastEffect;
       break;
@@ -388,6 +484,11 @@ void hmi::dashboard()
     toggleEffect = !toggleEffect;
     millisEffect = millis();
   }
+  if (millis() - millisDcDccEffect > (unsigned long) HMI_LowEffect*2)
+  {
+    toggleDcDccEffect = !toggleDcDccEffect;
+    millisDcDccEffect = millis();
+  }
   // -------------------------------------------------------------
 
   clearDisplay();
@@ -397,16 +498,16 @@ void hmi::dashboard()
   println("LaBox   Locoduino.org");
   drawFastHLine(0,10,128, WHITE);
 
-  setCursor(0, 48);
+  setCursor(0, 57);
 #if defined(HMI_SHOW_CURRENT)
-  sprintf(message, "U=%.0fV  |  I=%.0fmA", voltage, current);
+  sprintf(message, "U=%.0fV I=%.0fmA", voltage, current);
 #else
   sprintf(message, "U=%.0fV", voltage);
 #endif
   println(message);
 
   //--- Message stack, only 4 last events
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < 5; i++)
   {
     setCursor(0, 12 + i * 9);
     memset(message, 0, HMI_MessageSize);
@@ -415,12 +516,22 @@ void hmi::dashboard()
   }
 
   _HMIDEBUG_FCT_PRINTLN("hmi::Dashboard().. toggleEffect");
+	if (toggleDcDccEffect)	{
+		// DC / DCC mode
+		setCursor(92, 50);
+		setTextSize(2);
+		setTextColor(WHITE);
+		memset(message, 0, HMI_MessageSize);
+		memcpy(message,  LaboxModes::mainMode == MainMode::DCC ? TXT_DCDCC_DCCRUNNING : TXT_DCDCC_DCRUNNING, 14);
+		println(message);
+	}
+
   if (toggleEffect)
   {
     switch (laBoxState)
     {
       case Labox_StateDCCOFF :
-        drawBitmap(90, 13, Power, 35, 35, WHITE); // A modifier, ce n'est pas le bon icone
+        drawBitmap(90, 13, Power, 35, 35, WHITE);
         break;
       case Labox_StateDCCON:
         drawBitmap(90, 13, Ok_White, 35, 35, WHITE);
@@ -533,6 +644,28 @@ void hmi::dashboard1TrainView()
         tabTrains[0].dashboard1T(); 
         display();   
       }
+
+		if (LaboxModes::mainMode == MainMode::DC)
+		{
+			if (_HMIEvent == eventUp) 
+			{
+				int speed = LaboxDC::getSpeed() + 12; // We increase speed by 12 because it's the value of one step for 128 speed steps, so it will be more intuitive for the user to change of step with each press of the button. If we increase by 10, it will be more difficult to reach the maximum speed because of the rounding in the speed steps calculation.
+				DCC::setThrottle(LABOX_DC_CAB, min(speed, 127), LaboxDC::getDirection());
+			}
+
+			if (_HMIEvent == eventDown)
+			{
+				int speed = LaboxDC::getSpeed() - 12; // We decrease speed by 12 for the same reason as in IncreaseSpeed()
+				DCC::setThrottle(LABOX_DC_CAB, max(speed, 0), LaboxDC::getDirection());
+			}
+
+			if(_HMIEvent == eventDoubleSel)
+			{
+				bool dir = LaboxDC::getDirection();
+				DCC::setThrottle(LABOX_DC_CAB, LaboxDC::getSpeed(), !dir);
+			}
+		}
+
     _HMIEvent = noEvent;
     
     _HMIDEBUG_FCT_PRINTLN("hmi::dashboard1TrainView().. End");
@@ -858,7 +991,13 @@ void hmi::readVoltage()
     mainDriver=md;
   }
 
-  if (mainDriver == NULL)
+  if (LaboxModes::mainMode == MainMode::DCC && mainDriver == NULL)
+  {
+    voltage = 0;
+    return;
+  }
+
+  if (LaboxModes::mainMode == MainMode::DC && LaboxDC::started == false)
   {
     voltage = 0;
     return;
@@ -868,7 +1007,7 @@ void hmi::readVoltage()
   voltage = local_adc1_get_raw(pinToADC1Channel(PIN_VOLTAGE_MES)) * HMI_VoltageK;
 
 #ifdef _HMIDEBUG_SIMUL
-  voltage = (float)random(0, 30);
+  voltage = 20; //(float)random(0, 30);
 #endif
   _HMIDEBUG_FCT_PRINTLN("hmi::readVoltage().. End");  
 }
@@ -887,23 +1026,39 @@ void hmi::readCurrent()
     mainDriver=md;
   }
 
-  if (mainDriver == NULL || !mainDriver->canMeasureCurrent() || mainDriver->getPower() == POWERMODE::OFF)
+  if (LaboxModes::mainMode == MainMode::DCC && (mainDriver == NULL || !mainDriver->canMeasureCurrent() || mainDriver->getPower() == POWERMODE::OFF))
+  {
+    current = 0;
+#ifdef _HMIDEBUG_SIMUL
+	  current = 9999;
+#endif  
+    return;
+  }
+
+  if (LaboxModes::mainMode == MainMode::DC && LaboxDC::started == false)
   {
     current = 0;
     return;
   }
 
+	int currentPin = 0;
+  if (LaboxModes::mainMode == MainMode::DCC)
+		currentPin = mainDriver->getCurrentPin();
+	else
+		currentPin = PIN_CURRENT_MES;
+
   //current = mainDriver->getCurrentRaw() * HMI_CurrentK;
   // DB : remplacé par une moyenne de 50 mesures 
+
   float base = 0;
 	for (int j = 0; j < 50; j++)
 	{
-		float val = (float)analogRead(mainDriver->getCurrentPin());
+		float val = (float)analogRead(currentPin);
 		base += val;
 	}
 	current = (float) (((base / 50) * HMI_CurrentK) - HMI_deltaCurrent);
 #ifdef _HMIDEBUG_SIMUL
-  current = ((float)random(0, 4000));
+  current = 4000;//((float)random(0, 4000));
 #endif  
   _HMIDEBUG_FCT_PRINTLN("hmi::readCurrent().. End");  
 }
@@ -944,8 +1099,21 @@ void hmi::BtnSelectPressed()
 {
   _HMIDEBUG_SM_PRINTLN("hmi::BtnSelect Pressed"); 
   _HMIEvent = eventSel;
-
 }
+
+/*!
+    @brief  BtnSelectDoubleClick
+            Call when button is double pressed
+    @param  None
+    @return None (void).
+    @note : /!\ It's a STATIC FUNCTION
+*/
+void hmi::BtnSelectDoubleClick()
+{
+  _HMIDEBUG_SM_PRINTLN("hmi::BtnSelect Double Clicked"); 
+  _HMIEvent = eventDoubleSel;
+}
+
 /*!
     @brief  pushMessageOnStack
             This function push a new message in the stack by shifting all the elements

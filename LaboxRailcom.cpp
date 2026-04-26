@@ -3,10 +3,10 @@
 #include "TrackManager.h"
 #include "DCCRMT.h"
 #include "DCCTimer.h"
-#include "Railcom.h"
+#include "LaboxRailcom.h"
 #include "LaboxModes.h"
 
-#ifdef ENABLE_RAILCOM
+#ifdef ENABLE_LABOX_RAILCOM
 //----------------------------------------------------------------------------
 hw_timer_t * TimerCutOut = NULL;
 int rmt_channel;                                                             // * Variable
@@ -42,7 +42,7 @@ void IRAM_ATTR timer_isr_CutOut() {
 
 void RailcomBegin() {
 	// No railcom in prog mode
-	if (LaboxModes::progMode)
+	if (LaboxModes::progMode || LaboxModes::mainMode != MainMode::DCC)
 		return;
 
 	TimerCutOut = timerBegin(3, 80, true);  

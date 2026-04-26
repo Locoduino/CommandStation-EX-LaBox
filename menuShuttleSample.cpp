@@ -5,15 +5,15 @@
  * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
-#include "defines.h"
 #include "DCC.h"
-#include "TrackManager.h"
-#include "EXRAIL2.h"
 
 #ifdef USE_HMI
+#include "TrackManager.h"
+#include "EXRAIL2.h"
 #include "menuobject.h"
 #include "menuShuttleSample.h"
 #include "hmi.h"
+#include "LaboxModes.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
@@ -42,6 +42,10 @@ void menuShuttleSample::start()
 
 	if (shuttleRoute == NULL)
 	{
+		if (LaboxModes::mainMode == DC) 
+		{
+			locoAddress = LABOX_DC_CAB;
+		}
 		if (locoAddress > 0)
 			shuttleSampleState = FixingAddress;
 		else
@@ -52,8 +56,6 @@ void menuShuttleSample::start()
 		shuttleSampleState = MenuStop;
 	}
 	displayShuttleToDo = true;
-
-	DIAG("shuttle start");
 
 	_HMIDEBUG_FCT_PRINTLN("menuShuttleSample::start.. End"); 
 }
@@ -82,13 +84,16 @@ void menuShuttleSample::eventUp()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuShuttleSample::eventUp.. Begin");
 
-	menuObject::eventUp();
+	//menuObject::eventUp();
 
 	if (shuttleSampleState == Ready || shuttleSampleState == FixingAddress)
 	{
 		shuttleSampleState = FixingAddress;
-		locoAddress++;
-	  displayShuttleToDo = true;
+		if(LaboxModes::mainMode == DCC)
+		{
+			locoAddress++;
+	  	displayShuttleToDo = true;
+		}
 	}
 
 	if (shuttleSampleState == MenuQuit)
@@ -109,14 +114,18 @@ void menuShuttleSample::eventUp()
 void menuShuttleSample::eventDown()
 {
 	_HMIDEBUG_FCT_PRINTLN("menuShuttleSample::eventDown.. Begin"); 
-	menuObject::eventDown();
+	//menuObject::eventDown();
 
 	if (shuttleSampleState == Ready || shuttleSampleState == FixingAddress)
 	{
 		shuttleSampleState = FixingAddress;
-		if (locoAddress > 0) {
-			locoAddress--;
-			displayShuttleToDo = true;
+		if(LaboxModes::mainMode == DCC)
+		{
+			if (locoAddress > 0) 
+			{
+				locoAddress--;
+				displayShuttleToDo = true;
+			}
 		}
 
 		if (locoAddress == 0) {
@@ -148,8 +157,9 @@ int menuShuttleSample::eventSelect()
 	{
 		case FixingAddress:
 			// Run sample !
+			DIAG("shuttle start");
 			TrackManager::setMainPower(POWERMODE::ON);
-			shuttleRoute = RMFT2::createNewTask(123, locoAddress);
+			shuttleRoute = RMFT2::createNewTask(LaboxModes::mainMode == DCC?123:124, locoAddress);
 			shuttleSampleState = MenuStop;
 			displayShuttleToDo = true;
 			_HMIDEBUG_CRITICAL_PRINTLN("menuShuttleSample::eventSelect.. End");  
@@ -161,6 +171,7 @@ int menuShuttleSample::eventSelect()
 			break;
 
 		case MenuStop:
+			DIAG("shuttle stop");
 			// because RMFT destructor will send a loco 1 speed command, updating Hmi, calling also the eventSelect 
 			// of this menu and doing a stack overflow...
 			boxHMI.stopStateMachine = true;
@@ -169,6 +180,7 @@ int menuShuttleSample::eventSelect()
 			boxHMI.stopStateMachine = false;
 			shuttleSampleState = MenuQuit;
 			displayShuttleToDo = true;
+			_HMIDEBUG_FCT_PRINTLN("menuShuttleSample::eventSelect.. End");  
 			return 0;
 	}
 
@@ -219,10 +231,17 @@ void menuShuttleSample::update()
 
 	display->setCursor(20, 26);
   char add[20];
-  if(locoAddress > 0)
-    sprintf(add,"%04d",locoAddress);
-  else
-    sprintf(add,"----");
+	if(LaboxModes::mainMode == DCC)
+	{
+		if(locoAddress > 0)
+  	  sprintf(add,"%04d",locoAddress);
+  	else
+    	sprintf(add,"----");
+	}
+	if(LaboxModes::mainMode == DC)
+	{
+  	  sprintf(add,"DC (%04d)",locoAddress);
+	}
   display->println(add);
 
 	if (shuttleRoute != NULL)

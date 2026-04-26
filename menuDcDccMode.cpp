@@ -1,20 +1,22 @@
 /*
  * LaBox Project
- * menuTrainCvRead Classes 
+ * menuDcDccMode Classes 
  *
  * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
 #include "defines.h"
 #include "DCC.h"
-#include "TrackManager.h"
 
 #ifdef USE_HMI
 #include "menuobject.h"
 #include "menuDcDccMode.h"
 #include "hmi.h"
+#include "LaboxModes.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+
+extern hmi boxHMI;
 
 bool displayDcDccToDo;
 char messageDcDcc[21];
@@ -28,32 +30,19 @@ enum StateDcDcc
 					//	Confirm			Abort
 	//																									Select								Up								Down
 	DcMode = 0,	// Ready to change to DC mode					Select DC								--						Move to Dcc
-	DccMode = 1, // Ready to change to DCC mode				Select Dcc					Move to Dc				Move to Confirm
-	ConfirmChange = 2, // Confirm the change !				Change comfirmed		Move to DCC				Move to Abort
-	AbortChange = 3, // Abort the change !				    Abort comfirmed			Move to Confirm				--
+	DccMode = 1, // Ready to change to DCC mode				Select Dcc					Move to Dc				
 };
 
 StateDcDcc	dcDccState;
-TRACK_MODE currentPowerMode;
-TRACK_MODE wantedPowerMode;
 
 void menuDcDccMode::start()
 {
 	MENUDIAG("menuDcDccMode::start.. Begin"); 
 
-  MotorDriver *  mainDriver=NULL;
-  for(const auto& md: TrackManager::getMainDrivers()) {
-    mainDriver=md;
-  }
-
-	if (mainDriver != NULL)
-	{
-		currentPowerMode = mainDriver->getMode();
-		wantedPowerMode = currentPowerMode;
-
-		dcDccState = AbortChange;
-		displayDcDccToDo = true;
-	}
+	dcDccState = LaboxModes::mainMode == MainMode::DC ? DcMode : DccMode;
+	displayDcDccToDo = true;
+	this->modeChoosen = false;
+	boxHMI.stopTimeOutRefresh = true;
 
 	MENUDIAG("menuDcDccMode::start.. End"); 
 }
@@ -82,11 +71,11 @@ void menuDcDccMode::eventUp()
 {
 	MENUDIAG("menuDcDccMode::eventUp.. Begin");
 
-	menuObject::eventUp();
+	//menuObject::eventUp();
 
-	if (dcDccState > 0)
+	if (dcDccState == DcMode)
 	{
-		dcDccState = (StateDcDcc) ((int) dcDccState - 1);
+		dcDccState = DccMode;
 	  displayDcDccToDo = true;
 		DIAGSTATE;
 	}
@@ -103,11 +92,11 @@ void menuDcDccMode::eventUp()
 void menuDcDccMode::eventDown()
 {
 	MENUDIAG("menuDcDccMode::eventDown.. Begin"); 
-	menuObject::eventDown();
+	//menuObject::eventDown();
 
-	if (dcDccState < (int) AbortChange)
+	if (dcDccState == DccMode)
 	{
-		dcDccState = (StateDcDcc) ((int) dcDccState + 1);
+		dcDccState = DcMode;
 	  displayDcDccToDo = true;
 		DIAGSTATE;
 	}
@@ -129,34 +118,23 @@ int menuDcDccMode::eventSelect()
 	switch (dcDccState)
 	{
 		case DcMode:
-			wantedPowerMode = TRACK_MODE_DC;
-			dcDccState = ConfirmChange;
-			displayDcDccToDo = true;
-			break;
-
-		case DccMode:
-			wantedPowerMode = TRACK_MODE_MAIN;
-			dcDccState = ConfirmChange;
-			displayDcDccToDo = true;
-			break;
-
-		case ConfirmChange:
-			if (currentPowerMode != wantedPowerMode)
-			{
-				Serial.print("Move to ");
-				Serial.println(wantedPowerMode == TRACK_MODE_DC ? "DcMode":"DccMode");
-				//TrackManager::setMainPower(POWERMODE::OFF);
-				//TrackManager::setTrackMode(0, wantedPowerMode, DC_MODE_ADDRESS);
-				dcDccState = wantedPowerMode == TRACK_MODE_DC ? DcMode:DccMode;
-			}
+			LaboxModes::mainMode = MainMode::DC;
 			ret = MENUEXIT;
 			break;
 
-		case AbortChange:
+		case DccMode:
+			LaboxModes::mainMode = MainMode::DCC;
 			ret = MENUEXIT;
 			break;
 	}
 
+	while(digitalRead(PIN_BTN_SEL) == LOW)	// wait for button release to avoid immediate selection of the current mode
+	{
+		delay(10);
+	}
+
+	this->modeChoosen = true;
+	boxHMI.stopTimeOutRefresh = false;
 	DIAGSTATE;
 	MENUDIAG("menuDcDccMode::eventSelect.. End");  
 	return ret;
@@ -194,64 +172,33 @@ void menuDcDccMode::update()
   displayDcDccToDo = false;
   
   display->setTextSize(1);
-  display->setCursor(5, 6);
-  display->println(TXT_SHUTTLE_LOGO);
+  display->setTextColor(WHITE);
+  display->setCursor(0, 0);
+  display->println("LaBox   Locoduino.org");
+	display->drawFastHLine(0,10,128, WHITE);
 
- 	display->setTextSize(2);
-
-	display->setCursor(20, 20);
-	if (currentPowerMode == TRACK_MODE_DC)
+  display->setTextSize(2);
+  display->setCursor(40, 18);
+	if (dcDccState == DcMode)
 	{
-		if (wantedPowerMode == TRACK_MODE_DC)
-			display->println(TXT_DCDCC_DC);
-		else
-		{
-			display->setCursor(5, 20);
-			display->println(TXT_DCDCC_TODCC);
-		}
+		sprintf(messageDcDcc," %s ", TXT_DCDCC_DCCRUNNING);
 	}
-	if (currentPowerMode == TRACK_MODE_MAIN)
+	if (dcDccState == DccMode)
 	{
-		if (wantedPowerMode == TRACK_MODE_MAIN)
-			display->println(TXT_DCDCC_DCC);
-		else
-		{
-			display->setCursor(5, 20);
-			display->println(TXT_DCDCC_TODC);
-		}
+		sprintf(messageDcDcc,">%s<", TXT_DCDCC_DCCRUNNING);
 	}
+  display->println(messageDcDcc);
 
-  display->setTextSize(1);
-	switch (dcDccState)
+  display->setCursor(40, 40);
+	if (dcDccState == DcMode)
 	{
-		case DcMode:
-			displayOptionString(TXT_DCDCC_DC, true, 5, 44);
-			displayOptionString(TXT_DCDCC_DCC, false, 64, 44);
-			displayOptionString(TXT_DCDCC_CONFIRM, false, 5, 55);
-			displayOptionString(TXT_DCDCC_ABORT, false, 64, 55);
-			break;
-
-		case DccMode:
-			displayOptionString(TXT_DCDCC_DC, false, 5, 44);
-			displayOptionString(TXT_DCDCC_DCC, true, 64, 44);
-			displayOptionString(TXT_DCDCC_CONFIRM, false, 5, 55);
-			displayOptionString(TXT_DCDCC_ABORT, false, 64, 55);
-			break;
-
-		case ConfirmChange:
-			displayOptionString(TXT_DCDCC_DC, false, 5, 44);
-			displayOptionString(TXT_DCDCC_DCC, false, 64, 44);
-			displayOptionString(TXT_DCDCC_CONFIRM, true, 5, 55);
-			displayOptionString(TXT_DCDCC_ABORT, false, 64, 55);
-			break;
-
-		case AbortChange:
-			displayOptionString(TXT_DCDCC_DC, false, 5, 44);
-			displayOptionString(TXT_DCDCC_DCC, false, 64, 44);
-			displayOptionString(TXT_DCDCC_CONFIRM, false, 5, 55);
-			displayOptionString(TXT_DCDCC_ABORT, true, 64, 55);
-			break;
+		sprintf(messageDcDcc,">%s< ", TXT_DCDCC_DCRUNNING);
 	}
+	if (dcDccState == DccMode)
+	{
+		sprintf(messageDcDcc," %s", TXT_DCDCC_DCRUNNING);
+	}
+  display->println(messageDcDcc);
 
   display->display();   
 

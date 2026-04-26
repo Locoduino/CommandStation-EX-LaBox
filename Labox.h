@@ -15,8 +15,26 @@ class Labox {
 		static bool ChangeCVs(int address, int value);
 		static bool ParseLB(Print *stream, int16_t params, int16_t p[]);
 
-	private:
+		static bool DIAGLABOXDC;
 		static bool DIAGLABOXCVS;
+};	
+
+class LaboxDC {
+	public:
+		static void begin();
+		static void SetSpeed(int val);
+		static bool SetDirection(bool forward);
+		static void Stop();
+		static bool Power(bool on);
+		static bool isPowered() { return powered; }
+
+		static bool powered;
+		static bool forward;
+		static bool started;
+
+		static LocoSlot *trainSlot;
+		static int8_t getSpeed() { return trainSlot ? trainSlot->getSpeedCode() & 0x7F : 0; }
+		static bool getDirection() { return trainSlot ? (trainSlot->getSpeedCode() & 0x80) != 0 : true; }
 };
-	
+
 #endif

@@ -13,6 +13,7 @@
 
 #ifdef USE_HMI
 #include "hmi.h"
+#include "Labox.h"
 #include "LaboxModes.h"
 #include "menumanagement.h"
 #include "menuobject.h"
@@ -44,19 +45,20 @@ MenuManagement::MenuManagement(hmi*  screen)
   baseMenu      = new menuObject(display, NULL, TXT_MenuParams, MENUTYPELIST);
   onOffLine     = new menuObject(display, baseMenu, TXT_MenuDCCOffLine, MENUTYPELIST);
     onOffLineOn = new menuObject(display, onOffLine, TXT_MenuOnLine,   0);
-    onOffLineOff= new menuObject(display, onOffLine, TXT_MenuOffLine,  1);
-  trainAddrRead = new menuTrainAddrRead(display, baseMenu, TXT_MenuAddrRead,  MENUTRAINADDRREAD);
-  trainCVRead 	= new menuTrainCvRead(display, baseMenu, TXT_MenuCVRead,  MENUTRAINCVREAD);
-  trainCVWrite 	= new menuTrainCvWrite(display, baseMenu, TXT_MenuCVWrite,  MENUTRAINCVWRITE);
-  trainIdent	 	= new menuDecoderIdentification(display, baseMenu, TXT_MenuIdent,  MENUTRAINIDENT);
-  shuttle	 			= new menuShuttleSample(display, baseMenu, TXT_MenuShuttle,  MENUSHUTTLESAMPLE);
-  //dcMode	 			= new menuDcDccMode(display, baseMenu, TXT_DcDccMode,  MENUDCDCCMODE);
-  TrainView     = new menuObject(display, baseMenu, TXT_TrainView, MENUTYPELIST);
-    V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
-    V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
-    V3Trains    = new menuObject(display, TrainView, TXT_V3Trains, 3);
+		onOffLineOff= new menuObject(display, onOffLine, TXT_MenuOffLine,  1);
+	if (LaboxModes::mainMode == MainMode::DCC) {
+		trainAddrRead = new menuTrainAddrRead(display, baseMenu, TXT_MenuAddrRead,  MENUTRAINADDRREAD);
+		trainCVRead 	= new menuTrainCvRead(display, baseMenu, TXT_MenuCVRead,  MENUTRAINCVREAD);
+		trainCVWrite 	= new menuTrainCvWrite(display, baseMenu, TXT_MenuCVWrite,  MENUTRAINCVWRITE);
+		trainIdent	 	= new menuDecoderIdentification(display, baseMenu, TXT_MenuIdent,  MENUTRAINIDENT);
+	  progMode			= new menuProgMode(display, baseMenu, TXT_ProgMode, MENUPROGMODE);
+		TrainView     = new menuObject(display, baseMenu, TXT_TrainView, MENUTYPELIST);
+			V1Train     = new menuObject(display, TrainView, TXT_V1Train,  1);
+			V2Trains    = new menuObject(display, TrainView, TXT_V2Trains, 2);
+			V3Trains    = new menuObject(display, TrainView, TXT_V3Trains, 3);
+	}
+	shuttle	 			= new menuShuttleSample(display, baseMenu, TXT_MenuShuttle,  MENUSHUTTLESAMPLE);
   physicalMes   = new menuPhysicalMes(display, baseMenu, TXT_PhysicalMes, MENUPHYSICALMES);
-  progMode			= new menuProgMode(display, baseMenu, TXT_ProgMode, MENUPROGMODE);
   settings      = new menuSettings(display, baseMenu, TXT_MenuSettings, MENUSETTINGS);
   lstEvent      = new menuObject(display, baseMenu, TXT_LstEvent, MENUACTION);
   info					= new menuObject(display, baseMenu, TXT_MenuInfos, MENUTYPELIST);
@@ -65,8 +67,9 @@ MenuManagement::MenuManagement(hmi*  screen)
 #ifdef ENABLE_EXCOMM
     exCommInfo  = new menuInformation(display, info, TXT_MenuEXCOMMInfo, MENUINFORMATION_EXCOMM);
 #endif
-  reset         = new menuObject(display, baseMenu, TXT_MenuSoftReset, MENUTYPELIST);
-    resetConfirm= new menuObject(display, reset, TXT_MenuResetConfirm, MENUACTION);
+
+	// hidden options : must be at the end !
+	dcMode	 			= new menuDcDccMode(display, baseMenu, "",  MENUDCDCCMODE);	// no text to avoid appearance in the menu, this menu is directly called at the beginning to choose between DC and DCC mode
 }
 /*!
     @brief  begin
@@ -217,7 +220,9 @@ void MenuManagement::BtnSelectPressed()
 				if (LaboxModes::progMode == true)
 					TrackManager::setProgPower(POWERMODE::ON);
 				else
+				{
 					TrackManager::setMainPower(POWERMODE::ON);
+				}
 				_HMIState = StateExitMenu;
 			}else
 			if(activeMenu == onOffLineOff)
@@ -226,63 +231,53 @@ void MenuManagement::BtnSelectPressed()
 				if (LaboxModes::progMode == true)
 					TrackManager::setProgPower(POWERMODE::OFF);
 				else
+				{
 					TrackManager::setMainPower(POWERMODE::OFF);
+				}
 				_HMIState = StateExitMenu;
 			}else
 			{
-				if(activeMenu == resetConfirm)
+				if(activeMenu == lstEvent)
 				{
 					_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-					_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-					_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-#ifdef ARDUINO_ARCH_ESP32
-					// !! Only for ESP !!
-					LaboxModes::Restart(MAIN);
-#endif
+					//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
+					//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
+					// Restore default setting
+					_HMIState = StateBrowseEventLst ;
+					baseMenu->resetMenu();
 				}else
-        {
-					if(activeMenu == lstEvent)
+				{
+					if(activeMenu == V1Train)
 					{
 						_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
 						//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
 						//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
 						// Restore default setting
-						_HMIState = StateBrowseEventLst ;
-						baseMenu->resetMenu();
+						((hmi*) display)->nbTrainToView = 1 ;
+						_HMIState = StateExitMenu;
 					}else
 					{
-						if(activeMenu == V1Train)
+						if(activeMenu == V2Trains)
 						{
 							_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
 							//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
 							//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
 							// Restore default setting
-							((hmi*) display)->nbTrainToView = 1 ;
+							((hmi*) display)->nbTrainToView = 2 ;
 							_HMIState = StateExitMenu;
 						}else
-            {
-							if(activeMenu == V2Trains)
+						{
+							if(activeMenu == V3Trains)
 							{
 								_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
 								//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
 								//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
 								// Restore default setting
-								((hmi*) display)->nbTrainToView = 2 ;
+								((hmi*) display)->nbTrainToView = 3 ;
 								_HMIState = StateExitMenu;
 							}else
 							{
-								if(activeMenu == V3Trains)
-								{
-									_HMIDEBUG_LEVEL1_PRINT("Choice menu found for ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->caption);
-									//_HMIDEBUG_LEVEL1_PRINT(": Choice is ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->caption);
-									//_HMIDEBUG_LEVEL1_PRINT(" (value : ");_HMIDEBUG_LEVEL1_PRINT(activeMenu->subMenu[activeMenu->SelectListIndex]->value);_HMIDEBUG_LEVEL1_PRINTLN(")");
-									// Restore default setting
-									((hmi*) display)->nbTrainToView = 3 ;
-									_HMIState = StateExitMenu;
-								}else
-								{
-									_HMIDEBUG_CRITICAL_PRINT("Critical error, no choice menu found for ");_HMIDEBUG_CRITICAL_PRINTLN(activeMenu->caption);
-								}
+								_HMIDEBUG_CRITICAL_PRINT("Critical error, no choice menu found for ");_HMIDEBUG_CRITICAL_PRINTLN(activeMenu->caption);
 							}
 						}
           }
