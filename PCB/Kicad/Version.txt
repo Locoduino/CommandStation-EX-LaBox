@@ -66,3 +66,9 @@ Versions PCB
 - Move slightly LM7805 to avoid contact with underlying tracks.
 - Remove some small tracks without any connections...
 - Rotate 7805 socket.
+
+1.0 b2 (21/07/2026)
+- Adapt placement of the two leds LED4/LED2 for an easier soldering of a JST connector.
+- Add a serigraphy for the 1M resistor replacing the potentiometer R17.
+- Improve the serigraphy of the RX2/TX2 connector to avoid misunderstandings.
+- Improve 7805 serigraphy for a better placement.
