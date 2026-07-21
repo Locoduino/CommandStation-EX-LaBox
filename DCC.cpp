@@ -1278,15 +1278,14 @@ bool DCC::issueReminder(LocoSlot * slot) {
 						LaboxDC::trainSlot->setSpeedCode(sc);
 						LaboxDC::SetDirection(LaboxDC::getDirection());
 						LaboxDC::SetSpeed(LaboxDC::getSpeed());	// Always change speed AFTER direction !
-					 }
 #ifdef USE_HMI
-					if (hmi::CurrentInterface != NULL)
-					{
-						hmi::CurrentInterface->ChangeDirection(LABOX_DC_CAB, LaboxDC::getDirection());
-						hmi::CurrentInterface->ChangeSpeed(LABOX_DC_CAB, LaboxDC::getSpeed());
-						hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-					}
+						if (hmi::CurrentInterface != NULL) {
+							hmi::CurrentInterface->ChangeDirection(LABOX_DC_CAB, LaboxDC::getDirection());
+							hmi::CurrentInterface->ChangeSpeed(LABOX_DC_CAB, LaboxDC::getSpeed());
+							hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+						}
 #endif
+					}
         }
         return true; // reminder sent
        case 1: // remind function group 1 (F0-F4)

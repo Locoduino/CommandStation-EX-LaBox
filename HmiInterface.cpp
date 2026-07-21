@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "DCC.h"
+#include "LaboxModes.h"
 #include "HmiInterface.hpp"
 
 #ifdef USE_HMI
@@ -58,12 +59,22 @@ void HmiInterface::CloseClient(int clientId)
   this->pHmiInterfaceEventBuffer->PushBytes((byte*)&msg, sizeof(msg));
 }
 
+byte memoDCSpeed = 0;
+bool memoDCDirection = false;
+
 void HmiInterface::ChangeSpeed(uint16_t addr, uint8_t speed)
 {
   HmiInterfaceMessage msg;
   msg.event = HmiInterfaceEvent_ChangeSpeed;
   msg.data.dcc.addr = addr;
   msg.data.dcc.speed = speed;
+
+	if (LaboxModes::mainMode == MainMode::DC) {
+		if (memoDCSpeed == speed)
+			return;
+
+			memoDCSpeed = speed;
+		}
 
   this->pHmiInterfaceEventBuffer->PushBytes((byte*)&msg, sizeof(msg));
 }
@@ -74,6 +85,13 @@ void HmiInterface::ChangeDirection(uint16_t addr, bool forward)
   msg.event = HmiInterfaceEvent_ChangeDirection;
   msg.data.dcc.addr = addr;
   msg.data.dcc.forward = forward;
+
+	if (LaboxModes::mainMode == MainMode::DC) {
+		if (memoDCDirection == forward)
+			return;
+
+		memoDCDirection = forward;
+	}
 
   this->pHmiInterfaceEventBuffer->PushBytes((byte*)&msg, sizeof(msg));
 }

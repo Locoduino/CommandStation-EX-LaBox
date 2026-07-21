@@ -1,7 +1,11 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.16.0"
+#define VERSION_LABOX "2.17.0"
+// 2.17.0	- Fix the DC address always present in the DCC driving screen...
+// 200726 - In DC mode, fix the perpetual movement 0/1 of the speed on the driving screen !
+//				-	The library Adafruit SSD1306 poassed to 2.5.17
+//				- The ESP32 platform for Platform.IO passed to 7.0.1, but is still uncompatible with ESP32 Env 3 !
 // 2.16.0	- Add a LABOX_PROG_LED define in config.h to manage a LED to show the prog mode activity. This is only useful for the configurations with only a prog track, as it allows to have a visual feedback of the prog mode activity, which is not the case when the prog track is also used as main track.
 // 120526	- Improve Z21Throttle to match the work of Harald Barth in the branch Devel-z21 of CS-EX.
 //				- Z21 now handles broadcasting also if LaBox restart and Z21 app does not, fixing a long delay of reactivity of the Z21 app when the LaBox is restarted while the Z21 app is running. This is done by setting the default value of broadcast flags to BROADCAST_BASE in the Z21Throttle constructor, which allows to broadcast loco and turnout infos to the app even if the app does not resend the LAN_SET_BROADCASTFLAGS after a restart of the LaBox.
