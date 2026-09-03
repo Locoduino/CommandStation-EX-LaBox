@@ -67,6 +67,8 @@
 #define HMI_Menu_WifiOff        204
 #define NbMaxLineVisible        5
 
+#define SPEED_VALUE_UNCHANGED		255
+
 #define MENUNOTINIT             300
 #define MENUEXIT                301
 #define MENUCHANGETOCHILD       302

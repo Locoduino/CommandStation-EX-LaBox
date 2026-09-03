@@ -59,22 +59,25 @@ void HmiInterface::CloseClient(int clientId)
   this->pHmiInterfaceEventBuffer->PushBytes((byte*)&msg, sizeof(msg));
 }
 
-byte memoDCSpeed = 0;
+uint8_t memoDCSpeed = 0;
 bool memoDCDirection = false;
 
 void HmiInterface::ChangeSpeed(uint16_t addr, uint8_t speed)
 {
+	if (LaboxModes::mainMode == MainMode::DC) {
+		// Only applicable for the DC cab, ignore other addresses
+		if (memoDCSpeed == speed) {
+			return;
+		}
+
+		DIAG(F("HmiInterface::ChangeSpeed, DC cab speed changed from %d to %d"), memoDCSpeed, speed);
+		memoDCSpeed = speed;
+	}
+
   HmiInterfaceMessage msg;
   msg.event = HmiInterfaceEvent_ChangeSpeed;
   msg.data.dcc.addr = addr;
   msg.data.dcc.speed = speed;
-
-	if (LaboxModes::mainMode == MainMode::DC) {
-		if (memoDCSpeed == speed)
-			return;
-
-			memoDCSpeed = speed;
-		}
 
   this->pHmiInterfaceEventBuffer->PushBytes((byte*)&msg, sizeof(msg));
 }

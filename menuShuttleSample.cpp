@@ -5,6 +5,7 @@
  * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
+
 #include "DCC.h"
 
 #ifdef USE_HMI
@@ -22,6 +23,9 @@ int locoAddress;
 char messageShuttle[21];
 RMFT2 *shuttleRoute;
 extern hmi boxHMI;		// from .ino !
+
+const int DCC_EXRAIL_ID = 123;
+const int DC_EXRAIL_ID = 124;
 
 enum StateShuttleSample
 {
@@ -159,7 +163,7 @@ int menuShuttleSample::eventSelect()
 			// Run sample !
 			DIAG("shuttle start");
 			TrackManager::setMainPower(POWERMODE::ON);
-			shuttleRoute = RMFT2::createNewTask(LaboxModes::mainMode == DCC?123:124, locoAddress);
+			shuttleRoute = RMFT2::createNewTask(LaboxModes::mainMode == DCC ? DCC_EXRAIL_ID : DC_EXRAIL_ID, locoAddress);
 			shuttleSampleState = MenuStop;
 			displayShuttleToDo = true;
 			_HMIDEBUG_CRITICAL_PRINTLN("menuShuttleSample::eventSelect.. End");  

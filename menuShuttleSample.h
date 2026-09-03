@@ -1,5 +1,5 @@
 /*
- * La Box Project
+ * LaBox Project
  * menuShuttleSample Classe
  *
  * @Author : Thierry Paris

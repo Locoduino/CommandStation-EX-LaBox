@@ -163,6 +163,7 @@ static mcpwm_generator_t invGen;
 bool LaboxDC::powered = false;
 bool LaboxDC::forward = true;
 bool LaboxDC::started = false;
+int LaboxDC::speed = -1;
 
 LocoSlot *LaboxDC::trainSlot = NULL;
 
@@ -217,6 +218,11 @@ void LaboxDC::begin()
 
 void LaboxDC::SetSpeed(int val)    
 {
+	if (val == speed) {
+		return;
+	}
+	speed = val;
+
 	DIAG_LDC(F("LaboxDC : SetSpeed(%d)"), val);
 
 	if (val <= 1) { // emergency stop (1) or normal stop (0) !
@@ -236,23 +242,21 @@ void LaboxDC::SetSpeed(int val)
 
 bool LaboxDC::SetDirection(bool inForward)
 {
-	DIAG_LDC(F("LaboxDC : SetDirection(%s)"), forward ? "1:forward" : "0:reverse");
 	if (forward == inForward)
 	{
-		DIAG_LDC(F("No change..."));
 		return false;
 	}
 
-	SetSpeed(0); // stop before changing direction
+	DIAG_LDC(F("LaboxDC : SetDirection(%s)"), inForward ? "1:forward" : "0:reverse");
+
+	//SetSpeed(0); // stop before changing direction
 	if (inForward)
 	{
-		DIAG_LDC(F("LaboxDC : SetDirection Forward"));
 		mainGen = MCPWM_GEN_A;
 		invGen = MCPWM_GEN_B;
 	}
 	else 
 	{
-		DIAG_LDC(F("LaboxDC : SetDirection Reverse"));
 		mainGen = MCPWM_GEN_B;
 		invGen = MCPWM_GEN_A;
 	}

@@ -93,7 +93,7 @@ bool hmi::HmiInterfaceLoop()
 			if (!dir) { this->currentBaseCVData = 0; if (this->currentCVData>128) this->currentCVData = 127; }
 			else 		{ this->currentBaseCVData = 128; if (this->currentCVData<128) this->currentCVData = 128; }
 		}
-    addNotification(msg.data.dcc.addr, msg.data.dcc.forward ? HMI_OrderForward : HMI_OrderBack, dir);
+    addNotification(msg.data.dcc.addr, msg.data.dcc.forward ? HMI_OrderForward : HMI_OrderBack, SPEED_VALUE_UNCHANGED);
     break;
 
   case HmiInterfaceEvent_ChangeFunction:

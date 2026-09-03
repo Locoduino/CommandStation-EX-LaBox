@@ -31,9 +31,10 @@ class LaboxDC {
 		static bool powered;
 		static bool forward;
 		static bool started;
+		static int speed;
 
 		static LocoSlot *trainSlot;
-		static int8_t getSpeed() { return trainSlot ? trainSlot->getSpeedCode() & 0x7F : 0; }
+		static int getSpeed() { return trainSlot ? trainSlot->getSpeedCode() & 0x7F : 0; }
 		static bool getDirection() { return trainSlot ? (trainSlot->getSpeedCode() & 0x80) != 0 : true; }
 };
 

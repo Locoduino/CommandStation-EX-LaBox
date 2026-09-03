@@ -1202,16 +1202,18 @@ void DCC::issueReminders() {
   }
 
   for (auto slot=nextLocoReminder;slot;slot=slot->getNext()) {
+		if (LaboxModes::mainMode == MainMode::DC && slot != LaboxDC::trainSlot) 
+			continue; // only send reminders for the active DC loco
+		
     if (issueReminder(slot)) {
       nextLocoReminder=slot->getNext(); // remember next one to check
       return; // reminder sent, exit
-      }
     }
+  }
   
-    // if we get to her, we have reached the end of the table.
-    // The next call will move on to restart 
-    nextLocoReminder=nullptr;
-  
+  // if we get to her, we have reached the end of the table.
+  // The next call will move on to restart 
+  nextLocoReminder=nullptr;
 }
 
 int16_t normalize(byte speed) {
@@ -1266,25 +1268,22 @@ bool DCC::issueReminder(LocoSlot * slot) {
               sc=dccalize(current);
               //DIAG(F("t=%d c=%d newsc=%d"),target,slot->getTargetSpeed() & 0x7F,sc & 0x7F);
               slot->setSpeedCode(sc);
+							if (LaboxModes::mainMode == MainMode::DC) {
+								LaboxDC::SetSpeed(sc & 0x7F);	// Always change speed AFTER direction !
+#ifdef USE_HMI
+								if (hmi::CurrentInterface != NULL) {
+									hmi::CurrentInterface->ChangeSpeed(LABOX_DC_CAB, sc & 0x7F);
+									hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
+								}
+#endif
+							}
               if (!estopIsLocked) TrackManager::setDCSignal(loco,sc); // in case this is a dcc track on this addr
               slot->setMomentumBase(now);  
             }
           }
-          //DIAG(F("Reminder %d speed %d"),loco,sc & 0x7F);
+          //DIAG(F("Reminder %d speed %d target %d code %d"),loco,sc & 0x7F,slot->getTargetSpeed(),sc);
 					if (LaboxModes::mainMode == MainMode::DCC) {
           	setThrottle2(slot, sc); // includes consist followers
-					}
-					if (LaboxModes::mainMode == MainMode::DC) {
-						LaboxDC::trainSlot->setSpeedCode(sc);
-						LaboxDC::SetDirection(LaboxDC::getDirection());
-						LaboxDC::SetSpeed(LaboxDC::getSpeed());	// Always change speed AFTER direction !
-#ifdef USE_HMI
-						if (hmi::CurrentInterface != NULL) {
-							hmi::CurrentInterface->ChangeDirection(LABOX_DC_CAB, LaboxDC::getDirection());
-							hmi::CurrentInterface->ChangeSpeed(LABOX_DC_CAB, LaboxDC::getSpeed());
-							hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
-						}
-#endif
 					}
         }
         return true; // reminder sent

@@ -79,7 +79,8 @@ void hmiTrain::setInfo(int _addr, uint8_t _order, uint8_t _value, bool _function
   {
     case HMI_OrderForward :
     case HMI_OrderBack :
-      speed = _value;
+			if (_value != SPEED_VALUE_UNCHANGED)
+      	speed = _value;
 			if (LaboxModes::mainMode == MainMode::DC)
       	mode = _order;
 			else
