@@ -675,9 +675,13 @@ void TrackManager::reportObsoleteCurrent(Print* stream) {
   // It reports the first track only, as main, regardless of track settings.
   //  <c MeterName value C/V unit min max res warn>
 #ifdef HAS_ENOUGH_MEMORY
-  int maxCurrent=track[0]->raw2mA(track[0]->getRawCurrentTripValue());
-  StringFormatter::send(stream, F("<c CurrentMAIN %d C Milli 0 %d 1 %d>\n"), 
-            track[0]->raw2mA(track[0]->getCurrentRaw(false)), maxCurrent, maxCurrent);
+  FOR_EACH_TRACK(t) {
+    if (track[t]->getMode() & TRACK_MODE_MAIN) {
+		  int maxCurrent=track[t]->raw2mA(track[t]->getRawCurrentTripValue());
+  		StringFormatter::send(stream, F("<c CurrentMAIN %d C Milli 0 %d 1 %d>\n"), 
+            track[t]->raw2mA(track[t]->getCurrentRaw(false)), maxCurrent, maxCurrent);
+    }
+  }
 #else
   (void)stream;
 #endif

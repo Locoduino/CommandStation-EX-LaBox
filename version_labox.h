@@ -1,7 +1,8 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.18.0"
+#define VERSION_LABOX "2.19.0"
+// 2.19.0 - Fix the DCC++ command 'c' only used by old versions of JMRI and 'DCC-EX Native Throttle' (https://github.com/RB211/DCC_Ex_Driver/)
 // 2.18.0	- Fix DC mode setting speed to 0 or 1 when using select double click on the box.
 //				- Fix the DC mode with multiple loco slots, as it was not working properly when more than one loco slot was used in DC mode. Now, the DC mode can handle multiple loco slots correctly, allowing to control multiple trains in DC mode without issues.
 // 2.17.0	- Fix the DC address always present in the DCC driving screen...
