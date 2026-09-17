@@ -74,7 +74,14 @@ void SerialManager::init() {
 #endif
 #ifdef SERIAL2_COMMANDS
 #ifdef ARDUINO_ARCH_ESP32
+#ifdef LABOX
+#ifdef ENABLE_SERIAL_INPUT
+	Serial2.begin(SERIAL_INPUT_SPEED, SERIAL_8N1, SERIAL_INPUT_RX_PIN, SERIAL_INPUT_TX_PIN);
+	DIAG(F("Serial2 input on RX %d, TX %d at %d bauds"), SERIAL_INPUT_RX_PIN, SERIAL_INPUT_TX_PIN, SERIAL_INPUT_SPEED);
+#endif
+#else
   Serial2.begin(115200, SERIAL_8N1, 16, 17); // GPIO 16 RXD2; GPIO 17 TXD2 on ESP32
+#endif
 #else  // not ESP32
   Serial2.begin(115200);
 #endif // ESP32

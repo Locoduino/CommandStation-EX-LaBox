@@ -21,6 +21,8 @@
 #include "hmiGlobals.h"
 #include "menuobject.h"
 #include "menuDcDccMode.h"
+#include "version_labox.h"
+#include "version.h"
 
 #if defined(ARDUINO_ARCH_ESP32)
 #include <driver/adc.h>
@@ -80,17 +82,19 @@ void hmi::begin()
   BtnDown = new OneButton(PIN_BTN_BTNDWN, true);
   BtnSelect = new OneButton(PIN_BTN_SEL, true);
 
-	bool chooseDcDcc = false;
-  
 	if (digitalRead(PIN_BTN_BTNUP) == LOW) {
 		DIAG(F("Main mode requested by button press at startup"));
 		delay(1000); // Wait to avoid that the button press is detected as a click after startup
 		LaboxModes::Restart(ProgType::MAIN);
 	}
 
+#ifdef LABOX_DC_CAB
+	bool chooseDcDcc = false;
+  
 	if (digitalRead(PIN_BTN_SEL) == LOW) {
 		chooseDcDcc = true;
 	}
+#endif
 
   BtnUp->attachClick(this->BtnUpPressed);
   BtnDown->attachClick(this->BtnDownPressed);
@@ -114,7 +118,10 @@ void hmi::begin()
     drawBitmap(0, 0, locoduino_Splash128x44, 128, 44, WHITE);
     setCursor(0, 48);
     println("LaBox | Locoduino.org");
-    display();
+    setCursor(5 , 57);
+	  sprintf(message, "Ver %s / %s", VERSION_LABOX, VERSION);
+	  println(message);
+  	display();
     delay(2000);
   }
 
@@ -139,6 +146,7 @@ void hmi::begin()
   menu = new MenuManagement(this);
   menu->begin();
 
+	#if defined(LABOX_DC_CAB)
 	while(digitalRead(PIN_BTN_SEL) == LOW)	// wait for button release to avoid immediate selection of the current mode
 	{
 		chooseDcDcc = true;
@@ -168,6 +176,7 @@ void hmi::begin()
 			DIAG(F("DCC mode choosen"));
 		}*/
 	}
+	#endif
 
 	#ifdef LABOX_PROG_LED
 	pinMode(LABOX_PROG_LED, OUTPUT);
@@ -322,6 +331,7 @@ void hmi::stateMachine()
     case eventUp :
       if(_HMIState == StateDashboard)
 			{      
+#ifdef LABOX_DC_CAB
 				if (LaboxModes::mainMode == MainMode::DC && laBoxState == Labox_StateDCCON)
 				{
 					_HMIState = StateDashboardTrainView;
@@ -330,6 +340,7 @@ void hmi::stateMachine()
 					setTrainState(LABOX_DC_CAB, dir ? HMI_OrderForward : HMI_OrderBack, 
 						DCC::getThrottleSpeed(LABOX_DC_CAB), false);
 				}
+#endif
 				break;
 			}
     // <<<<<<<<<< Down button pressed >>>>>>>>>>>>>>>>
@@ -344,6 +355,7 @@ void hmi::stateMachine()
           _HMIState = StateBrowseEventLst;
           _HMIEvent = noEvent;
 				}
+				#ifdef LABOX_DC_CAB
 				if (LaboxModes::mainMode == MainMode::DC && laBoxState == Labox_StateDCCON)
 				{
 					_HMIState = StateDashboardTrainView;
@@ -352,6 +364,7 @@ void hmi::stateMachine()
 					setTrainState(LABOX_DC_CAB, dir ? HMI_OrderForward : HMI_OrderBack, 
 						DCC::getThrottleSpeed(LABOX_DC_CAB), false);
 				}
+				#endif
         break;
         case StateParametersMenu :      // We let the menu management process the event
         break;
@@ -645,6 +658,7 @@ void hmi::dashboard1TrainView()
         display();   
       }
 
+#ifdef LABOX_DC_CAB
 		if (LaboxModes::mainMode == MainMode::DC)
 		{
 			if (_HMIEvent == eventUp) 
@@ -665,6 +679,7 @@ void hmi::dashboard1TrainView()
 				DCC::setThrottle(LABOX_DC_CAB, LaboxDC::getSpeed(), !dir);
 			}
 		}
+#endif
 
     _HMIEvent = noEvent;
     

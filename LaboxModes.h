@@ -52,8 +52,6 @@ enum MainMode {
 #define LABOX_DC_IN1	33
 #define LABOX_DC_IN2	27
 
-
-
 /** This is a class to handle external communications.
 An instance of this class receive message from external world and call DCCEX API functions.
 */

@@ -142,6 +142,8 @@ bool DCC::setThrottle( uint16_t cab, uint8_t tSpeed, bool tDirection)  { // tDir
 	  }
 	  CommandDistributor::broadcastLoco(slot);
   }
+
+#ifdef LABOX_DC_CAB
 	if (LaboxModes::mainMode == MainMode::DC && cab == LABOX_DC_CAB) {
 	  if (LaboxDC::trainSlot->getTargetSpeed() == speedCode) // speed has been reached
 	    return true;
@@ -160,6 +162,7 @@ bool DCC::setThrottle( uint16_t cab, uint8_t tSpeed, bool tDirection)  { // tDir
 		}
 	  CommandDistributor::broadcastLoco(LaboxDC::trainSlot);
 	}
+#endif
 #ifdef USE_HMI
 	if (hmi::CurrentInterface != NULL)
 	{
@@ -1268,15 +1271,17 @@ bool DCC::issueReminder(LocoSlot * slot) {
               sc=dccalize(current);
               //DIAG(F("t=%d c=%d newsc=%d"),target,slot->getTargetSpeed() & 0x7F,sc & 0x7F);
               slot->setSpeedCode(sc);
+#ifdef LABOX_DC_CAB
 							if (LaboxModes::mainMode == MainMode::DC) {
 								LaboxDC::SetSpeed(sc & 0x7F);	// Always change speed AFTER direction !
-#ifdef USE_HMI
+	#ifdef USE_HMI
 								if (hmi::CurrentInterface != NULL) {
 									hmi::CurrentInterface->ChangeSpeed(LABOX_DC_CAB, sc & 0x7F);
 									hmi::CurrentInterface->HmiInterfaceUpdateDrawing();
 								}
-#endif
+	#endif
 							}
+#endif
               if (!estopIsLocked) TrackManager::setDCSignal(loco,sc); // in case this is a dcc track on this addr
               slot->setMomentumBase(now);  
             }

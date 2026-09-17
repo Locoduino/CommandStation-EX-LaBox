@@ -1,7 +1,13 @@
 #ifndef version_labox_h
 #define version_labox_h
 
-#define VERSION_LABOX "2.19.0"
+#define VERSION_LABOX "2.20.0"
+// 2.20.0 - Add LABOX_SERIAL_INPUT define in config.h to enable Serial2 input for LaBox. This allows to use Serial2 for input commands in LaBox, which can be useful for certain configurations or setups. The Serial2 input can be used for various purposes, such as receiving commands from an external device or interface, and can be configured with the appropriate RX and TX pins and baud rate in config.h.
+//        - Fix in DC mode when the direction change is requested by an external device (Z21, WiThrottle, etc...) the change was not applied immediately, but only after the next speed change. Now, the direction change is applied immediately when requested by an external device, allowing for more responsive control of the train in DC mode.
+//				- A diagnostic mesage 'HmiInterface::ChangeSpeed' was still present in the code, which was not necessary and could cause confusion. This message has been removed to clean up the code and avoid unnecessary diagnostic output.
+//				- In Wifi information menu, the UDP port is now shown, allowing users to easily identify the port used for Z21 communication and troubleshoot any issues related to Z21 connectivity or communication.
+//				- CommandStation-EX code base passed to version 5.6.4 : fix a bug in EXRAIL. All the other fixes are not related to LaBox.
+//				- On Locoduino splash screen, the version of the LaBox is now shown, allowing users to easily identify the version of the LaBox firmware and CommandStation_EX version they are running and ensure they are using the latest version with all the latest features and bug fixes.
 // 2.19.0 - Fix the DCC++ command 'c' only used by old versions of JMRI and 'DCC-EX Native Throttle' (https://github.com/RB211/DCC_Ex_Driver/)
 // 2.18.0	- Fix DC mode setting speed to 0 or 1 when using select double click on the box.
 //				- Fix the DC mode with multiple loco slots, as it was not working properly when more than one loco slot was used in DC mode. Now, the DC mode can handle multiple loco slots correctly, allowing to control multiple trains in DC mode without issues.

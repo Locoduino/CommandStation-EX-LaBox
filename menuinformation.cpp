@@ -2,7 +2,7 @@
  * La Box Project
  * menuInformation Classes 
  *
- * @Author : Cedric Bellec
+ * @Author : Thierry Paris
  * @Organization : Locoduino.org
  */
 #include "defines.h"
@@ -22,6 +22,7 @@
 #include "version.h"
 #include "version_labox.h"
 #include "EXComm.h"
+#include "Z21Throttle.h"
 
 bool updatedInfo;
 char messageInfo[30];
@@ -69,6 +70,8 @@ void menuInformation::start()
 				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 				sprintf(messageInfo, "Port %d", IP_PORT);
 				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
+				sprintf(messageInfo, "UDP Port %d", Z21_UDPPORT);
+				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 			}
 			else
 			{
@@ -80,6 +83,8 @@ void menuInformation::start()
 				sprintf(messageInfo, "IP %s", WiFi.softAPIP().toString().c_str());
 				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 				sprintf(messageInfo, "Port %d", IP_PORT);
+				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
+				sprintf(messageInfo, "UDP Port %d", Z21_UDPPORT);
 				strncpy(messages[mess++], messageInfo, HMIInfo_MessageMaxSize);
 			}
 			break;

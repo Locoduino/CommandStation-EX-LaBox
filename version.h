@@ -3,7 +3,13 @@
 
 #include "StringFormatter.h"
 
-#define VERSION "5.6.0"
+#define VERSION "5.6.4"
+// 5.6.4  - BugFix: Corrected decoding for F13 to F20
+//        - Minor fixes for PlatformIO compile
+// 5.6.3  - BugFix: EXRAIL READ_LOCO IFLOCO(0)
+// 5.6.2  - Bugfix: Sniffer decoder filter out irrelevant DCC packets
+//        - Bugfix: Make sniffer railsync input detection interrupt safe
+// 5.6.1  - Safety net for users which have not defined an ONRAILSYNCOFF hanlder
 // 5.6.0  - Minor adaptions to make production version
 // 5.5.68 - EXRAIL: BITMAP_SET
 //        - EXRAIL: Comments corrections for doc build

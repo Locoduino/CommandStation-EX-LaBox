@@ -32,17 +32,14 @@
 #include "driver/mcpwm.h"
 #include "esp_log.h"
 
-#ifdef LABOX_CV_ADDRESS
-
-bool Labox::DIAGLABOXCVS = false;
-bool Labox::DIAGLABOXDC = false;
-
 #ifdef USE_HMI
 extern hmi boxHMI;
 #endif
 
+#ifdef LABOX_CV_ADDRESS
+
+bool Labox::DIAGLABOXCVS = false;
 #define DIAG_LCVS				if (Labox::DIAGLABOXCVS) DIAG
-#define DIAG_LDC				if (Labox::DIAGLABOXDC) DIAG
 
 bool Labox::ChangeCVs(int address, int value)
 {
@@ -154,10 +151,17 @@ bool Labox::ParseLB(Print *stream, int16_t params, int16_t p[])
 	DIAG_LCVS(F("Labox : ParseLB() done"));
 	return ret;
 }
+#endif
 
 // LaBox specific DC control functions
 
+#ifndef LABOX_DC_CAB
+__attribute__((unused))
+#endif
 static mcpwm_generator_t mainGen;
+#ifndef LABOX_DC_CAB
+__attribute__((unused))
+#endif
 static mcpwm_generator_t invGen;
 
 bool LaboxDC::powered = false;
@@ -167,6 +171,10 @@ int LaboxDC::speed = -1;
 
 LocoSlot *LaboxDC::trainSlot = NULL;
 
+bool Labox::DIAGLABOXDC = false;
+#define DIAG_LDC				if (Labox::DIAGLABOXDC) DIAG
+
+#ifdef LABOX_DC_CAB
 void LaboxDC::begin()
 {
 	DIAG_LDC(F("LaboxDC : begin()"));
@@ -260,6 +268,9 @@ bool LaboxDC::SetDirection(bool inForward)
 		mainGen = MCPWM_GEN_B;
 		invGen = MCPWM_GEN_A;
 	}
+
+	ESP_ERROR_CHECK(mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, mainGen, speed));
+	ESP_ERROR_CHECK(mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, invGen, 0.f));
 
 	forward = inForward;
 	return true;

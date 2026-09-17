@@ -12,8 +12,19 @@
 
 class Labox {
 	public:
-		static bool ChangeCVs(int address, int value);
-		static bool ParseLB(Print *stream, int16_t params, int16_t p[]);
+		static bool ChangeCVs(int address, int value)
+#ifdef LABOX_CV_ADDRESS
+;
+#else
+{ return false; }
+#endif
+
+		static bool ParseLB(Print *stream, int16_t params, int16_t p[])
+#ifdef LABOX_CV_ADDRESS
+;
+#else
+{ return false; }
+#endif
 
 		static bool DIAGLABOXDC;
 		static bool DIAGLABOXCVS;
@@ -21,11 +32,36 @@ class Labox {
 
 class LaboxDC {
 	public:
-		static void begin();
-		static void SetSpeed(int val);
-		static bool SetDirection(bool forward);
-		static void Stop();
-		static bool Power(bool on);
+		static void begin()
+#ifdef LABOX_DC_CAB
+;
+#else
+{}
+#endif
+		static void SetSpeed(int val)
+#ifdef LABOX_DC_CAB
+;
+#else
+{}
+#endif
+		static bool SetDirection(bool forward)
+#ifdef LABOX_DC_CAB
+;
+#else
+{ return false; }
+#endif
+		static void Stop()
+#ifdef LABOX_DC_CAB
+;
+#else
+{}
+#endif
+		static bool Power(bool on)
+#ifdef LABOX_DC_CAB
+;
+#else
+{ return false; }
+#endif
 		static bool isPowered() { return powered; }
 
 		static bool powered;

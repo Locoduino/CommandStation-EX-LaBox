@@ -1011,9 +1011,11 @@ bool Z21Throttle::parse() {
 					DB0 = DB[1];
 					switch (DB0) { 
 					case LAN_X_DB0_GET_VERSION:
+						// Verbose diag because used as a ping to check if the Z21 is alive
 						DIAG_Z21VERBOSE(F("[Z21] %d: GET_VERSION"), this->clientid);
 						break;
 					case LAN_X_DB0_GET_STATUS:
+						// Verbose diag because used as a ping to check if the Z21 is alive
 						DIAG_Z21VERBOSE(F("[Z21] %d: GET_STATUS  "), this->clientid);
 						notifyStatus();
 						done = true;
@@ -1048,22 +1050,22 @@ bool Z21Throttle::parse() {
 					}
 					switch (DB0) {
 						case LAN_X_DB0_LOCO_DCC14:
-							DIAG_Z21VERBOSE(F("[Z21] %d: LOCO DCC 14 SPEED"), this->clientid);
+							DIAG_Z21(F("[Z21] %d: LOCO DCC 14 SPEED"), this->clientid);
 							setSpeed(14, DB[2], DB[3], DB[4]);
 							done = true;
 							break;
 						case LAN_X_DB0_LOCO_DCC28:
-							DIAG_Z21VERBOSE(F("[Z21] %d: LOCO DCC 28 SPEED"), this->clientid);
+							DIAG_Z21(F("[Z21] %d: LOCO DCC 28 SPEED"), this->clientid);
 							setSpeed(28, DB[2], DB[3], DB[4]);
 							done = true;
 							break;
 						case LAN_X_DB0_LOCO_DCC128:
-							DIAG_Z21VERBOSE(F("[Z21] %d: LOCO DCC 128 SPEED"), this->clientid);
+							DIAG_Z21(F("[Z21] %d: LOCO DCC 128 SPEED"), this->clientid);
 							setSpeed(128, DB[2], DB[3], DB[4]);
 							done = true;
 							break;
 						case LAN_X_DB0_SET_LOCO_FUNCTION:
-							DIAG_Z21VERBOSE(F("[Z21] %d: LOCO DCC FUNCTION"), this->clientid);
+							DIAG_Z21(F("[Z21] %d: LOCO DCC FUNCTION"), this->clientid);
 							setFunction(DB[2], DB[3], DB[4]);							
 							if (Z21Throttle::DIAGBASE) {
 								// Debug capacity to print data...
@@ -1080,6 +1082,7 @@ bool Z21Throttle::parse() {
 					}
 					break;
 				case LAN_X_HEADER_GET_LOCO_INFO:
+					// Verbose diag because used as a ping to check if the Z21 is alive
 					DIAG_Z21VERBOSE(F("[Z21] %d: LOCO %d INFO: "), this->clientid, ((DB[2] & 0x3F) << 8) + DB[3]);
 					notifyLocoInfo(DB[2], DB[3]);
 					done = true;
@@ -1088,13 +1091,13 @@ bool Z21Throttle::parse() {
 				case LAN_X_HEADER_GET_TURNOUT_INFO:
 				{
 					int id = TURNOUT_FAR_TO_ADDRESS(DB[1], DB[2]);
-					DIAG_Z21VERBOSE(F("[Z21] %d: TURNOUT %d INFO"), this->clientid, id);
+					DIAG_Z21(F("[Z21] %d: TURNOUT %d INFO"), this->clientid, id);
 					if (!Turnout::exists(id)) {
 						// If turnout does not exist, create it
 						int addr = (id / 4) + 1;
 						int subaddr = id % 4;
 						DCCTurnout::create(id,addr,subaddr);
-						DIAG_Z21VERBOSE(F("[Z21] %d: TURNOUT %d created"), this->clientid, id);
+						DIAG_Z21(F("[Z21] %d: TURNOUT %d created"), this->clientid, id);
 						//Turnout::printAll(&USB_SERIAL);
 					}
 
@@ -1104,7 +1107,7 @@ bool Z21Throttle::parse() {
 					break;
 
 				case LAN_X_HEADER_GET_FIRMWARE_VERSION:
-					DIAG_Z21VERBOSE(F("[Z21] %d: FIRMWARE VERSION  "), this->clientid);
+					DIAG_Z21(F("[Z21] %d: FIRMWARE VERSION  "), this->clientid);
 					notifyFirmwareVersion();
 					done = true;
 					break;

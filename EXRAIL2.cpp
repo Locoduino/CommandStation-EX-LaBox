@@ -68,7 +68,7 @@
 // Statics 
 const int16_t LOCO_ID_WAITING=-99; // waiting for loco id from prog track
 int16_t RMFT2::progtrackLocoId;  // used for callback when detecting a loco on prog track
-bool RMFT2::diag=true;      // <D EXRAIL ON>  
+bool RMFT2::diag=false;      // <D EXRAIL ON>  
 RMFT2 * RMFT2::loopTask=NULL; // loopTask contains the address of ONE of the tasks in a ring.
 RMFT2 * RMFT2::pausingTask=NULL; // Task causing a PAUSE.
  // when pausingTask is set, that is the ONLY task that gets any service,
@@ -401,8 +401,6 @@ char RMFT2::getRouteType(int16_t id) {
 
 
 RMFT2::RMFT2(int progCtr, int16_t _loco, bool _invert) {
-	DIAG("RMFT2 constructor %d loco=%d invert=%d",progCtr,_loco,_invert);  
-	
 	progCounter=progCtr;
 
   // get an unused  task id from the flags table
@@ -423,8 +421,6 @@ RMFT2::RMFT2(int progCtr, int16_t _loco, bool _invert) {
 
   // chain into ring of RMFTs
   if (loopTask==NULL) {
-		DIAG("RMFT2 constructor - first task");
-
     loopTask=this;
     next=this;
   } else {
@@ -505,14 +501,14 @@ bool RMFT2::skipIfBlock() {
 /* static */ void RMFT2::readLocoCallback(int16_t cv) {
   if (cv <= 0) {
     DIAG(F("CV read error"));
-    progtrackLocoId = -1;
+    progtrackLocoId = 0;
     return;
   }
   if (cv & LONG_ADDR_MARKER) {               // maker bit indicates long addr
     progtrackLocoId = cv ^ LONG_ADDR_MARKER; // remove marker bit to get real long addr
     if (progtrackLocoId <= HIGHEST_SHORT_ADDR ) {     // out of range for long addr
       DIAG(F("Long addr %d <= %d unsupported\n"), progtrackLocoId, HIGHEST_SHORT_ADDR);
-      progtrackLocoId = -1;
+      progtrackLocoId = 0;
     }
   } else {
     progtrackLocoId=cv;
@@ -1113,7 +1109,7 @@ void RMFT2::loop2() {
       return; // still waiting for callback
     }
     
-    // At failed read will result in loco == -1
+    // At failed read will result in loco == 0
     // which is intended so it can be checked
     // from within EXRAIL
     loco=progtrackLocoId;
@@ -1578,11 +1574,15 @@ void RMFT2::railsyncEvent(bool on) {
   if (Diag::CMD)
    DIAG(F("railsyncEvent : %d"), on);
   if (on) {
-    if (onRailSyncOnLookup)
+    if (onRailSyncOnLookup && onRailSyncOnLookup->size() > 0)
       onRailSyncOnLookup->handleEvent(F("RAILSYNCON"), 0);
   } else {
-    if (onRailSyncOffLookup)
+    if (onRailSyncOffLookup && onRailSyncOffLookup->size() > 0)
       onRailSyncOffLookup->handleEvent(F("RAILSYNCOFF"), 0);
+    else {
+      TrackManager::setTrackPower(TRACK_MODE_BOOST, POWERMODE::OFF);
+      DIAG(F("Railsync signal went off and no ONRAILSYNCOFF handler was defined. All booster tracks switched off"));
+    }
   }
 }
 #endif

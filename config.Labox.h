@@ -270,7 +270,7 @@ The configuration file for DCC-EX Command Station
 // On HMI screen, number of trains of the dashboard view : can be 1 to 3 .
 #define HMI_DASHBOARD_TRAIN_NB	3
 
-// Change the screen reading orientation : should be 0 or 2.
+// Change the screen reading orientation : should be 0 (big screen) or 2 (0.96 screen.
 #define HMI_SCREEN_ROTATION     2           // 0 : 0°, 1 : 90°, 2 : 180°, 3 : 270°
 
 // Current value shift (in mA) applied only to the displayed current on the OLED screen; 
@@ -316,7 +316,7 @@ The configuration file for DCC-EX Command Station
 	#define SPROG_SERIAL	Serial1
 	#define SPROG_SERIAL_TEXT	"Serial1"
 
-	#define SPROGCOMM		new SProg(16, 17)
+	#define SPROGCOMM		new SProg(16, 17)	// Internal RX2/TX2 connector
 	#else
 	#define SPROGCOMM		NULL
 	#endif
@@ -338,6 +338,34 @@ The configuration file for DCC-EX Command Station
 
 #endif
 
+#define ENABLE_SERIAL_INPUT
+
+// Serial communication on EXT2 on extension connector
+// 								+--------------------------------------------
+// 								|  Ver 1.0a1      []  O  O  O  O
+// 								|								GND 36 32 33 27
+// 	Serial		+---| [] GND -+
+// 		--------+---| O 39    |
+// 	Connector	+---| O 14    | EXT #2
+//			 					| O 25    |
+// 								| O 26 ---+
+//			 					| [] GND	-+
+// 								| O 35    |
+//			 					| O 12    | EXT #1
+// 								| O 13    |
+//			 					| O 15 ---+
+// 								| [] GND
+//			 					| O 3v
+// 								| O 5v
+
+#define SERIAL_INPUT_RX_PIN		39
+#define SERIAL_INPUT_TX_PIN		14
+#define SERIAL_INPUT_SPEED		115200
+
+#ifdef ENABLE_SERIAL_INPUT
+#define SERIAL2_COMMANDS
+#endif
+
 /////////////////////////////////////////////////////////////////////////////////////
 // Change LaBox state using CV programming on a specific address...
 /////////////////////////////////////////////////////////////////////////////////////
@@ -348,6 +376,7 @@ The configuration file for DCC-EX Command Station
 // This pin will swap on/off every second during prog mode.
 //#define LABOX_PROG_LED			PIN_LEDBUILTIN
 
+// If LABOX_DC_CAB is not defined, the DC mode is completely disabled and the CS will only work in DCC mode. If defined, the DC mode is enabled and the CS will work in DCC or DC mode depending on the configuration.
 // A special address to control the DC cab in DC mode via DCC apps, not used in DCC mode.
 #define LABOX_DC_CAB				9999 
 
@@ -356,6 +385,11 @@ The configuration file for DCC-EX Command Station
 
 // If defined, LaBox will use the DC mode by defaut, instead of DCC mode.
 //#define LABOX_DC_MAIN_MODE
+
+#if defined(LABOX_DC_MAIN_MODE) && !defined(LABOX_DC_CAB)
+// If LABOX_DC_MAIN_MODE is defined, LABOX_DC_CAB must also be defined to enable DC mode. If LABOX_DC_CAB is not defined, the DC mode will not be available, and the Command Station will only operate in DCC mode. Please define LABOX_DC_CAB to enable DC mode.
+#undef LABOX_DC_MAIN_MODE
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////
 // DISABLE EEPROM

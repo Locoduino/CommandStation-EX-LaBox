@@ -46,10 +46,12 @@ void menuShuttleSample::start()
 
 	if (shuttleRoute == NULL)
 	{
+#ifdef LABOX_DC_CAB
 		if (LaboxModes::mainMode == DC) 
 		{
 			locoAddress = LABOX_DC_CAB;
 		}
+#endif
 		if (locoAddress > 0)
 			shuttleSampleState = FixingAddress;
 		else

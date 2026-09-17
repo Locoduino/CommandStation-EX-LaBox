@@ -38,7 +38,7 @@ bool LaboxModes::progMode = false;
 ProgType LaboxModes::progModeType = ProgType::MAIN;
 ProgBehavior LaboxModes::progBehavior = ProgBehaviorNone;
 bool LaboxModes::silentBootMode = false;
-#if defined(LABOX_DC_MAIN_MODE)
+#if defined(LABOX_DC_CAB) && defined(LABOX_DC_MAIN_MODE)
 	MainMode LaboxModes::mainMode = DC;
 #else
 	MainMode LaboxModes::mainMode = DCC;

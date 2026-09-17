@@ -70,7 +70,6 @@ void HmiInterface::ChangeSpeed(uint16_t addr, uint8_t speed)
 			return;
 		}
 
-		DIAG(F("HmiInterface::ChangeSpeed, DC cab speed changed from %d to %d"), memoDCSpeed, speed);
 		memoDCSpeed = speed;
 	}
 
